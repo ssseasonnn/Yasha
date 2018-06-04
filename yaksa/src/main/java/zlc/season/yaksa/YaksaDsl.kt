@@ -1,13 +1,16 @@
 package zlc.season.yaksa
 
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView.VERTICAL
+import android.support.v7.widget.StaggeredGridLayoutManager
 
 class YaksaDsl {
-    var orientation = VERTICAL
-    var reverse = false
-    var spanCount = 0
+    internal var orientation = VERTICAL
+    internal var reverse = false
+    internal var spanCount = 0
 
-    val dataSet = mutableListOf<YaksaItem>()
+    internal val dataSet = mutableListOf<YaksaItem>()
 
     fun orientation(orientation: Int) {
         this.orientation = orientation
@@ -21,16 +24,6 @@ class YaksaDsl {
         this.spanCount = span
     }
 
-    fun header(block: () -> YaksaItem) {
-        dataSet.add(block())
-    }
-
-    fun headerDsl(block: YaksaItemDsl.() -> Unit) {
-        val dsl = YaksaItemDsl()
-        dsl.block()
-        dataSet.add(dsl.internal())
-    }
-
     fun item(block: () -> YaksaItem) {
         dataSet.add(block())
     }
@@ -41,13 +34,28 @@ class YaksaDsl {
         dataSet.add(dsl.internal())
     }
 
-    fun footer(block: () -> YaksaItem) {
-        dataSet.add(block())
+    internal fun checkStagger(source: StaggeredGridLayoutManager): Boolean {
+        if (source.orientation == orientation &&
+                source.spanCount == spanCount) {
+            return false
+        }
+        return true
     }
 
-    fun footerDsl(block: YaksaItemDsl.() -> Unit) {
-        val dsl = YaksaItemDsl()
-        dsl.block()
-        dataSet.add(dsl.internal())
+    internal fun checkLinear(source: LinearLayoutManager): Boolean {
+        if (source.orientation == orientation &&
+                source.reverseLayout == reverse) {
+            return false
+        }
+        return true
+    }
+
+    internal fun checkGrid(source: GridLayoutManager): Boolean {
+        if (source.orientation == orientation &&
+                source.spanCount == spanCount &&
+                source.reverseLayout == reverse) {
+            return false
+        }
+        return true
     }
 }

@@ -54,49 +54,38 @@ private fun initLayoutManager(target: RecyclerView, dsl: YaksaDsl, type: Int) {
     }
 
     if (needNew) {
-        val layoutManager: LayoutManager = when (type) {
-            LINEAR_LAYOUT -> LinearLayoutManager(target.context, dsl.orientation, dsl.reverse)
-            GRID_LAYOUT -> GridLayoutManager(target.context, dsl.spanCount, dsl.orientation, dsl.reverse)
-            STAGGERED_LAYOUT -> StaggeredGridLayoutManager(dsl.spanCount, dsl.orientation)
-            else -> throw IllegalStateException("This should never happen!")
-        }
-
+        val layoutManager = newLayoutManager(type, target, dsl)
+        configureLayoutManager(layoutManager, dsl)
         target.layoutManager = layoutManager
+    }
+}
+
+private fun newLayoutManager(type: Int, target: RecyclerView, dsl: YaksaDsl): LayoutManager {
+    return when (type) {
+        LINEAR_LAYOUT -> LinearLayoutManager(target.context, dsl.orientation, dsl.reverse)
+        GRID_LAYOUT -> GridLayoutManager(target.context, dsl.spanCount, dsl.orientation, dsl.reverse)
+        STAGGERED_LAYOUT -> StaggeredGridLayoutManager(dsl.spanCount, dsl.orientation)
+        else -> throw IllegalStateException("This should never happen!")
+    }
+}
+
+private fun configureLayoutManager(layoutManager: LayoutManager, dsl: YaksaDsl) {
+    if (layoutManager is GridLayoutManager) {
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return dsl.dataSet[position].gridSpanSize()
+            }
+        }
     }
 }
 
 private fun checkNeedNew(source: LayoutManager, dsl: YaksaDsl): Boolean {
     return when (source) {
-        is GridLayoutManager -> checkGrid(source, dsl)            //Grid must check before Linear
-        is LinearLayoutManager -> checkLinear(source, dsl)
-        is StaggeredGridLayoutManager -> checkStagger(source, dsl)
+        is GridLayoutManager -> dsl.checkGrid(source)            //Grid must check before Linear
+        is LinearLayoutManager -> dsl.checkLinear(source)
+        is StaggeredGridLayoutManager -> dsl.checkStagger(source)
         else -> throw  IllegalStateException("This should never happen!")
     }
-}
-
-private fun checkStagger(source: StaggeredGridLayoutManager, dsl: YaksaDsl): Boolean {
-    if (source.orientation == dsl.orientation &&
-            source.spanCount == dsl.spanCount) {
-        return false
-    }
-    return true
-}
-
-private fun checkLinear(source: LinearLayoutManager, dsl: YaksaDsl): Boolean {
-    if (source.orientation == dsl.orientation &&
-            source.reverseLayout == dsl.reverse) {
-        return false
-    }
-    return true
-}
-
-private fun checkGrid(source: GridLayoutManager, dsl: YaksaDsl): Boolean {
-    if (source.orientation == dsl.orientation &&
-            source.spanCount == dsl.spanCount &&
-            source.reverseLayout == dsl.reverse) {
-        return false
-    }
-    return true
 }
 
 
