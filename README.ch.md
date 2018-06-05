@@ -53,7 +53,7 @@ recycler_view.linear {
 
 效果图：
 
-![](screenshot.png | width=200)
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot.png" width="200">
 
 ### License
 
