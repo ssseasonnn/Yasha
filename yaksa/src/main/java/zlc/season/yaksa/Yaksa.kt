@@ -6,33 +6,36 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.LayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager
 
-
 const val LINEAR_LAYOUT = 0
 const val GRID_LAYOUT = 1
 const val STAGGERED_LAYOUT = 2
 
-fun RecyclerView.linear(block: YaksaDsl.() -> Unit) {
-    initDsl(this, LINEAR_LAYOUT, block)
+fun RecyclerView.linear(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
+    initDsl(this, clear, LINEAR_LAYOUT, block)
 }
 
-
-fun RecyclerView.grid(block: YaksaDsl.() -> Unit) {
-    initDsl(this, GRID_LAYOUT, block)
+fun RecyclerView.grid(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
+    initDsl(this, clear, GRID_LAYOUT, block)
 }
 
-fun RecyclerView.stagger(block: YaksaDsl.() -> Unit) {
-    initDsl(this, STAGGERED_LAYOUT, block)
+fun RecyclerView.stagger(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
+    initDsl(this, clear, STAGGERED_LAYOUT, block)
 }
 
-private fun initDsl(target: RecyclerView, type: Int, block: YaksaDsl.() -> Unit) {
+private fun initDsl(target: RecyclerView, clear: Boolean, type: Int, block: YaksaDsl.() -> Unit) {
     checkAdapter(target)
 
-    val dsl = YaksaDsl()
+    val adapter = target.adapter as YaksaAdapter
+
+    val dsl = if (clear) {
+        YaksaDsl(mutableListOf())
+    } else {
+        YaksaDsl(adapter.data)
+    }
+
     dsl.block()
 
     initLayoutManager(target, dsl, type)
-
-    val adapter = target.adapter as YaksaAdapter
     adapter.submitList(dsl.dataSet)
 }
 

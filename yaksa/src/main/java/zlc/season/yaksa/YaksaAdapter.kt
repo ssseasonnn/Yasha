@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import zlc.season.yaksa.YaksaAdapter.YaksaViewHolder
 
 open class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
-    private val data: MutableList<YaksaItem> = mutableListOf()
+    internal val data: MutableList<YaksaItem> = mutableListOf()
 
     fun submitList(list: List<YaksaItem>) {
         data.clear()
@@ -29,8 +29,7 @@ open class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: YaksaViewHolder, position: Int) {
-        data[position].injectPosition(position)
-        data[position].render(holder.itemView)
+        data[position].render(position, holder.itemView)
     }
 
     override fun onViewAttachedToWindow(holder: YaksaViewHolder) {

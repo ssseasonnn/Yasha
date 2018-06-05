@@ -4,7 +4,8 @@ import android.view.View
 
 class YaksaItemDsl {
     private var resId: Int = 0
-    private var block: (view: View) -> Unit = { }
+    private var renderBlock: (view: View) -> Unit = {}
+    private var renderBlockX: (position: Int, view: View) -> Unit = { _: Int, _: View -> }
 
     private var gridSpanSize = 1
     private var staggerFullSpan = false
@@ -14,7 +15,11 @@ class YaksaItemDsl {
     }
 
     fun render(block: (view: View) -> Unit) {
-        this.block = block
+        this.renderBlock = block
+    }
+
+    fun renderX(block: (position: Int, view: View) -> Unit) {
+        this.renderBlockX = block
     }
 
     fun gridSpanSize(spanSize: Int) {
@@ -27,8 +32,9 @@ class YaksaItemDsl {
 
     internal fun internal(): YaksaItem {
         return object : YaksaItem {
-            override fun render(view: View) {
-                block(view)
+            override fun render(position: Int, view: View) {
+                renderBlock(view)
+                renderBlockX(position, view)
             }
 
             override fun xml(): Int {

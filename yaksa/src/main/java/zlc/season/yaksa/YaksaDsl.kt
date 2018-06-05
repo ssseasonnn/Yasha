@@ -5,12 +5,18 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.support.v7.widget.StaggeredGridLayoutManager
 
-class YaksaDsl {
+class YaksaDsl(dataSet: MutableList<YaksaItem>) {
     internal var orientation = VERTICAL
     internal var reverse = false
     internal var spanCount = 0
 
-    internal val dataSet = mutableListOf<YaksaItem>()
+    internal val dataSet: MutableList<YaksaItem> = mutableListOf()
+    internal var dataSetChanged = false
+
+
+    init {
+        this.dataSet.addAll(dataSet)
+    }
 
     fun orientation(orientation: Int) {
         this.orientation = orientation
@@ -24,14 +30,24 @@ class YaksaDsl {
         this.spanCount = span
     }
 
-    fun item(block: () -> YaksaItem) {
-        dataSet.add(block())
+    fun item(index: Int = -1, block: () -> YaksaItem) {
+        if (index <= -1) {
+            dataSet.add(block())
+        } else {
+            dataSet.add(index, block())
+        }
+        dataSetChanged = true
     }
 
-    fun itemDsl(block: YaksaItemDsl.() -> Unit) {
+    fun itemDsl(index: Int = -1, block: YaksaItemDsl.() -> Unit) {
         val dsl = YaksaItemDsl()
         dsl.block()
-        dataSet.add(dsl.internal())
+        if (index <= -1) {
+            dataSet.add(dsl.internal())
+        } else {
+            dataSet.add(index, dsl.internal())
+        }
+        dataSetChanged = true
     }
 
     internal fun checkStagger(source: StaggeredGridLayoutManager): Boolean {

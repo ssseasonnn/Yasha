@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
         </activity>
-        <activity android:name=".ListActivity">
+        <activity android:name=".LinearExampleActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
