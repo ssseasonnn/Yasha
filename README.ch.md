@@ -53,7 +53,7 @@ recycler_view.linear {
 
 效果图：
 
-![](screenshot.png)
+![](screenshot.png | width=200)
 
 ### License
 

@@ -59,7 +59,7 @@ That's it, there is no Adapter, no ViewHolder, you just need to concentrate on r
 
 Output:
 
-![](screenshot.png)
+![](screenshot.png | width=200)
 
 ### License
 
