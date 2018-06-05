@@ -1,12 +1,11 @@
 package zlc.season.yaksaproject
 
 import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders.*
+import android.arch.lifecycle.ViewModelProviders.of
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.view.View.GONE
 import android.widget.FrameLayout
 import kotlinx.android.synthetic.main.activity_linear_example.*
 import kotlinx.android.synthetic.main.header_item.view.*
@@ -25,10 +24,22 @@ class LinearExampleActivity : AppCompatActivity() {
         viewModel = of(this).get(ExampleViewModel::class.java)
 
         viewModel.bindData(this) { list ->
-            list?.let {
-                pb_loading.visibility = GONE
+            refresh.isRefreshing = false
 
+            list?.let {
                 rv_list.linear {
+                    item {
+                        HeaderItem("This is a Header")
+                    }
+
+                    itemDsl(index = 0) {
+                        xml(R.layout.header_item)
+                        render {
+                            it.tv_header.text = "This is a dsl Header"
+                            it.setOnClickListener { toast("DSL Header Clicked") }
+                        }
+                    }
+
                     list.forEach { each ->
                         itemDsl {
                             xml(R.layout.list_item)
@@ -40,38 +51,28 @@ class LinearExampleActivity : AppCompatActivity() {
                             }
                         }
                     }
+
+                    item {
+                        ListItem("This is item too!")
+                    }
                 }
             }
         }
 
-
-        btn_add_header.setOnClickListener {
-            rv_list.linear(clear = false) {
-                itemDsl(index = 0) {
-                    xml(R.layout.header_item)
-                    render {
-                        it.title.text = "this is a header"
-                        it.setOnClickListener { toast("Header Clicked") }
-                    }
-                }
-            }
+        refresh.setOnRefreshListener {
+            viewModel.loadData()
         }
     }
 
     override fun onStart() {
         super.onStart()
         viewModel.loadData()
-        viewModel.loadHeader()
-    }
-
-    private fun Activity.toast(msg: String) {
-        Snackbar.make(findViewById<FrameLayout>(android.R.id.content),
-                msg, Snackbar.LENGTH_SHORT).show()
     }
 
     class HeaderItem(val title: String) : YaksaItem {
         override fun render(position: Int, view: View) {
-            view.title.text = title
+            view.tv_header.text = title
+            view.setOnClickListener { }
         }
 
         override fun xml(): Int {
@@ -82,10 +83,16 @@ class LinearExampleActivity : AppCompatActivity() {
     class ListItem(val str: String) : YaksaItem {
         override fun render(position: Int, view: View) {
             view.textView.text = str
+            view.setOnClickListener { }
         }
 
         override fun xml(): Int {
             return R.layout.list_item
         }
+    }
+
+    private fun Activity.toast(msg: String) {
+        Snackbar.make(findViewById<FrameLayout>(android.R.id.content),
+                msg, Snackbar.LENGTH_SHORT).show()
     }
 }

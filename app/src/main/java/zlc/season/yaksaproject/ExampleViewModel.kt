@@ -8,16 +8,9 @@ import kotlin.concurrent.thread
 
 class ExampleViewModel : ViewModel() {
     private val exampleData: MutableLiveData<List<ExampleData>> = MutableLiveData()
-    private val headerData: MutableLiveData<List<HeaderData>> = MutableLiveData()
 
     fun bindData(owner: LifecycleOwner, onChange: (t: List<ExampleData>?) -> Unit) {
         exampleData.observe(owner, Observer {
-            onChange(it)
-        })
-    }
-
-    fun bindHeader(owner: LifecycleOwner, onChange: (t: List<HeaderData>?) -> Unit) {
-        headerData.observe(owner, Observer {
             onChange(it)
         })
     }
@@ -33,22 +26,7 @@ class ExampleViewModel : ViewModel() {
         }
     }
 
-    fun loadHeader() {
-        thread(start = true) {
-            Thread.sleep(4000)
-            val headers = mutableListOf<HeaderData>()
-            for (i in 0..1) {
-                headers.add(HeaderData("this is header $i"))
-            }
-            headerData.update(headers)
-        }
-    }
-
     data class ExampleData(
-            val title: String
-    )
-
-    data class HeaderData(
             val title: String
     )
 }
