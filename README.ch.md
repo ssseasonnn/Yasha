@@ -3,32 +3,26 @@
 
 # Yaksa
 
-A lightweight RecyclerView tool that lets you render items like Javascript.
+一个轻量级的RecyclerView工具，让你像Javascript一样渲染Item.
 
 ![](https://img.shields.io/badge/language-kotlin-brightgreen.svg)  
 
 *Read this in other languages: [中文](README.ch.md), [English](README.md)* 
 
-As we all know, using RecyclerView to display list data is a must-have feature for every Android developer.
+众所周知，熟练使用RecyclerView展示列表数据已经是每个Android开发者必备的能力，然而，RecyclerView仍然有它的不足，
+那就是过于繁琐，相信每个开发者都有过这样的经历，我们为了展示一个只有单一类型的简单的列表，需要创建一个Adapter，
+需要创建一个ViewHolder，而对于具有多个类型的稍微复杂的列表，我们不但需要创建Adapter，同时还要创建多个ViewHolder..
 
-However, RecyclerView still has its shortcomings, that is too cumbersome.
+我们一次又一次不断的重复着这样无聊的工作，显得那么的麻木不仁
 
-I believe every developer has had this experience: 
+然而，生活不止眼前的苟且，还有诗和远方！
 
-To show a simple list of only a single type, we need to create an Adapter and we need to create a ViewHolder,
+让我们一起和噩梦一样的Adapter和ViewHolder说声再见，一起来拥抱Yaksa吧!
 
-for a slightly more complicated list with multiple types, we need not only to create an Adapter, but also to create multiple ViewHolders
-
-We repeated such boring work again and again and again, and it seemed so insensitive.
-
-However, there is more to life than just present, poetry and distance!
-
-Let's say goodbye to the same Adapter and ViewHolder as the nightmare, and embrace Yaksa together!
-
-> Yaksa(夜叉), Increases 16 Agility 15% Attack Speed ​​10% Movement Speed
+> Yaksa(夜叉), 提高16点敏捷  15%攻击速度  10%移动速度
 
 
-### Let us come to see
+### 让我们来见识一下
 
 ```kotlin
 recycler_view.linear {
@@ -55,9 +49,9 @@ recycler_view.linear {
 }
 ```
 
-That's it, there is no Adapter, no ViewHolder, you just need to concentrate on rendering the Item just fine!
+就是这样，没有Adapter,也没有ViewHolder，你只需要专心的渲染Item就好了！
 
-Output:
+效果图：
 
 ![](screenshot.png)
 
