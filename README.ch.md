@@ -53,7 +53,20 @@ recycler_view.linear {
 
 效果图：
 
-<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot.png" width="200">
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot.png" width="300">
+
+
+### 添加依赖:
+
+```groovy
+dependencies {
+	implementation 'zlc.season:yaksa:x.x.x'
+}
+```
+
+(请把上面的x替换成最新的版本号: [![Download](https://api.bintray.com/packages/ssseasonnn/android/Yaksa/images/download.svg)](https://bintray.com/ssseasonnn/android/Yaksa/_latestVersion))
+
+
 
 ### License
 

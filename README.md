@@ -59,7 +59,18 @@ That's it, there is no Adapter, no ViewHolder, you just need to concentrate on r
 
 Output:
 
-<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot.png" width="200">
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot.png" width="300">
+
+
+### Add to your project build.gradle file:
+
+```groovy
+dependencies {
+	implementation 'zlc.season:yaksa:x.x.x'
+}
+```
+
+(Please replace x with the latest version numbers: [![Download](https://api.bintray.com/packages/ssseasonnn/android/Yaksa/images/download.svg)](https://bintray.com/ssseasonnn/android/Yaksa/_latestVersion))
 
 ### License
 
