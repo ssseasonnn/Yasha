@@ -5,19 +5,26 @@ import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import zlc.season.yaksa.YaksaItem
-import zlc.season.yaksa.linear
+import zlc.season.yaksa.stagger
+import java.util.*
 
-class LinearExampleActivity : ExampleActivity() {
+class StaggerExampleActivity : ExampleActivity() {
+    private val HEIGHTS = arrayOf(60, 80, 100, 120, 140, 160)
 
     override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
         super.onChange(data)
+
         data?.let {
-            rv_list.linear {
+            rv_list.stagger {
+                spanCount(3)
+
                 item {
                     HeaderItem("This is a Header")
                 }
 
                 itemDsl(index = 0) {
+                    staggerFullSpan(true)
+
                     xml(R.layout.header_item)
                     render {
                         it.tv_header.text = "This is a dsl Header"
@@ -26,19 +33,9 @@ class LinearExampleActivity : ExampleActivity() {
                 }
 
                 data.forEach { each ->
-                    itemDsl {
-                        xml(R.layout.list_item)
-                        render {
-                            it.textView.text = each.title
-                        }
-                        renderX { position, it ->
-                            it.setOnClickListener { toast("Clicked $position") }
-                        }
+                    item {
+                        ListItem(each.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
                     }
-                }
-
-                item {
-                    ListItem("This is item too!")
                 }
             }
         }
@@ -53,12 +50,19 @@ class LinearExampleActivity : ExampleActivity() {
         override fun xml(): Int {
             return R.layout.header_item
         }
+
+        override fun staggerFullSpan(): Boolean {
+            return true
+        }
     }
 
-    private class ListItem(val str: String) : YaksaItem {
+    private class ListItem(val str: String, val height: Int) : YaksaItem {
         override fun render(position: Int, view: View) {
+            view.layoutParams.height = height
             view.textView.text = str
-            view.setOnClickListener { }
+            view.setOnClickListener {
+                toast(view, "Clicked $position")
+            }
         }
 
         override fun xml(): Int {

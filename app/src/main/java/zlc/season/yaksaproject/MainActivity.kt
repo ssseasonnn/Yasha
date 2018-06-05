@@ -1,8 +1,7 @@
 package zlc.season.yaksaproject
 
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -11,8 +10,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        simple.setOnClickListener {
-            startActivity(Intent(MainActivity@ this, LinearExampleActivity::class.java))
+        linear.setOnClickListener {
+            startActivity(LinearExampleActivity::class.java)
+        }
+
+        grid.setOnClickListener {
+            startActivity(GridExampleActivity::class.java)
+        }
+
+        stagger.setOnClickListener {
+            startActivity(StaggerExampleActivity::class.java)
         }
     }
 }

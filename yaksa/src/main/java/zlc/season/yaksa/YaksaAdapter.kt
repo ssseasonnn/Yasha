@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import zlc.season.yaksa.YaksaAdapter.YaksaViewHolder
 
-open class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
+class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
     internal val data: MutableList<YaksaItem> = mutableListOf()
 
     fun submitList(list: List<YaksaItem>) {

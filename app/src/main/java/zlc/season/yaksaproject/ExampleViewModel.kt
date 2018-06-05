@@ -17,7 +17,7 @@ class ExampleViewModel : ViewModel() {
 
     fun loadData() {
         thread(start = true) {
-            Thread.sleep(2000)
+            Thread.sleep(500)
             val newData = mutableListOf<ExampleData>()
             for (i in 0..50) {
                 newData.add(ExampleData("this is item $i"))

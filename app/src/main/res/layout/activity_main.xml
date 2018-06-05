@@ -8,9 +8,20 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/simple"
+        android:id="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Simple" />
+        android:text="LINEAR" />
 
+    <Button
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GRID" />
+
+    <Button
+        android:id="@+id/stagger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="STAGGER" />
 </LinearLayout>
