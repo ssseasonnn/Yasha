@@ -2,7 +2,6 @@ package zlc.season.yaksa
 
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.support.v7.widget.StaggeredGridLayoutManager
 
@@ -20,9 +19,10 @@ class YaksaDsl(dataSet: MutableList<YaksaItem>) {
     }
 
     /**
-     * Set the orientation, default is [RecyclerView.VERTICAL]
+     * Set the orientation, default is [android.support.v7.widget.RecyclerView.VERTICAL]
      *
-     * @param orientation   Layout orientation. Should be [RecyclerView.VERTICAL] or [RecyclerView.HORIZONTAL]
+     * @param orientation   Layout orientation. Should be [android.support.v7.widget.RecyclerView.VERTICAL]
+     *                      or [android.support.v7.widget.RecyclerView.HORIZONTAL]
      */
     fun orientation(orientation: Int) {
         this.orientation = orientation

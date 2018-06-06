@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<zlc.season.yaksaproject.NestedRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nested_header_rv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:listitem="@layout/header_item">
 
-</android.support.v7.widget.RecyclerView>
+</zlc.season.yaksaproject.NestedRecyclerView>

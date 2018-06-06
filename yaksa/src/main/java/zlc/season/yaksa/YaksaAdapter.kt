@@ -1,6 +1,7 @@
 package zlc.season.yaksa
 
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.NO_POSITION
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -34,15 +35,22 @@ class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
 
     override fun onViewAttachedToWindow(holder: YaksaViewHolder) {
         super.onViewAttachedToWindow(holder)
-        specialStaggerItem(holder)
+        if (holder.adapterPosition != NO_POSITION) {
+            data[holder.adapterPosition].onItemAttachWindow(holder.adapterPosition, holder.itemView)
+        }
     }
 
-    private fun specialStaggerItem(holder: YaksaViewHolder) {
-        val position = holder.adapterPosition
+    override fun onViewDetachedFromWindow(holder: YaksaViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        if (holder.adapterPosition != NO_POSITION) {
+            data[holder.adapterPosition].onItemDetachWindow(holder.adapterPosition, holder.itemView)
+        }
+    }
 
-        val lp = holder.itemView.layoutParams
-        if (lp != null && lp is StaggeredGridLayoutManager.LayoutParams) {
-            lp.isFullSpan = data[position].staggerFullSpan()
+    override fun onViewRecycled(holder: YaksaViewHolder) {
+        super.onViewRecycled(holder)
+        if (holder.adapterPosition != NO_POSITION) {
+            data[holder.adapterPosition].onItemRecycled(holder.adapterPosition, holder.itemView)
         }
     }
 
