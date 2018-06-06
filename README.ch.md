@@ -22,7 +22,9 @@
 > Yaksa(夜叉), 提高16点敏捷  15%攻击速度  10%移动速度
 
 
-### 让我们来见识一下
+### Talk is cheap, show me the code
+
+渲染一个Linear列表：
 
 ```kotlin
 recycler_view.linear {
@@ -56,7 +58,84 @@ recycler_view.linear {
 <img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot.png" width="300">
 
 
-### 添加依赖:
+渲染一个Grid列表：
+
+```kotlin
+rv_list.grid {
+    spanCount(SPAN_COUNT)
+    
+    item {
+        HeaderItem("This is a Header")
+    }
+    
+    itemDsl(index = 0) {
+        gridSpanSize(SPAN_COUNT)
+        
+        xml(R.layout.header_item)
+        render {
+            it.tv_header.text = "This is a dsl Header"
+            it.setOnClickListener { toast("DSL Header Clicked") }
+        }
+    }
+    
+    data.forEach { each ->
+        itemDsl {
+            xml(R.layout.list_item)
+            render {
+                it.textView.text = each.title
+            }
+            renderX { position, it ->
+                it.setOnClickListener { toast("Clicked $position") }
+            }
+        }
+    }
+}
+
+```
+
+效果图：
+
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot-grid.png" width="300">
+
+
+瀑布流? 没问题：
+
+```kotlin
+rv_list.stagger {
+    spanCount(3)
+    
+    item {
+        HeaderItem("This is a Header")
+    }
+    
+    itemDsl(index = 0) {
+        staggerFullSpan(true)
+        
+        xml(R.layout.header_item)
+        render {
+            it.tv_header.text = "This is a dsl Header"
+            it.setOnClickListener { toast("DSL Header Clicked") }
+        }
+    }
+    
+    data.forEach { each ->
+        item {
+            ListItem(each.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
+        }
+    }
+}
+```
+
+效果图：
+
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot-stagger.png" width="300">
+
+
+其余的Header,Footer,多种type类型更是不在话下，而且重要的是，这些都不需要你写任何的ViewHolder和Adapter
+
+现在就开始装备夜叉吧，开启你的超神之路！
+
+### 依赖:
 
 ```groovy
 dependencies {

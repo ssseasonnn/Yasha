@@ -28,7 +28,9 @@ Let's say goodbye to the same Adapter and ViewHolder as the nightmare, and embra
 > Yaksa(夜叉), Increases 16 Agility 15% Attack Speed ​​10% Movement Speed
 
 
-### Let us come to see
+### Talk is cheap, show me the code
+
+Render a Linear list:
 
 ```kotlin
 recycler_view.linear {
@@ -61,6 +63,84 @@ Output:
 
 <img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot.png" width="300">
 
+
+Render a Grid list:
+
+```kotlin
+rv_list.grid {
+    spanCount(SPAN_COUNT)
+    
+    item {
+        HeaderItem("This is a Header")
+    }
+    
+    itemDsl(index = 0) {
+        gridSpanSize(SPAN_COUNT)
+        
+        xml(R.layout.header_item)
+        render {
+            it.tv_header.text = "This is a dsl Header"
+            it.setOnClickListener { toast("DSL Header Clicked") }
+        }
+    }
+    
+    data.forEach { each ->
+        itemDsl {
+            xml(R.layout.list_item)
+            render {
+                it.textView.text = each.title
+            }
+            renderX { position, it ->
+                it.setOnClickListener { toast("Clicked $position") }
+            }
+        }
+    }
+}
+
+```
+
+Output:
+
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot-grid.png" width="300">
+
+
+Waterfall flow? No problem:
+
+```kotlin
+rv_list.stagger {
+    spanCount(3)
+    
+    item {
+        HeaderItem("This is a Header")
+    }
+    
+    itemDsl(index = 0) {
+        staggerFullSpan(true)
+        
+        xml(R.layout.header_item)
+        render {
+            it.tv_header.text = "This is a dsl Header"
+            it.setOnClickListener { toast("DSL Header Clicked") }
+        }
+    }
+    
+    data.forEach { each ->
+        item {
+            ListItem(each.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
+        }
+    }
+}
+```
+
+Output:
+
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot-stagger.png" width="300">
+
+
+Others such as Header, Footer, and multiple type types also support，and importantly, 
+none of these require you to write any ViewHolder and Adapter
+
+Start yaksa now and start your super-god!
 
 ### Add to your project build.gradle file:
 
