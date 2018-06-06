@@ -21,5 +21,9 @@ class MainActivity : AppCompatActivity() {
         stagger.setOnClickListener {
             startActivity(StaggerExampleActivity::class.java)
         }
+
+        nested.setOnClickListener {
+            startActivity(NestedExampleActivity::class.java)
+        }
     }
 }

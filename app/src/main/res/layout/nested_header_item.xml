@@ -2,25 +2,27 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginBottom="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/colorPrimary">
 
         <TextView
-            android:id="@+id/list_item_tv"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:id="@+id/nested_header_item_tv"
+            android:layout_width="150dp"
+            android:layout_height="130dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:gravity="center_vertical"
+            android:gravity="center"
+            android:textColor="@android:color/white"
             tools:text="TextView" />
     </android.support.v7.widget.CardView>
 </FrameLayout>

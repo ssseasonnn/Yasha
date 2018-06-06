@@ -19,6 +19,7 @@
         <activity android:name=".LinearExampleActivity" />
         <activity android:name=".GridExampleActivity" />
         <activity android:name=".StaggerExampleActivity" />
+        <activity android:name=".NestedExampleActivity" />
     </application>
 
 </manifest>

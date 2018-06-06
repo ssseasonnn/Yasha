@@ -15,7 +15,7 @@ class StaggerExampleActivity : ExampleActivity() {
         super.onChange(data)
 
         data?.let {
-            rv_list.stagger {
+            example_rv.stagger {
                 spanCount(3)
 
                 item {
@@ -27,7 +27,7 @@ class StaggerExampleActivity : ExampleActivity() {
 
                     xml(R.layout.header_item)
                     render {
-                        it.tv_header.text = "This is a dsl Header"
+                        it.header_item_tv.text = "This is a dsl Header"
                         it.setOnClickListener { toast("DSL Header Clicked") }
                     }
                 }
@@ -43,7 +43,7 @@ class StaggerExampleActivity : ExampleActivity() {
 
     private class HeaderItem(val title: String) : YaksaItem {
         override fun render(position: Int, view: View) {
-            view.tv_header.text = title
+            view.header_item_tv.text = title
             view.setOnClickListener { }
         }
 
@@ -59,7 +59,7 @@ class StaggerExampleActivity : ExampleActivity() {
     private class ListItem(val str: String, val height: Int) : YaksaItem {
         override fun render(position: Int, view: View) {
             view.layoutParams.height = height
-            view.textView.text = str
+            view.list_item_tv.text = str
             view.setOnClickListener {
                 toast(view, "Clicked $position")
             }

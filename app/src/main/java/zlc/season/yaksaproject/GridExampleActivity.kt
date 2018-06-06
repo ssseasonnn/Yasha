@@ -16,7 +16,7 @@ class GridExampleActivity : ExampleActivity() {
     override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
         super.onChange(data)
         data?.let {
-            rv_list.grid {
+            example_rv.grid {
                 spanCount(SPAN_COUNT)
 
                 item {
@@ -28,7 +28,7 @@ class GridExampleActivity : ExampleActivity() {
 
                     xml(R.layout.header_item)
                     render {
-                        it.tv_header.text = "This is a dsl Header"
+                        it.header_item_tv.text = "This is a dsl Header"
                         it.setOnClickListener { toast("DSL Header Clicked") }
                     }
                 }
@@ -37,7 +37,7 @@ class GridExampleActivity : ExampleActivity() {
                     itemDsl {
                         xml(R.layout.list_item)
                         render {
-                            it.textView.text = each.title
+                            it.list_item_tv.text = each.title
                         }
                         renderX { position, it ->
                             it.setOnClickListener { toast("Clicked $position") }
@@ -54,7 +54,7 @@ class GridExampleActivity : ExampleActivity() {
 
     private class HeaderItem(val title: String) : YaksaItem {
         override fun render(position: Int, view: View) {
-            view.tv_header.text = title
+            view.header_item_tv.text = title
             view.setOnClickListener { }
         }
 
@@ -69,7 +69,7 @@ class GridExampleActivity : ExampleActivity() {
 
     private class ListItem(val str: String) : YaksaItem {
         override fun render(position: Int, view: View) {
-            view.textView.text = str
+            view.list_item_tv.text = str
             view.setOnClickListener { }
         }
 
