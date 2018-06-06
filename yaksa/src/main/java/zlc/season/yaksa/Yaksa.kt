@@ -10,14 +10,38 @@ const val LINEAR_LAYOUT = 0
 const val GRID_LAYOUT = 1
 const val STAGGERED_LAYOUT = 2
 
+/**
+ * This function is used to create a Linear list.
+ *
+ *@param clear If true, all old items will be cleared and new items will be re-created.
+ *             Otherwise, it will continue to add new items to the original data
+ *
+ *@param block Item dsl
+ */
 fun RecyclerView.linear(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
     initDsl(this, clear, LINEAR_LAYOUT, block)
 }
 
+/**
+ * This function is used to create a Grid list.
+ *
+ *@param clear If true, all old items will be cleared and new items will be re-created.
+ *             Otherwise, it will continue to add new items to the original data
+ *
+ *@param block Item dsl
+ */
 fun RecyclerView.grid(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
     initDsl(this, clear, GRID_LAYOUT, block)
 }
 
+/**
+ * This function is used to create a Stagger list.
+ *
+ *@param clear If true, all old items will be cleared and new items will be re-created.
+ *             Otherwise, it will continue to add new items to the original data
+ *
+ *@param block Item dsl
+ */
 fun RecyclerView.stagger(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
     initDsl(this, clear, STAGGERED_LAYOUT, block)
 }

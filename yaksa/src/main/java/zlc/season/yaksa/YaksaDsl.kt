@@ -2,13 +2,14 @@ package zlc.season.yaksa
 
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.support.v7.widget.StaggeredGridLayoutManager
 
 class YaksaDsl(dataSet: MutableList<YaksaItem>) {
     internal var orientation = VERTICAL
     internal var reverse = false
-    internal var spanCount = 0
+    internal var spanCount = 1
 
     internal val dataSet: MutableList<YaksaItem> = mutableListOf()
     internal var dataSetChanged = false
@@ -18,18 +19,40 @@ class YaksaDsl(dataSet: MutableList<YaksaItem>) {
         this.dataSet.addAll(dataSet)
     }
 
+    /**
+     * Set the orientation, default is [RecyclerView.VERTICAL]
+     *
+     * @param orientation   Layout orientation. Should be [RecyclerView.VERTICAL] or [RecyclerView.HORIZONTAL]
+     */
     fun orientation(orientation: Int) {
         this.orientation = orientation
     }
 
+    /**
+     * Set whether to reverse the list
+     *
+     * @param reverse When set to true, layouts from end to start.
+     */
     fun reverse(reverse: Boolean) {
         this.reverse = reverse
     }
 
-    fun spanCount(span: Int) {
-        this.spanCount = span
+    /**
+     * Set SpanCount for Grid and Stagger
+     *
+     * @param spanCount spanCount
+     */
+    fun spanCount(spanCount: Int) {
+        this.spanCount = spanCount
     }
 
+    /**
+     * Use this method to add an item to Recyclerview.
+     *
+     * @param index Which index to add
+     *
+     * @param block A block return a direct item instance
+     */
     fun item(index: Int = -1, block: () -> YaksaItem) {
         if (index <= -1) {
             dataSet.add(block())
@@ -39,6 +62,14 @@ class YaksaDsl(dataSet: MutableList<YaksaItem>) {
         dataSetChanged = true
     }
 
+    /**
+     * Use this method to add an item to Recyclerview.
+     *
+     * @param index Which index to add
+     *
+     * @param block A dsl block
+     *
+     */
     fun itemDsl(index: Int = -1, block: YaksaItemDsl.() -> Unit) {
         val dsl = YaksaItemDsl()
         dsl.block()

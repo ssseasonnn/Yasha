@@ -34,6 +34,10 @@ class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
 
     override fun onViewAttachedToWindow(holder: YaksaViewHolder) {
         super.onViewAttachedToWindow(holder)
+        specialStaggerItem(holder)
+    }
+
+    private fun specialStaggerItem(holder: YaksaViewHolder) {
         val position = holder.adapterPosition
 
         val lp = holder.itemView.layoutParams

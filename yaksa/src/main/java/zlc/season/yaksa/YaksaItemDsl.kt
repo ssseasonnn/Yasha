@@ -10,22 +10,45 @@ class YaksaItemDsl {
     private var gridSpanSize = 1
     private var staggerFullSpan = false
 
+    /**
+     * Set item xml layout resource
+     */
     fun xml(res: Int) {
         this.resId = res
     }
 
+    /**
+     * Render item
+     *
+     * @param block  Call when item render
+     */
     fun render(block: (view: View) -> Unit) {
         this.renderBlock = block
     }
 
+    /**
+     * Render item
+     *
+     * @param block  Call when item render
+     */
     fun renderX(block: (position: Int, view: View) -> Unit) {
         this.renderBlockX = block
     }
 
+    /**
+     * Only work for Grid, set the span size of this item
+     *
+     * @param spanSize spanSize
+     */
     fun gridSpanSize(spanSize: Int) {
         this.gridSpanSize = spanSize
     }
 
+    /**
+     * Only work for Stagger, set the fullSpan of this item
+     *
+     * @param fullSpan True or false
+     */
     fun staggerFullSpan(fullSpan: Boolean) {
         this.staggerFullSpan = fullSpan
     }
