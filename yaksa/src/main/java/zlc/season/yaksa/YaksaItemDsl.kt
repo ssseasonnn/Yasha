@@ -55,6 +55,10 @@ class YaksaItemDsl {
     }
 
     internal fun internal(): YaksaItem {
+        if (resId == 0) {
+            throw IllegalStateException("You must call the xml() method to pass your layout resource id!")
+        }
+
         return object : YaksaItem {
             override fun render(position: Int, view: View) {
                 renderBlock(view)
