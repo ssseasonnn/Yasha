@@ -22,7 +22,7 @@ class LinearExampleActivity : ExampleActivity() {
                     xml(R.layout.list_item)
                     render { view ->
                         view.list_item_tv.text = item.title
-                        view.setOnClickListener { toast("DSL Header Clicked") }
+                        view.setOnClickListener { toast("Item Clicked") }
                     }
                 }
 

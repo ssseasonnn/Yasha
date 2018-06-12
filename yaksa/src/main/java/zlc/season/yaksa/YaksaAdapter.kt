@@ -83,7 +83,6 @@ class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
 
         fun checkPositionAndRun(block: (position: Int, view: View) -> Unit) {
             if (this.adapterPosition != NO_POSITION) {
-
                 block(this.adapterPosition, this.itemView)
             }
         }

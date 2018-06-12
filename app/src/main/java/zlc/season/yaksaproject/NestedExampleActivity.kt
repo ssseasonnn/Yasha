@@ -17,29 +17,18 @@ class NestedExampleActivity : ExampleActivity() {
 
     override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
         super.onChange(data)
-        data?.let {
+        data?.let { dataSource ->
             example_rv.linear {
-                itemDsl(index = 0) {
-                    xml(R.layout.header_item)
-                    render {
-                        it.header_item_tv.text = "This is a dsl Header"
-                        it.setOnClickListener { toast("DSL Header Clicked") }
-                    }
+                renderHeaders(mutableListOf(dataSource)) {
+                    NestedHeaderItem(it)
                 }
 
-                item {
-                    NestedHeaderItem(data)
-                }
+                renderItemsByDsl(dataSource) { item ->
+                    xml(R.layout.list_item)
 
-                data.forEach { each ->
-                    itemDsl {
-                        xml(R.layout.list_item)
-                        render {
-                            it.list_item_tv.text = each.title
-                        }
-                        renderX { position, it ->
-                            it.setOnClickListener { toast("Clicked $position") }
-                        }
+                    render { view ->
+                        view.list_item_tv.text = item.title
+                        view.setOnClickListener { toast("Item Clicked") }
                     }
                 }
             }
@@ -56,21 +45,16 @@ class NestedExampleActivity : ExampleActivity() {
         override fun render(position: Int, view: View) {
 
             view.nested_header_rv.linear {
-
                 orientation(HORIZONTAL)
 
-                data.forEach { each ->
-                    itemDsl {
-                        xml(R.layout.nested_header_item)
-                        render {
-                            it.nested_header_item_tv.text = each.title
-                        }
-                        renderX { position, it ->
-                            it.setOnClickListener { toast(view, "This is nested item $position") }
-                        }
+                renderItemsByDsl(data) { item ->
+                    xml(R.layout.nested_header_item)
+
+                    render { view ->
+                        view.nested_header_item_tv.text = item.title
+                        view.setOnClickListener { toast(view, "Item Clicked") }
                     }
                 }
-
             }
         }
 

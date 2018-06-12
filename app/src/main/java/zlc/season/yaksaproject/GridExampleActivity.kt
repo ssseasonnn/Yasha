@@ -15,38 +15,25 @@ class GridExampleActivity : ExampleActivity() {
 
     override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
         super.onChange(data)
-        data?.let {
+        data?.let { dataSource ->
             example_rv.grid {
                 spanCount(SPAN_COUNT)
 
-                item {
-                    HeaderItem("This is a Header")
+                renderHeaders(mutableListOf("Header1", "Header2", "Header3")) {
+                    HeaderItem(it)
                 }
 
-                itemDsl(index = 0) {
-                    gridSpanSize(SPAN_COUNT)
+                renderItemsByDsl(dataSource) { item ->
+                    xml(R.layout.list_item)
 
-                    xml(R.layout.header_item)
-                    render {
-                        it.header_item_tv.text = "This is a dsl Header"
-                        it.setOnClickListener { toast("DSL Header Clicked") }
+                    render { view ->
+                        view.list_item_tv.text = item.title
+                        view.setOnClickListener { toast("Item Clicked") }
                     }
                 }
 
-                data.forEach { each ->
-                    itemDsl {
-                        xml(R.layout.list_item)
-                        render {
-                            it.list_item_tv.text = each.title
-                        }
-                        renderX { position, it ->
-                            it.setOnClickListener { toast("Clicked $position") }
-                        }
-                    }
-                }
-
-                item {
-                    ListItem("This is item too!")
+                renderFooters(mutableListOf("Footer1", "Footer2")) {
+                    HeaderItem(it)
                 }
             }
         }

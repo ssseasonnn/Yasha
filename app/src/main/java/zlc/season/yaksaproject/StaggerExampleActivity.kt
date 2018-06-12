@@ -14,28 +14,20 @@ class StaggerExampleActivity : ExampleActivity() {
     override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
         super.onChange(data)
 
-        data?.let {
+        data?.let { dataSource ->
             example_rv.stagger {
                 spanCount(3)
 
-                item {
-                    HeaderItem("This is a Header")
+                renderHeaders(mutableListOf("Header1", "Header2", "Header3")) {
+                    HeaderItem(it)
                 }
 
-                itemDsl(index = 0) {
-                    staggerFullSpan(true)
-
-                    xml(R.layout.header_item)
-                    render {
-                        it.header_item_tv.text = "This is a dsl Header"
-                        it.setOnClickListener { toast("DSL Header Clicked") }
-                    }
+                renderItems(dataSource) { item ->
+                    ListItem(item.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
                 }
 
-                data.forEach { each ->
-                    item {
-                        ListItem(each.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
-                    }
+                renderFooters(mutableListOf("Footer1", "Footer2")) {
+                    HeaderItem(it)
                 }
             }
         }
