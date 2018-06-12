@@ -10,9 +10,9 @@ class YaksaDsl {
     internal var reverse = false
     internal var spanCount = 1
 
-    private val headerList = mutableListOf<YaksaItem>()
-    private val itemList = mutableListOf<YaksaItem>()
-    private val footerList = mutableListOf<YaksaItem>()
+    internal var headerList = mutableListOf<YaksaItem>()
+    internal var itemList = mutableListOf<YaksaItem>()
+    internal var footerList = mutableListOf<YaksaItem>()
 
 
     internal fun items(): List<YaksaItem> {
@@ -52,10 +52,27 @@ class YaksaDsl {
         this.spanCount = spanCount
     }
 
+    fun clearAll() {
+        headerList.clear()
+        itemList.clear()
+        footerList.clear()
+    }
+
+    fun clearHeaders() {
+        headerList.clear()
+    }
+
+    fun clearItems() {
+        headerList.clear()
+    }
+
+    fun clearFooters() {
+        footerList.clear()
+    }
 
     fun <T> renderHeaders(dataSource: List<T>, block: (T) -> YaksaItem) {
         dataSource.forEach {
-            headerList += YaksaItemWrapper(it, block(it))
+            headerList.add(YaksaItemWrapper(it, block(it)))
         }
     }
 
@@ -63,14 +80,13 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            headerList += YaksaItemWrapper(it, dsl.internal())
+            headerList.add(YaksaItemWrapper(it, dsl.internal()))
         }
     }
 
-
     fun <T> renderItems(dataSource: List<T>, block: (T) -> YaksaItem) {
         dataSource.forEach {
-            itemList += YaksaItemWrapper(it, block(it))
+            itemList.add(YaksaItemWrapper(it, block(it)))
         }
     }
 
@@ -79,13 +95,13 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            itemList += YaksaItemWrapper(it, dsl.internal())
+            itemList.add(YaksaItemWrapper(it, dsl.internal()))
         }
     }
 
     fun <T> renderFooters(dataSource: List<T>, block: (T) -> YaksaItem) {
         dataSource.forEach {
-            footerList += YaksaItemWrapper(it, block(it))
+            footerList.add(YaksaItemWrapper(it, block(it)))
         }
     }
 
@@ -93,7 +109,7 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            footerList += YaksaItemWrapper(it, dsl.internal())
+            footerList.add(YaksaItemWrapper(it, dsl.internal()))
         }
     }
 

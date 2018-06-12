@@ -19,7 +19,7 @@ class ExampleViewModel : ViewModel() {
         thread(start = true) {
             Thread.sleep(500)
             val newData = mutableListOf<ExampleData>()
-            for (i in 0..50) {
+            for (i in 0..5) {
                 newData.add(ExampleData("this is item $i"))
             }
             exampleData.update(newData)

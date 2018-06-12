@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.LayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.view.View
 
 const val LINEAR_LAYOUT = 0
 const val GRID_LAYOUT = 1
@@ -43,9 +44,13 @@ private fun initDsl(target: RecyclerView, type: Int, block: YaksaDsl.() -> Unit)
     val adapter = target.adapter as YaksaAdapter
 
     val dsl = YaksaDsl()
+    adapter.pop(dsl)
+
     dsl.block()
 
     initLayoutManager(target, dsl, type)
+
+    adapter.stash(dsl)
     adapter.submitList(dsl.items())
 }
 

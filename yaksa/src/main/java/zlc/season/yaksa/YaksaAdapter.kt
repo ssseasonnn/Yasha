@@ -1,8 +1,6 @@
 package zlc.season.yaksa
 
-import android.support.v7.recyclerview.extensions.AsyncDifferConfig
-import android.support.v7.recyclerview.extensions.AsyncListDiffer
-import android.support.v7.util.AdapterListUpdateCallback
+import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.NO_POSITION
@@ -12,24 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import zlc.season.yaksa.YaksaAdapter.YaksaViewHolder
 
-class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
-    private val helper = AsyncListDiffer(AdapterListUpdateCallback(this),
-            AsyncDifferConfig.Builder<YaksaItem>(DiffCallback()).build())
-
-    internal val data: MutableList<YaksaItem>
-        get() = helper.currentList
-
-    fun submitList(list: List<YaksaItem>) {
-        helper.submitList(list)
-    }
-
-    private fun getItem(position: Int): YaksaItem {
-        return helper.currentList[position]
-    }
-
-    override fun getItemCount(): Int {
-        return helper.currentList.size
-    }
+class YaksaAdapter : ListAdapter<YaksaItem, YaksaViewHolder>(DiffCallback()) {
+    private var headerList = mutableListOf<YaksaItem>()
+    private var itemList = mutableListOf<YaksaItem>()
+    private var footerList = mutableListOf<YaksaItem>()
 
     override fun getItemViewType(position: Int): Int {
         return getItem(position).xml()
@@ -79,8 +63,19 @@ class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
         return LayoutInflater.from(parent.context).inflate(resId, parent, false)
     }
 
-    class YaksaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    internal fun stash(dsl: YaksaDsl) {
+        this.headerList = dsl.headerList
+        this.itemList = dsl.itemList
+        this.footerList = dsl.footerList
+    }
 
+    internal fun pop(dsl: YaksaDsl) {
+        dsl.headerList = this.headerList
+        dsl.itemList = this.itemList
+        dsl.footerList = this.footerList
+    }
+
+    class YaksaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun checkPositionAndRun(block: (position: Int, view: View) -> Unit) {
             if (this.adapterPosition != NO_POSITION) {
                 block(this.adapterPosition, this.itemView)
@@ -90,7 +85,7 @@ class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
 
     class DiffCallback : DiffUtil.ItemCallback<YaksaItem>() {
         override fun areItemsTheSame(oldItem: YaksaItem, newItem: YaksaItem): Boolean {
-            return oldItem == newItem
+            return oldItem === newItem
         }
 
         override fun areContentsTheSame(oldItem: YaksaItem, newItem: YaksaItem): Boolean {
