@@ -35,22 +35,22 @@ class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
 
     override fun onViewAttachedToWindow(holder: YaksaViewHolder) {
         super.onViewAttachedToWindow(holder)
-        if (holder.adapterPosition != NO_POSITION) {
-            data[holder.adapterPosition].onItemAttachWindow(holder.adapterPosition, holder.itemView)
+        holder.checkPositionAndRun { position, view ->
+            data[position].onItemAttachWindow(position, view)
         }
     }
 
     override fun onViewDetachedFromWindow(holder: YaksaViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        if (holder.adapterPosition != NO_POSITION) {
-            data[holder.adapterPosition].onItemDetachWindow(holder.adapterPosition, holder.itemView)
+        holder.checkPositionAndRun { position, view ->
+            data[position].onItemDetachWindow(position, view)
         }
     }
 
     override fun onViewRecycled(holder: YaksaViewHolder) {
         super.onViewRecycled(holder)
-        if (holder.adapterPosition != NO_POSITION) {
-            data[holder.adapterPosition].onItemRecycled(holder.adapterPosition, holder.itemView)
+        holder.checkPositionAndRun { position, view ->
+            data[position].onItemRecycled(position, view)
         }
     }
 
@@ -58,5 +58,12 @@ class YaksaAdapter : RecyclerView.Adapter<YaksaViewHolder>() {
         return LayoutInflater.from(parent.context).inflate(resId, parent, false)
     }
 
-    class YaksaViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    class YaksaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        fun checkPositionAndRun(block: (position: Int, view: View) -> Unit) {
+            if (this.adapterPosition != NO_POSITION) {
+                block(this.adapterPosition, this.itemView)
+            }
+        }
+    }
 }
