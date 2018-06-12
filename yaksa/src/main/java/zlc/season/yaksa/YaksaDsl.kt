@@ -5,18 +5,24 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.support.v7.widget.StaggeredGridLayoutManager
 
-class YaksaDsl(dataSet: MutableList<YaksaItem>) {
+class YaksaDsl {
     internal var orientation = VERTICAL
     internal var reverse = false
     internal var spanCount = 1
 
-    internal val dataSet: MutableList<YaksaItem> = mutableListOf()
-    internal var dataSetChanged = false
+    private val headerList = mutableListOf<YaksaItem>()
+    private val itemList = mutableListOf<YaksaItem>()
+    private val footerList = mutableListOf<YaksaItem>()
 
 
-    init {
-        this.dataSet.addAll(dataSet)
+    internal fun items(): List<YaksaItem> {
+        val result = mutableListOf<YaksaItem>()
+        result.addAll(headerList)
+        result.addAll(itemList)
+        result.addAll(footerList)
+        return result
     }
+
 
     /**
      * Set the orientation, default is [android.support.v7.widget.RecyclerView.VERTICAL]
@@ -46,39 +52,49 @@ class YaksaDsl(dataSet: MutableList<YaksaItem>) {
         this.spanCount = spanCount
     }
 
-    /**
-     * Use this method to add an item to Recyclerview.
-     *
-     * @param index Which index to add
-     *
-     * @param block A block return a direct item instance
-     */
-    fun item(index: Int = -1, block: () -> YaksaItem) {
-        if (index <= -1) {
-            dataSet.add(block())
-        } else {
-            dataSet.add(index, block())
+
+    fun <T> renderHeaders(dataSource: List<T>, block: (T) -> YaksaItem) {
+        dataSource.forEach {
+            headerList += YaksaItemWrapper(it, block(it))
         }
-        dataSetChanged = true
     }
 
-    /**
-     * Use this method to add an item to Recyclerview.
-     *
-     * @param index Which index to add
-     *
-     * @param block A dsl block
-     *
-     */
-    fun itemDsl(index: Int = -1, block: YaksaItemDsl.() -> Unit) {
-        val dsl = YaksaItemDsl()
-        dsl.block()
-        if (index <= -1) {
-            dataSet.add(dsl.internal())
-        } else {
-            dataSet.add(index, dsl.internal())
+    fun <T> renderHeadersByDsl(dataSource: List<T>, block: YaksaItemDsl.(T) -> Unit) {
+        dataSource.forEach {
+            val dsl = YaksaItemDsl()
+            dsl.block(it)
+            headerList += YaksaItemWrapper(it, dsl.internal())
         }
-        dataSetChanged = true
+    }
+
+
+    fun <T> renderItems(dataSource: List<T>, block: (T) -> YaksaItem) {
+        dataSource.forEach {
+            itemList += YaksaItemWrapper(it, block(it))
+        }
+    }
+
+
+    fun <T> renderItemsByDsl(dataSource: List<T>, block: YaksaItemDsl.(T) -> Unit) {
+        dataSource.forEach {
+            val dsl = YaksaItemDsl()
+            dsl.block(it)
+            itemList += YaksaItemWrapper(it, dsl.internal())
+        }
+    }
+
+    fun <T> renderFooters(dataSource: List<T>, block: (T) -> YaksaItem) {
+        dataSource.forEach {
+            footerList += YaksaItemWrapper(it, block(it))
+        }
+    }
+
+    fun <T> renderFootersByDsl(dataSource: List<T>, block: YaksaItemDsl.(T) -> Unit) {
+        dataSource.forEach {
+            val dsl = YaksaItemDsl()
+            dsl.block(it)
+            footerList += YaksaItemWrapper(it, dsl.internal())
+        }
     }
 
     internal fun checkStagger(source: StaggeredGridLayoutManager): Boolean {

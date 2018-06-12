@@ -10,6 +10,7 @@ class YaksaItemDsl {
     private var gridSpanSize = 1
     private var staggerFullSpan = false
 
+
     /**
      * Set item xml layout resource
      */

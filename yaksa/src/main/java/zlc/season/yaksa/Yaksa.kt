@@ -13,54 +13,40 @@ const val STAGGERED_LAYOUT = 2
 /**
  * This function is used to create a Linear list.
  *
- *@param clear If true, all old items will be cleared and new items will be re-created.
- *             Otherwise, it will continue to add new items to the original data
- *
  *@param block Item dsl
  */
-fun RecyclerView.linear(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
-    initDsl(this, clear, LINEAR_LAYOUT, block)
+fun RecyclerView.linear(block: YaksaDsl.() -> Unit) {
+    initDsl(this, LINEAR_LAYOUT, block)
 }
 
 /**
  * This function is used to create a Grid list.
  *
- *@param clear If true, all old items will be cleared and new items will be re-created.
- *             Otherwise, it will continue to add new items to the original data
- *
  *@param block Item dsl
  */
-fun RecyclerView.grid(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
-    initDsl(this, clear, GRID_LAYOUT, block)
+fun RecyclerView.grid(block: YaksaDsl.() -> Unit) {
+    initDsl(this, GRID_LAYOUT, block)
 }
 
 /**
  * This function is used to create a Stagger list.
  *
- *@param clear If true, all old items will be cleared and new items will be re-created.
- *             Otherwise, it will continue to add new items to the original data
- *
  *@param block Item dsl
  */
-fun RecyclerView.stagger(clear: Boolean = true, block: YaksaDsl.() -> Unit) {
-    initDsl(this, clear, STAGGERED_LAYOUT, block)
+fun RecyclerView.stagger(block: YaksaDsl.() -> Unit) {
+    initDsl(this, STAGGERED_LAYOUT, block)
 }
 
-private fun initDsl(target: RecyclerView, clear: Boolean, type: Int, block: YaksaDsl.() -> Unit) {
+private fun initDsl(target: RecyclerView, type: Int, block: YaksaDsl.() -> Unit) {
     checkAdapter(target)
 
     val adapter = target.adapter as YaksaAdapter
 
-    val dsl = if (clear) {
-        YaksaDsl(mutableListOf())
-    } else {
-        YaksaDsl(adapter.data)
-    }
-
+    val dsl = YaksaDsl()
     dsl.block()
 
     initLayoutManager(target, dsl, type)
-    adapter.submitList(dsl.dataSet)
+    adapter.submitList(dsl.items())
 }
 
 private fun checkAdapter(target: RecyclerView) {
@@ -100,7 +86,7 @@ private fun configureLayoutManager(layoutManager: LayoutManager, dsl: YaksaDsl) 
     if (layoutManager is GridLayoutManager) {
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return dsl.dataSet[position].gridSpanSize()
+                return dsl.items()[position].gridSpanSize()
             }
         }
     }

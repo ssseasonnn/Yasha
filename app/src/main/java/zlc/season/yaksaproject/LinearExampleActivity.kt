@@ -11,34 +11,23 @@ class LinearExampleActivity : ExampleActivity() {
 
     override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
         super.onChange(data)
-        data?.let {
+        data?.let { dataSource ->
             example_rv.linear {
-                item {
-                    HeaderItem("This is a Header")
+
+                renderHeaders(mutableListOf("Header1", "Header2", "Header3")) {
+                    HeaderItem(it)
                 }
 
-                itemDsl(index = 0) {
-                    xml(R.layout.header_item)
-                    render {
-                        it.header_item_tv.text = "This is a dsl Header"
-                        it.setOnClickListener { toast("DSL Header Clicked") }
+                renderItemsByDsl(dataSource) { item ->
+                    xml(R.layout.list_item)
+                    render { view ->
+                        view.list_item_tv.text = item.title
+                        view.setOnClickListener { toast("DSL Header Clicked") }
                     }
                 }
 
-                data.forEach { each ->
-                    itemDsl {
-                        xml(R.layout.list_item)
-                        render {
-                            it.list_item_tv.text = each.title
-                        }
-                        renderX { position, it ->
-                            it.setOnClickListener { toast("Clicked $position") }
-                        }
-                    }
-                }
-
-                item {
-                    ListItem("This is item too!")
+                renderFooters(mutableListOf("Footer1", "Footer2")) {
+                    HeaderItem(it)
                 }
             }
         }

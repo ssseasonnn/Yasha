@@ -1,6 +1,5 @@
 package zlc.season.yaksa
 
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
 
 /**
@@ -36,7 +35,6 @@ interface YaksaItem {
     }
 
     fun onItemAttachWindow(position: Int, view: View) {
-        specialStaggerItem(view)
     }
 
 
@@ -46,12 +44,5 @@ interface YaksaItem {
 
     fun onItemRecycled(position: Int, view: View) {
 
-    }
-
-    private fun specialStaggerItem(view: View) {
-        val layoutParams = view.layoutParams
-        if (layoutParams != null && layoutParams is StaggeredGridLayoutManager.LayoutParams) {
-            layoutParams.isFullSpan = staggerFullSpan()
-        }
     }
 }
