@@ -13,7 +13,7 @@ class GridExampleActivity : ExampleActivity() {
         const val SPAN_COUNT = 3
     }
 
-    override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
+    override fun onChange(data: ExampleViewModel.ExampleData?) {
         super.onChange(data)
         data?.let { dataSource ->
             example_rv.grid {
@@ -23,7 +23,7 @@ class GridExampleActivity : ExampleActivity() {
                     HeaderItem(it)
                 }
 
-                renderItemsByDsl(dataSource) { item ->
+                renderItemsByDsl(dataSource.list) { item ->
                     xml(R.layout.list_item)
 
                     render { view ->

@@ -14,6 +14,7 @@ class YaksaAdapter : ListAdapter<YaksaItem, YaksaViewHolder>(DiffCallback()) {
     private var headerList = mutableListOf<YaksaItem>()
     private var itemList = mutableListOf<YaksaItem>()
     private var footerList = mutableListOf<YaksaItem>()
+    private var extraList = mutableListOf<YaksaItem>()
 
     override fun getItemViewType(position: Int): Int {
         return getItem(position).xml()
@@ -67,12 +68,14 @@ class YaksaAdapter : ListAdapter<YaksaItem, YaksaViewHolder>(DiffCallback()) {
         this.headerList = dsl.headerList
         this.itemList = dsl.itemList
         this.footerList = dsl.footerList
+        this.extraList = dsl.extraList
     }
 
     internal fun pop(dsl: YaksaDsl) {
         dsl.headerList = this.headerList
         dsl.itemList = this.itemList
         dsl.footerList = this.footerList
+        dsl.extraList = this.extraList
     }
 
     class YaksaViewHolder(view: View) : RecyclerView.ViewHolder(view) {

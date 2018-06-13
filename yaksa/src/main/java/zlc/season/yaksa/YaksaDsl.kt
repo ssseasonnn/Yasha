@@ -13,16 +13,16 @@ class YaksaDsl {
     internal var headerList = mutableListOf<YaksaItem>()
     internal var itemList = mutableListOf<YaksaItem>()
     internal var footerList = mutableListOf<YaksaItem>()
-
+    internal var extraList = mutableListOf<YaksaItem>()
 
     internal fun items(): List<YaksaItem> {
         val result = mutableListOf<YaksaItem>()
         result.addAll(headerList)
         result.addAll(itemList)
         result.addAll(footerList)
+        result.addAll(extraList)
         return result
     }
-
 
     /**
      * Set the orientation, default is [android.support.v7.widget.RecyclerView.VERTICAL]
@@ -56,6 +56,7 @@ class YaksaDsl {
         headerList.clear()
         itemList.clear()
         footerList.clear()
+        extraList.clear()
     }
 
     fun clearHeaders() {
@@ -63,11 +64,15 @@ class YaksaDsl {
     }
 
     fun clearItems() {
-        headerList.clear()
+        itemList.clear()
     }
 
     fun clearFooters() {
         footerList.clear()
+    }
+
+    fun clearExtras() {
+        extraList.clear()
     }
 
     fun <T> renderHeaders(dataSource: List<T>, block: (T) -> YaksaItem) {
@@ -113,6 +118,20 @@ class YaksaDsl {
         }
     }
 
+    fun <T> renderExtras(dataSource: List<T>, block: (T) -> YaksaItem) {
+        dataSource.forEach {
+            extraList.add(YaksaItemWrapper(it, block(it)))
+        }
+    }
+
+    fun <T> renderExtrasByDsl(dataSource: List<T>, block: YaksaItemDsl.(T) -> Unit) {
+        dataSource.forEach {
+            val dsl = YaksaItemDsl()
+            dsl.block(it)
+            extraList.add(YaksaItemWrapper(it, dsl.internal()))
+        }
+    }
+    
     internal fun checkStagger(source: StaggeredGridLayoutManager): Boolean {
         if (source.orientation == orientation &&
                 source.spanCount == spanCount) {

@@ -15,7 +15,7 @@ import zlc.season.yaksa.linear
 
 class NestedExampleActivity : ExampleActivity() {
 
-    override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
+    override fun onChange(data: ExampleViewModel.ExampleData?) {
         super.onChange(data)
         data?.let { dataSource ->
             example_rv.linear {
@@ -23,7 +23,7 @@ class NestedExampleActivity : ExampleActivity() {
                     NestedHeaderItem(it)
                 }
 
-                renderItemsByDsl(dataSource) { item ->
+                renderItemsByDsl(dataSource.list) { item ->
                     xml(R.layout.list_item)
 
                     render { view ->
@@ -35,7 +35,7 @@ class NestedExampleActivity : ExampleActivity() {
         }
     }
 
-    private class NestedHeaderItem(val data: List<ExampleViewModel.ExampleData>) : YaksaItem {
+    private class NestedHeaderItem(val data: ExampleViewModel.ExampleData) : YaksaItem {
         var scrollState = ScrollState(0, 0)
 
         override fun xml(): Int {
@@ -47,7 +47,7 @@ class NestedExampleActivity : ExampleActivity() {
             view.nested_header_rv.linear {
                 orientation(HORIZONTAL)
 
-                renderItemsByDsl(data) { item ->
+                renderItemsByDsl(data.list) { item ->
                     xml(R.layout.nested_header_item)
 
                     render { view ->

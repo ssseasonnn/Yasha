@@ -11,7 +11,7 @@ import java.util.*
 class StaggerExampleActivity : ExampleActivity() {
     private val HEIGHTS = arrayOf(60, 80, 100, 120, 140, 160)
 
-    override fun onChange(data: List<ExampleViewModel.ExampleData>?) {
+    override fun onChange(data: ExampleViewModel.ExampleData?) {
         super.onChange(data)
 
         data?.let { dataSource ->
@@ -22,7 +22,7 @@ class StaggerExampleActivity : ExampleActivity() {
                     HeaderItem(it)
                 }
 
-                renderItems(dataSource) { item ->
+                renderItems(dataSource.list) { item ->
                     ListItem(item.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
                 }
 
