@@ -15,6 +15,8 @@ class YaksaDsl {
     internal var footerList = mutableListOf<YaksaItem>()
     internal var extraList = mutableListOf<YaksaItem>()
 
+    internal var state: YaksaState? = null
+
     internal fun items(): List<YaksaItem> {
         val result = mutableListOf<YaksaItem>()
         result.addAll(headerList)
@@ -22,6 +24,20 @@ class YaksaDsl {
         result.addAll(footerList)
         result.addAll(extraList)
         return result
+    }
+
+    fun setState(newState: YaksaState) {
+        this.state = newState
+    }
+
+    fun setState(block: () -> YaksaState) {
+        this.state = block()
+    }
+
+    fun setStateByDsl(block: YaksaStateDsl.() -> Unit) {
+        val dsl = YaksaStateDsl()
+        dsl.block()
+        this.state = dsl.internalState()
     }
 
     /**
@@ -85,7 +101,7 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            headerList.add(YaksaItemWrapper(it, dsl.internal()))
+            headerList.add(YaksaItemWrapper(it, dsl.internalItem()))
         }
     }
 
@@ -100,7 +116,7 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            itemList.add(YaksaItemWrapper(it, dsl.internal()))
+            itemList.add(YaksaItemWrapper(it, dsl.internalItem()))
         }
     }
 
@@ -114,7 +130,7 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            footerList.add(YaksaItemWrapper(it, dsl.internal()))
+            footerList.add(YaksaItemWrapper(it, dsl.internalItem()))
         }
     }
 
@@ -128,10 +144,10 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            extraList.add(YaksaItemWrapper(it, dsl.internal()))
+            extraList.add(YaksaItemWrapper(it, dsl.internalItem()))
         }
     }
-    
+
     internal fun checkStagger(source: StaggeredGridLayoutManager): Boolean {
         if (source.orientation == orientation &&
                 source.spanCount == spanCount) {

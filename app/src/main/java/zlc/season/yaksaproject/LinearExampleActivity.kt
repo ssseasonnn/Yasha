@@ -2,10 +2,10 @@ package zlc.season.yaksaproject
 
 import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
-import kotlinx.android.synthetic.main.error_item.view.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import zlc.season.yaksa.YaksaItem
+import zlc.season.yaksa.YaksaState
 import zlc.season.yaksa.linear
 import zlc.season.yaksaproject.ExampleViewModel.ExampleData
 
@@ -19,7 +19,7 @@ class LinearExampleActivity : ExampleActivity() {
                 if (dataSource.isRefresh) {
                     clearAll()
 
-                    renderHeaders(mutableListOf("Header1", "Header2", "Header3")) {
+                    renderHeaders(mutableListOf("Header1", "Header2")) {
                         HeaderItem(it)
                     }
 
@@ -31,30 +31,22 @@ class LinearExampleActivity : ExampleActivity() {
                         }
                     }
 
-                    renderExtrasByDsl(mutableListOf(1)) {
+                    setStateByDsl {
                         xml(R.layout.loading_item)
+                        onItemAttachWindow {
+                            viewModel.loadNextPage()
+                        }
                     }
                 }
 
                 if (dataSource.isNoMore) {
-                    clearExtras()
-
-                    renderExtrasByDsl(mutableListOf(1)) {
+                    setStateByDsl {
                         xml(R.layout.empty_item)
                     }
                 }
 
                 if (dataSource.isLoadMoreError) {
-                    clearExtras()
 
-                    renderExtrasByDsl(mutableListOf(1)) {
-                        xml(R.layout.error_item)
-                        render {
-                            it.retry.setOnClickListener {
-                                viewModel.retry()
-                            }
-                        }
-                    }
                 }
 
                 renderItemsByDsl(dataSource.list) { item ->

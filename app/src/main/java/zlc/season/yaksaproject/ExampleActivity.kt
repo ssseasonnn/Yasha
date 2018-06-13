@@ -20,20 +20,13 @@ open class ExampleActivity : AppCompatActivity() {
         viewModel.bindData(this, ::onChange)
 
         refresh.setOnRefreshListener {
-            viewModel.loadData()
-        }
-
-        example_rv.onReachEnd {
-            if (!loadingNextPage) {
-                viewModel.loadNextPage()
-                loadingNextPage = true
-            }
+            viewModel.loadInitData()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.loadData()
+        viewModel.loadInitData()
     }
 
     open fun onChange(data: ExampleData?) {

@@ -20,7 +20,9 @@ class ExampleViewModel : ViewModel() {
         })
     }
 
-    fun loadData() {
+    fun loadInitData() {
+        page = 0
+
         thread(start = true) {
             Thread.sleep(1500)
             val itemData = mutableListOf<ItemData>()
@@ -35,9 +37,6 @@ class ExampleViewModel : ViewModel() {
     }
 
     fun loadNextPage() {
-        if (isNoMore) return
-        if (isLoadMoreError) return
-
         thread(start = true) {
             Thread.sleep(1500)
             val itemData = mutableListOf<ItemData>()
@@ -52,10 +51,10 @@ class ExampleViewModel : ViewModel() {
                     isNoMore = true
                     exampleData.update(ExampleData(emptyList(), false, true))
                 }
-                page % 2 == 0 -> {
-                    isLoadMoreError = true
-                    exampleData.update(ExampleData(emptyList(), false, false, true))
-                }
+//                page % 2 == 0 -> {
+//                    isLoadMoreError = true
+//                    exampleData.update(ExampleData(emptyList(), false, false, true))
+//                }
                 else -> exampleData.update(ExampleData(itemData, false))
             }
         }

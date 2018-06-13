@@ -2,7 +2,7 @@ package zlc.season.yaksa
 
 import android.view.View
 
-class YaksaItemDsl {
+open class YaksaItemDsl {
     private var resId: Int = 0
     private var renderBlock: (view: View) -> Unit = {}
     private var renderBlockX: (position: Int, view: View) -> Unit = { _: Int, _: View -> }
@@ -10,6 +10,13 @@ class YaksaItemDsl {
     private var gridSpanSize = 1
     private var staggerFullSpan = false
 
+    private var onItemAttachWindowBlock: () -> Unit = {}
+    private var onItemDetachWindowBlock: () -> Unit = {}
+    private var onItemRecycledBlock: () -> Unit = {}
+
+    private var onItemAttachWindowBlockX: (position: Int, view: View) -> Unit = { _: Int, _: View -> }
+    private var onItemDetachWindowBlockX: (position: Int, view: View) -> Unit = { _: Int, _: View -> }
+    private var onItemRecycledBlockX: (position: Int, view: View) -> Unit = { _: Int, _: View -> }
 
     /**
      * Set item xml layout resource
@@ -54,7 +61,31 @@ class YaksaItemDsl {
         this.staggerFullSpan = fullSpan
     }
 
-    internal fun internal(): YaksaItem {
+    fun onItemAttachWindow(block: () -> Unit) {
+        this.onItemAttachWindowBlock = block
+    }
+
+    fun onItemAttachWindowX(block: (position: Int, view: View) -> Unit) {
+        this.onItemAttachWindowBlockX = block
+    }
+
+    fun onItemDetachWindow(block: () -> Unit) {
+        this.onItemDetachWindowBlock = block
+    }
+
+    fun onItemDetachWindowX(block: (position: Int, view: View) -> Unit) {
+        this.onItemDetachWindowBlockX = block
+    }
+
+    fun onItemRecycled(block: () -> Unit) {
+        this.onItemRecycledBlock = block
+    }
+
+    fun onItemRecycledX(block: (position: Int, view: View) -> Unit) {
+        this.onItemRecycledBlockX = block
+    }
+
+    internal fun internalItem(): YaksaItem {
         if (resId == 0) {
             throw IllegalStateException("You must call the xml() method to pass your layout resource id!")
         }
@@ -75,6 +106,24 @@ class YaksaItemDsl {
 
             override fun staggerFullSpan(): Boolean {
                 return staggerFullSpan
+            }
+
+            override fun onItemAttachWindow(position: Int, view: View) {
+                super.onItemAttachWindow(position, view)
+                onItemAttachWindowBlock()
+                onItemAttachWindowBlockX(position, view)
+            }
+
+            override fun onItemDetachWindow(position: Int, view: View) {
+                super.onItemDetachWindow(position, view)
+                onItemDetachWindowBlock()
+                onItemDetachWindowBlockX(position, view)
+            }
+
+            override fun onItemRecycled(position: Int, view: View) {
+                super.onItemRecycled(position, view)
+                onItemRecycledBlock()
+                onItemRecycledBlockX(position, view)
             }
         }
     }

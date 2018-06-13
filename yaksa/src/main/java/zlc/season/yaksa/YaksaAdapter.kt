@@ -16,6 +16,43 @@ class YaksaAdapter : ListAdapter<YaksaItem, YaksaViewHolder>(DiffCallback()) {
     private var footerList = mutableListOf<YaksaItem>()
     private var extraList = mutableListOf<YaksaItem>()
 
+    private var state: YaksaState? = null
+
+    private fun setState(newState: YaksaState) {
+        val hadStateItem = hasStateItem()
+
+        val previousState = this.state
+        this.state = newState
+
+        val hasStateItem = hasStateItem()
+
+        if (hadStateItem != hasStateItem) {
+            if (hadStateItem) {
+                notifyItemRemoved(super.getItemCount())
+            } else {
+                notifyItemInserted(super.getItemCount())
+            }
+        } else if (hasStateItem && previousState != newState) {
+            notifyItemChanged(itemCount - 1)
+        }
+    }
+
+    private fun hasStateItem(): Boolean {
+        val currentState = state
+        return currentState != null && currentState.isShowStateItem()
+    }
+
+    override fun getItem(position: Int): YaksaItem {
+        if (hasStateItem() && position == itemCount - 1) {
+            return state!!.renderStateItem()
+        }
+        return super.getItem(position)
+    }
+
+    override fun getItemCount(): Int {
+        return super.getItemCount() + if (hasStateItem()) 1 else 0
+    }
+
     override fun getItemViewType(position: Int): Int {
         return getItem(position).xml()
     }
@@ -69,6 +106,10 @@ class YaksaAdapter : ListAdapter<YaksaItem, YaksaViewHolder>(DiffCallback()) {
         this.itemList = dsl.itemList
         this.footerList = dsl.footerList
         this.extraList = dsl.extraList
+
+        if (dsl.state != null) {
+            this.setState(dsl.state!!)
+        }
     }
 
     internal fun pop(dsl: YaksaDsl) {
