@@ -18,16 +18,20 @@ class StaggerExampleActivity : ExampleActivity() {
             example_rv.stagger {
                 spanCount(3)
 
-                renderHeaders(mutableListOf("Header1", "Header2", "Header3")) {
-                    HeaderItem(it)
+                if (dataSource.isRefresh) {
+                    clearAll()
+
+                    renderHeaders(mutableListOf("Header1", "Header2")) {
+                        HeaderItem(it)
+                    }
+
+                    renderFooters(mutableListOf("Footer1", "Footer2")) {
+                        HeaderItem(it)
+                    }
                 }
 
                 renderItems(dataSource.list) { item ->
                     ListItem(item.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
-                }
-
-                renderFooters(mutableListOf("Footer1", "Footer2")) {
-                    HeaderItem(it)
                 }
             }
         }

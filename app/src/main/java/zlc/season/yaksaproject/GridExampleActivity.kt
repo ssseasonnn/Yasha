@@ -19,8 +19,17 @@ class GridExampleActivity : ExampleActivity() {
             example_rv.grid {
                 spanCount(SPAN_COUNT)
 
-                renderHeaders(mutableListOf("Header1", "Header2", "Header3")) {
-                    HeaderItem(it)
+                if (dataSource.isRefresh) {
+                    clearAll()
+
+                    renderHeaders(mutableListOf("Header1", "Header2")) {
+                        HeaderItem(it)
+                    }
+
+                    renderFooters(mutableListOf("Footer1", "Footer2")) {
+                        HeaderItem(it)
+                    }
+
                 }
 
                 renderItemsByDsl(dataSource.list) { item ->
@@ -30,10 +39,6 @@ class GridExampleActivity : ExampleActivity() {
                         view.list_item_tv.text = item.title
                         view.setOnClickListener { toast("Item Clicked") }
                     }
-                }
-
-                renderFooters(mutableListOf("Footer1", "Footer2")) {
-                    HeaderItem(it)
                 }
             }
         }
@@ -51,17 +56,6 @@ class GridExampleActivity : ExampleActivity() {
 
         override fun gridSpanSize(): Int {
             return SPAN_COUNT
-        }
-    }
-
-    private class ListItem(val str: String) : YaksaItem {
-        override fun render(position: Int, view: View) {
-            view.list_item_tv.text = str
-            view.setOnClickListener { }
-        }
-
-        override fun xml(): Int {
-            return R.layout.list_item
         }
     }
 }

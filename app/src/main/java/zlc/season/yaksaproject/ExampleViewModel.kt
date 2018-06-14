@@ -13,8 +13,10 @@ class ExampleViewModel : ViewModel() {
 
     private val testData = mutableListOf<ItemData>()
 
+    private var isLoading = false
+
     init {
-        for (i in 0 until 25) {
+        for (i in 0 until 50) {
             testData.add(ItemData("this is item $i"))
         }
     }
@@ -30,6 +32,10 @@ class ExampleViewModel : ViewModel() {
             start = 0
         }
 
+        if (isLoading) {
+            return
+        }
+
         if (start == 20) {
             exampleData.update(ExampleData(emptyList(), false, State.Error()))
             start += pageSize
@@ -41,9 +47,14 @@ class ExampleViewModel : ViewModel() {
         }
 
         thread(start = true) {
+            if (start >= 25) return@thread
+
+            isLoading = true
             Thread.sleep(1500)
             exampleData.update(ExampleData(testData.slice(IntRange(start, start + pageSize - 1)), isRefresh))
             start += pageSize
+
+            isLoading = false
         }
     }
 

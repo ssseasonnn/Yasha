@@ -19,8 +19,27 @@ class NestedExampleActivity : ExampleActivity() {
         super.onChange(data)
         data?.let { dataSource ->
             example_rv.linear {
-                renderHeaders(mutableListOf(dataSource)) {
-                    NestedHeaderItem(it)
+
+                if (dataSource.isRefresh) {
+                    clearAll()
+
+                    renderHeadersByDsl(mutableListOf("Header1", "Header2")) {
+                        xml(R.layout.header_item)
+                        render { view ->
+                            view.header_item_tv.text = it
+                        }
+                    }
+
+                    renderFootersByDsl(mutableListOf("Footer1", "Footer2")) {
+                        xml(R.layout.header_item)
+                        render { view ->
+                            view.header_item_tv.text = it
+                        }
+                    }
+
+                    renderHeaders(mutableListOf(dataSource)) {
+                        NestedHeaderItem(it)
+                    }
                 }
 
                 renderItemsByDsl(dataSource.list) { item ->
