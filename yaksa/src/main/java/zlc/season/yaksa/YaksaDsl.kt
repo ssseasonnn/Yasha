@@ -26,10 +26,16 @@ class YaksaDsl {
         return result
     }
 
+    /**
+     * Render a state item, such as error, empty, or loading indicator
+     */
     fun renderStateItem(block: () -> YaksaState) {
         this.state = block()
     }
 
+    /**
+     * Render a state item, such as error, empty, or loading indicator
+     */
     fun renderStateItemByDsl(block: YaksaStateDsl.() -> Unit) {
         val dsl = YaksaStateDsl()
         dsl.block()
@@ -87,9 +93,12 @@ class YaksaDsl {
         extraList.clear()
     }
 
+    /**
+     * Render headers with given data
+     */
     fun <T> renderHeaders(dataSource: List<T>, block: (T) -> YaksaItem) {
         dataSource.forEach {
-            headerList.add(YaksaItemWrapper(it, block(it)))
+            headerList.add(block(it))
         }
     }
 
@@ -97,28 +106,33 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            headerList.add(YaksaItemWrapper(it, dsl.internalItem()))
+            headerList.add(dsl.internalItem())
         }
     }
 
+    /**
+     * Render items with given data
+     */
     fun <T> renderItems(dataSource: List<T>, block: (T) -> YaksaItem) {
         dataSource.forEach {
-            itemList.add(YaksaItemWrapper(it, block(it)))
+            itemList.add(block(it))
         }
     }
-
 
     fun <T> renderItemsByDsl(dataSource: List<T>, block: YaksaItemDsl.(T) -> Unit) {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            itemList.add(YaksaItemWrapper(it, dsl.internalItem()))
+            itemList.add(dsl.internalItem())
         }
     }
 
+    /**
+     * Render footers with given data
+     */
     fun <T> renderFooters(dataSource: List<T>, block: (T) -> YaksaItem) {
         dataSource.forEach {
-            footerList.add(YaksaItemWrapper(it, block(it)))
+            footerList.add(block(it))
         }
     }
 
@@ -126,13 +140,16 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            footerList.add(YaksaItemWrapper(it, dsl.internalItem()))
+            footerList.add(dsl.internalItem())
         }
     }
 
+    /**
+     * Render extras with given data
+     */
     fun <T> renderExtras(dataSource: List<T>, block: (T) -> YaksaItem) {
         dataSource.forEach {
-            extraList.add(YaksaItemWrapper(it, block(it)))
+            extraList.add(block(it))
         }
     }
 
@@ -140,7 +157,7 @@ class YaksaDsl {
         dataSource.forEach {
             val dsl = YaksaItemDsl()
             dsl.block(it)
-            extraList.add(YaksaItemWrapper(it, dsl.internalItem()))
+            extraList.add(dsl.internalItem())
         }
     }
 

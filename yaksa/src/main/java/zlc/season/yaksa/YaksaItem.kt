@@ -34,14 +34,23 @@ interface YaksaItem {
         return false
     }
 
+    /**
+     * Call when item attach window
+     */
     fun onItemAttachWindow(position: Int, view: View) {
     }
 
 
+    /**
+     * Call when item detach window
+     */
     fun onItemDetachWindow(position: Int, view: View) {
 
     }
 
+    /**
+     * Call when item recycled
+     */
     fun onItemRecycled(position: Int, view: View) {
 
     }

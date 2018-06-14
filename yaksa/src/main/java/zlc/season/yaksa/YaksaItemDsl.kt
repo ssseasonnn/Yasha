@@ -61,26 +61,53 @@ open class YaksaItemDsl {
         this.staggerFullSpan = fullSpan
     }
 
+    /**
+     * Set a callback that is called when item attach to the window
+     */
     fun onItemAttachWindow(block: () -> Unit) {
         this.onItemAttachWindowBlock = block
     }
 
+    /**
+     * Set a callback that is called when item attach to the window.
+     *
+     * This callback is different from [onItemAttachWindow].
+     * It has two parameters:  position and view.
+     */
     fun onItemAttachWindowX(block: (position: Int, view: View) -> Unit) {
         this.onItemAttachWindowBlockX = block
     }
 
+    /**
+     * Set a callback that is called when item detach to the window
+     */
     fun onItemDetachWindow(block: () -> Unit) {
         this.onItemDetachWindowBlock = block
     }
 
+    /**
+     * Set a callback that is called when item detach to the window.
+     *
+     * This callback is different from [onItemDetachWindow].
+     * It has two parameters:  position and view.
+     */
     fun onItemDetachWindowX(block: (position: Int, view: View) -> Unit) {
         this.onItemDetachWindowBlockX = block
     }
 
+    /**
+     * Set a callback that is called when item recycled
+     */
     fun onItemRecycled(block: () -> Unit) {
         this.onItemRecycledBlock = block
     }
 
+    /**
+     * Set a callback that is called when item recycled
+     *
+     * This callback is different from [onItemRecycled].
+     * It has two parameters:  position and view.
+     */
     fun onItemRecycledX(block: (position: Int, view: View) -> Unit) {
         this.onItemRecycledBlockX = block
     }
