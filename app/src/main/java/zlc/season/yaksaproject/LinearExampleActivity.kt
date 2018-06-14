@@ -2,12 +2,13 @@ package zlc.season.yaksaproject
 
 import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
+import kotlinx.android.synthetic.main.error_item.view.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import zlc.season.yaksa.YaksaItem
-import zlc.season.yaksa.YaksaState
 import zlc.season.yaksa.linear
 import zlc.season.yaksaproject.ExampleViewModel.ExampleData
+import zlc.season.yaksaproject.ExampleViewModel.State
 
 class LinearExampleActivity : ExampleActivity() {
 
@@ -31,30 +32,56 @@ class LinearExampleActivity : ExampleActivity() {
                         }
                     }
 
-                    setStateByDsl {
+                    renderItemsByDsl(dataSource.list) { item ->
+                        xml(R.layout.list_item)
+                        render { view ->
+                            view.list_item_tv.text = item.title
+                            view.setOnClickListener { toast("Item Clicked") }
+                        }
+                    }
+
+                    /**
+                     * Render a LOAD_MORE item that triggers load more action when it is displayed on the screen
+                     */
+                    renderStateItemByDsl {
                         xml(R.layout.loading_item)
                         onItemAttachWindow {
-                            viewModel.loadNextPage()
+                            viewModel.loadData()
+                        }
+                    }
+
+                } else {
+                    renderItemsByDsl(dataSource.list) { item ->
+                        xml(R.layout.list_item)
+                        render { view ->
+                            view.list_item_tv.text = item.title
+                            view.setOnClickListener { toast("Item Clicked") }
                         }
                     }
                 }
 
-                if (dataSource.isNoMore) {
-                    setStateByDsl {
-                        xml(R.layout.empty_item)
-                    }
-                }
 
-                if (dataSource.isLoadMoreError) {
+                when (dataSource.state) {
+                    is State.Empty ->
+                        /**
+                         * render a NO_MORE state item
+                         */
+                        renderStateItemByDsl {
+                            xml(R.layout.empty_item)
+                        }
 
-                }
-
-                renderItemsByDsl(dataSource.list) { item ->
-                    xml(R.layout.list_item)
-                    render { view ->
-                        view.list_item_tv.text = item.title
-                        view.setOnClickListener { toast("Item Clicked") }
-                    }
+                    is State.Error ->
+                        /**
+                         * render an ERROR state item
+                         */
+                        renderStateItemByDsl {
+                            xml(R.layout.error_item)
+                            render {
+                                it.retry.setOnClickListener {
+                                    viewModel.loadData()
+                                }
+                            }
+                        }
                 }
             }
         }

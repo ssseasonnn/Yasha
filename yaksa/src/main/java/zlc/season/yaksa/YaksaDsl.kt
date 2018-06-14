@@ -26,15 +26,11 @@ class YaksaDsl {
         return result
     }
 
-    fun setState(newState: YaksaState) {
-        this.state = newState
-    }
-
-    fun setState(block: () -> YaksaState) {
+    fun renderStateItem(block: () -> YaksaState) {
         this.state = block()
     }
 
-    fun setStateByDsl(block: YaksaStateDsl.() -> Unit) {
+    fun renderStateItemByDsl(block: YaksaStateDsl.() -> Unit) {
         val dsl = YaksaStateDsl()
         dsl.block()
         this.state = dsl.internalState()

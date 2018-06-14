@@ -1,5 +1,7 @@
 package zlc.season.yaksa
 
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -28,14 +30,21 @@ class YaksaAdapter : ListAdapter<YaksaItem, YaksaViewHolder>(DiffCallback()) {
 
         if (hadStateItem != hasStateItem) {
             if (hadStateItem) {
-                notifyItemRemoved(super.getItemCount())
+                post { notifyItemRemoved(super.getItemCount()) }
             } else {
-                notifyItemInserted(super.getItemCount())
+                post { notifyItemInserted(super.getItemCount()) }
             }
         } else if (hasStateItem && previousState != newState) {
-            notifyItemChanged(itemCount - 1)
+            post { notifyItemChanged(itemCount - 1) }
         }
     }
+
+    private fun post(block: () -> Unit) {
+        Handler(Looper.getMainLooper()).post {
+            block()
+        }
+    }
+
 
     private fun hasStateItem(): Boolean {
         val currentState = state

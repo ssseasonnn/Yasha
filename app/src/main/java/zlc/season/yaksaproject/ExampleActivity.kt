@@ -17,16 +17,16 @@ open class ExampleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_example)
 
         viewModel = ViewModelProviders.of(this).get(ExampleViewModel::class.java)
-        viewModel.bindData(this, ::onChange)
+        viewModel.observerLiveData(this, ::onChange)
 
         refresh.setOnRefreshListener {
-            viewModel.loadInitData()
+            viewModel.loadData(true)
         }
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.loadInitData()
+        viewModel.loadData(true)
     }
 
     open fun onChange(data: ExampleData?) {

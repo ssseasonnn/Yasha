@@ -8,72 +8,58 @@ import kotlin.concurrent.thread
 
 class ExampleViewModel : ViewModel() {
     private val exampleData: MutableLiveData<ExampleData> = MutableLiveData()
-    private var page = 0
     private val pageSize = 5
+    private var start = 0
 
-    private var isNoMore = false
-    private var isLoadMoreError = false
+    private val testData = mutableListOf<ItemData>()
 
-    fun bindData(owner: LifecycleOwner, onChange: (t: ExampleData?) -> Unit) {
+    init {
+        for (i in 0 until 25) {
+            testData.add(ItemData("this is item $i"))
+        }
+    }
+
+    fun observerLiveData(owner: LifecycleOwner, onChange: (t: ExampleData?) -> Unit) {
         exampleData.observe(owner, Observer {
             onChange(it)
         })
     }
 
-    fun loadInitData() {
-        page = 0
+    fun loadData(isRefresh: Boolean = false) {
+        if (isRefresh) {
+            start = 0
+        }
+
+        if (start == 20) {
+            exampleData.update(ExampleData(emptyList(), false, State.Error()))
+            start += pageSize
+            return
+        }
+        if (start >= 25) {
+            exampleData.update(ExampleData(emptyList(), false, State.Empty()))
+            return
+        }
 
         thread(start = true) {
             Thread.sleep(1500)
-            val itemData = mutableListOf<ItemData>()
-            for (i in 0 until pageSize) {
-                itemData.add(ItemData("this is item $i"))
-            }
-
-            page++
-
-            exampleData.update(ExampleData(itemData, true))
+            exampleData.update(ExampleData(testData.slice(IntRange(start, start + pageSize - 1)), isRefresh))
+            start += pageSize
         }
-    }
-
-    fun loadNextPage() {
-        thread(start = true) {
-            Thread.sleep(1500)
-            val itemData = mutableListOf<ItemData>()
-            for (i in 0 until pageSize) {
-                itemData.add(ItemData("this is item ${(i + pageSize) * page}"))
-            }
-
-            page++
-
-            when {
-                page >= 5 -> {
-                    isNoMore = true
-                    exampleData.update(ExampleData(emptyList(), false, true))
-                }
-//                page % 2 == 0 -> {
-//                    isLoadMoreError = true
-//                    exampleData.update(ExampleData(emptyList(), false, false, true))
-//                }
-                else -> exampleData.update(ExampleData(itemData, false))
-            }
-        }
-    }
-
-
-    fun retry() {
-        isLoadMoreError = false
-        loadNextPage()
     }
 
     data class ExampleData(
             val list: List<ItemData>,
             val isRefresh: Boolean = true,
-            val isNoMore: Boolean = false,
-            val isLoadMoreError: Boolean = false
+            val state: State = State.None()
     )
 
     data class ItemData(
             val title: String
     )
+
+    sealed class State {
+        class None : State()
+        class Error : State()
+        class Empty : State()
+    }
 }

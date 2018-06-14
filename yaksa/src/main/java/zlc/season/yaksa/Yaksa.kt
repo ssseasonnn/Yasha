@@ -38,9 +38,7 @@ fun RecyclerView.stagger(block: YaksaDsl.() -> Unit) {
 }
 
 private fun initDsl(target: RecyclerView, type: Int, block: YaksaDsl.() -> Unit) {
-    checkAdapter(target)
-
-    val adapter = target.adapter as YaksaAdapter
+    val adapter = checkAdapter(target)
 
     val dsl = YaksaDsl()
     adapter.pop(dsl)
@@ -53,7 +51,7 @@ private fun initDsl(target: RecyclerView, type: Int, block: YaksaDsl.() -> Unit)
     adapter.submitList(dsl.items())
 }
 
-private fun checkAdapter(target: RecyclerView) {
+private fun checkAdapter(target: RecyclerView): YaksaAdapter {
     if (target.adapter == null) {
         target.adapter = YaksaAdapter()
     }
@@ -61,6 +59,8 @@ private fun checkAdapter(target: RecyclerView) {
     if (target.adapter !is YaksaAdapter) {
         throw IllegalStateException("Adapter must be YaksaAdapter")
     }
+
+    return target.adapter as YaksaAdapter
 }
 
 private fun initLayoutManager(target: RecyclerView, dsl: YaksaDsl, type: Int) {
