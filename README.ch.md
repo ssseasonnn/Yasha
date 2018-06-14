@@ -124,6 +124,12 @@ example_rv.stagger {
 
 现在就开始装备夜叉吧，开启你的超神之路！
 
+
+动图:
+
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/example.gif" width="300">
+
+
 ### 依赖:
 
 ```groovy

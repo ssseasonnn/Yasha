@@ -131,6 +131,12 @@ none of these require you to write any ViewHolder and Adapter
 
 Start yaksa now and start your super-god!
 
+
+Gif:
+
+<img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/example.gif" width="300">
+
+
 ### Add to your project build.gradle file:
 
 ```groovy
