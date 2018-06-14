@@ -1,5 +1,6 @@
 package zlc.season.yaksaproject
 
+import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.HORIZONTAL
@@ -11,9 +12,19 @@ import kotlinx.android.synthetic.main.nested_header_item.view.*
 import kotlinx.android.synthetic.main.nested_header_layout.view.*
 import zlc.season.yaksa.YaksaItem
 import zlc.season.yaksa.linear
+import zlc.season.yaksa.linearWithPlaceholder
 
 
 class NestedExampleActivity : ExampleActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        example_rv.linearWithPlaceholder {
+            renderPlaceholdersByDsl(List(10) { it }) {
+                xml(R.layout.placeholder_item)
+            }
+        }
+    }
 
     override fun onChange(data: ExampleViewModel.ExampleData?) {
         super.onChange(data)

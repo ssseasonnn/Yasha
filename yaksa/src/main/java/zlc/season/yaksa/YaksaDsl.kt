@@ -15,6 +15,8 @@ class YaksaDsl {
     internal var footerList = mutableListOf<YaksaItem>()
     internal var extraList = mutableListOf<YaksaItem>()
 
+    internal var placeholderList = mutableListOf<YaksaItem>()
+
     internal var state: YaksaState? = null
 
     internal fun items(): List<YaksaItem> {
@@ -23,6 +25,13 @@ class YaksaDsl {
         result.addAll(itemList)
         result.addAll(footerList)
         result.addAll(extraList)
+        return result
+    }
+
+    internal fun itemsWithPlaceholder(): List<YaksaItem> {
+        val result = mutableListOf<YaksaItem>()
+        result.addAll(items())
+        result.addAll(placeholderList)
         return result
     }
 
@@ -91,6 +100,24 @@ class YaksaDsl {
 
     fun clearExtras() {
         extraList.clear()
+    }
+
+
+    /**
+     * Render placeholder item with given data
+     */
+    fun <T> renderPlaceholders(dataSource: List<T>, block: (T) -> YaksaItem) {
+        dataSource.forEach {
+            placeholderList.add(block(it))
+        }
+    }
+
+    fun <T> renderPlaceholdersByDsl(dataSource: List<T>, block: YaksaItemDsl.(T) -> Unit) {
+        dataSource.forEach {
+            val dsl = YaksaItemDsl()
+            dsl.block(it)
+            placeholderList.add(dsl.internalItem())
+        }
     }
 
     /**

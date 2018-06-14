@@ -1,15 +1,26 @@
 package zlc.season.yaksaproject
 
+import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import zlc.season.yaksa.YaksaItem
+import zlc.season.yaksa.linearWithPlaceholder
 import zlc.season.yaksa.stagger
 import java.util.*
 
 class StaggerExampleActivity : ExampleActivity() {
     private val HEIGHTS = arrayOf(60, 80, 100, 120, 140, 160)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        example_rv.linearWithPlaceholder {
+            renderPlaceholdersByDsl(List(10) { it }) {
+                xml(R.layout.placeholder_item)
+            }
+        }
+    }
 
     override fun onChange(data: ExampleViewModel.ExampleData?) {
         super.onChange(data)

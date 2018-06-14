@@ -37,6 +37,27 @@ fun RecyclerView.stagger(block: YaksaDsl.() -> Unit) {
     initDsl(this, STAGGERED_LAYOUT, block)
 }
 
+/**
+ * Create a Linear list with placeholder item
+ */
+fun RecyclerView.linearWithPlaceholder(block: YaksaDsl.() -> Unit) {
+    initPlaceholderDsl(this, LINEAR_LAYOUT, block)
+}
+
+/**
+ * Create a Grid list with placeholder item
+ */
+fun RecyclerView.gridWithPlaceholder(block: YaksaDsl.() -> Unit) {
+    initPlaceholderDsl(this, GRID_LAYOUT, block)
+}
+
+/**
+ * Create a Stagger list with placeholder item
+ */
+fun RecyclerView.staggerWithPlaceholder(block: YaksaDsl.() -> Unit) {
+    initPlaceholderDsl(this, STAGGERED_LAYOUT, block)
+}
+
 private fun initDsl(target: RecyclerView, type: Int, block: YaksaDsl.() -> Unit) {
     val adapter = checkAdapter(target)
 
@@ -45,36 +66,57 @@ private fun initDsl(target: RecyclerView, type: Int, block: YaksaDsl.() -> Unit)
 
     dsl.block()
 
-    initLayoutManager(target, dsl, type)
+    initLayoutManager(target, dsl, type, false)
 
     adapter.stash(dsl)
     adapter.submitList(dsl.items())
 }
 
-private fun checkAdapter(target: RecyclerView): YaksaAdapter {
-    if (target.adapter == null) {
-        target.adapter = YaksaAdapter()
-    }
-
-    if (target.adapter !is YaksaAdapter) {
-        throw IllegalStateException("Adapter must be YaksaAdapter")
-    }
-
-    return target.adapter as YaksaAdapter
+private fun initPlaceholderDsl(target: RecyclerView, type: Int, block: YaksaDsl.() -> Unit) {
+    val adapter = checkPlaceholderAdapter(target)
+    val dsl = YaksaDsl()
+    dsl.block()
+    initLayoutManager(target, dsl, type, true)
+    adapter.submitList(dsl.itemsWithPlaceholder())
 }
 
-private fun initLayoutManager(target: RecyclerView, dsl: YaksaDsl, type: Int) {
+private fun checkAdapter(target: RecyclerView): YaksaRealAdapter {
+    if (target.adapter == null) {
+        target.adapter = YaksaRealAdapter()
+    }
+
+    if (target.adapter !is YaksaRealAdapter) {
+        target.adapter = YaksaRealAdapter()
+    }
+
+    return target.adapter as YaksaRealAdapter
+}
+
+private fun checkPlaceholderAdapter(target: RecyclerView): YaksaPlaceholderAdapter {
+    if (target.adapter == null) {
+        target.adapter = YaksaPlaceholderAdapter()
+    }
+
+    if (target.adapter !is YaksaPlaceholderAdapter) {
+        target.adapter = YaksaPlaceholderAdapter()
+    }
+
+    return target.adapter as YaksaPlaceholderAdapter
+}
+
+private fun initLayoutManager(target: RecyclerView, dsl: YaksaDsl, type: Int, withPlaceholder: Boolean) {
     var needNew = true
-    val source = target.layoutManager
-    if (source != null) {
-        needNew = checkNeedNew(source, dsl)
+    var layoutManager = target.layoutManager
+    if (layoutManager != null) {
+        needNew = checkNeedNew(layoutManager, dsl, type)
     }
 
     if (needNew) {
-        val layoutManager = newLayoutManager(type, target, dsl)
-        configureLayoutManager(layoutManager, dsl)
+        layoutManager = newLayoutManager(type, target, dsl)
         target.layoutManager = layoutManager
     }
+
+    configureLayoutManager(layoutManager, dsl, withPlaceholder)
 }
 
 private fun newLayoutManager(type: Int, target: RecyclerView, dsl: YaksaDsl): LayoutManager {
@@ -86,21 +128,25 @@ private fun newLayoutManager(type: Int, target: RecyclerView, dsl: YaksaDsl): La
     }
 }
 
-private fun configureLayoutManager(layoutManager: LayoutManager, dsl: YaksaDsl) {
+private fun configureLayoutManager(layoutManager: LayoutManager, dsl: YaksaDsl, withPlaceholder: Boolean) {
     if (layoutManager is GridLayoutManager) {
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return dsl.items()[position].gridSpanSize()
+                return if (withPlaceholder) {
+                    dsl.itemsWithPlaceholder()[position].gridSpanSize()
+                } else {
+                    dsl.items()[position].gridSpanSize()
+                }
             }
         }
     }
 }
 
-private fun checkNeedNew(source: LayoutManager, dsl: YaksaDsl): Boolean {
-    return when (source) {
-        is GridLayoutManager -> dsl.checkGrid(source)            //Grid must check before Linear
-        is LinearLayoutManager -> dsl.checkLinear(source)
-        is StaggeredGridLayoutManager -> dsl.checkStagger(source)
+private fun checkNeedNew(layoutManager: LayoutManager, dsl: YaksaDsl, type: Int): Boolean {
+    return when (layoutManager) {
+        is GridLayoutManager -> type != GRID_LAYOUT || dsl.checkGrid(layoutManager)            //Grid must check before Linear
+        is LinearLayoutManager -> type != LINEAR_LAYOUT || dsl.checkLinear(layoutManager)
+        is StaggeredGridLayoutManager -> type != STAGGERED_LAYOUT || dsl.checkStagger(layoutManager)
         else -> throw  IllegalStateException("This should never happen!")
     }
 }

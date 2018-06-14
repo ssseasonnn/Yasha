@@ -1,16 +1,29 @@
 package zlc.season.yaksaproject
 
+import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import zlc.season.yaksa.YaksaItem
 import zlc.season.yaksa.grid
+import zlc.season.yaksa.gridWithPlaceholder
 
 class GridExampleActivity : ExampleActivity() {
 
     companion object {
         const val SPAN_COUNT = 3
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        example_rv.gridWithPlaceholder {
+            spanCount(2)
+
+            renderPlaceholdersByDsl(List(20) { it }) {
+                xml(R.layout.placeholder_item)
+            }
+        }
     }
 
     override fun onChange(data: ExampleViewModel.ExampleData?) {

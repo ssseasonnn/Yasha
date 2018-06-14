@@ -1,16 +1,28 @@
 package zlc.season.yaksaproject
 
+import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.error_item.view.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import zlc.season.yaksa.YaksaItem
+import zlc.season.yaksa.gridWithPlaceholder
 import zlc.season.yaksa.linear
+import zlc.season.yaksa.linearWithPlaceholder
 import zlc.season.yaksaproject.ExampleViewModel.ExampleData
 import zlc.season.yaksaproject.ExampleViewModel.State
 
 class LinearExampleActivity : ExampleActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        example_rv.linearWithPlaceholder {
+            renderPlaceholdersByDsl(List(10) { it }) {
+                xml(R.layout.placeholder_item)
+            }
+        }
+    }
 
     override fun onChange(data: ExampleData?) {
         super.onChange(data)

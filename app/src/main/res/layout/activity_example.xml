@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
     tools:context=".LinearExampleActivity">
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -20,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:visibility="visible"
-            tools:listitem="@layout/list_item" />
+            tools:listitem="@layout/placeholder_item" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
