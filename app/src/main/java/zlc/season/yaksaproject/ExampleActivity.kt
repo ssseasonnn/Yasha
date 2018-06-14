@@ -10,7 +10,6 @@ import zlc.season.yaksaproject.ExampleViewModel.ExampleData
 @SuppressLint("Registered")
 open class ExampleActivity : AppCompatActivity() {
     lateinit var viewModel: ExampleViewModel
-    var loadingNextPage = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +30,5 @@ open class ExampleActivity : AppCompatActivity() {
 
     open fun onChange(data: ExampleData?) {
         refresh.isRefreshing = false
-        loadingNextPage = false
     }
 }
