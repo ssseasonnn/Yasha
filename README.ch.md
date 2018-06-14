@@ -27,25 +27,24 @@
 渲染一个Linear列表：
 
 ```kotlin
-recycler_view.linear {
-    item {
-        HeaderItem("This is a Header")
+example_rv.linear {
+    renderHeaders(mutableListOf("Header1", "Header2")) {
+        HeaderItem(it)
     }
-
-    itemDsl(index = 0) {
+    
+    renderFootersByDsl(mutableListOf("Footer1", "Footer2")) { text ->
         xml(R.layout.header_item)
-        render {
-            it.tv_header.text = "This is a dsl Header"
-            it.setOnClickListener { toast("DSL Header Clicked") }
+        render { view ->
+            view.header_item_tv.text = text
+            view.setOnClickListener { }
         }
     }
-
-    data.forEach { each ->
-        itemDsl {
-            xml(R.layout.list_item)
-            render {
-                it.textView.text = each.title
-            }
+    
+    renderItemsByDsl(dataSource.list) { item ->
+        xml(R.layout.list_item)
+        render { view ->
+            view.list_item_tv.text = item.title
+            view.setOnClickListener { toast("Item Clicked") }
         }
     }
 }
@@ -61,32 +60,26 @@ recycler_view.linear {
 渲染一个Grid列表：
 
 ```kotlin
-rv_list.grid {
+example_rv.grid {
     spanCount(SPAN_COUNT)
     
-    item {
-        HeaderItem("This is a Header")
+    renderHeaders(mutableListOf("Header1", "Header2")) {
+        HeaderItem(it)
     }
     
-    itemDsl(index = 0) {
-        gridSpanSize(SPAN_COUNT)
-        
+    renderFootersByDsl(mutableListOf("Footer1", "Footer2")) { text ->
         xml(R.layout.header_item)
-        render {
-            it.tv_header.text = "This is a dsl Header"
-            it.setOnClickListener { toast("DSL Header Clicked") }
+        render { view ->
+            view.header_item_tv.text = text
+            view.setOnClickListener { }
         }
     }
     
-    data.forEach { each ->
-        itemDsl {
-            xml(R.layout.list_item)
-            render {
-                it.textView.text = each.title
-            }
-            renderX { position, it ->
-                it.setOnClickListener { toast("Clicked $position") }
-            }
+    renderItemsByDsl(dataSource.list) { item ->
+        xml(R.layout.list_item)
+        render { view ->
+            view.list_item_tv.text = item.title
+            view.setOnClickListener { toast("Item Clicked") }
         }
     }
 }
@@ -101,27 +94,23 @@ rv_list.grid {
 瀑布流? 没问题：
 
 ```kotlin
-rv_list.stagger {
+example_rv.stagger {
     spanCount(3)
     
-    item {
-        HeaderItem("This is a Header")
+    renderHeaders(mutableListOf("Header1", "Header2")) {
+        HeaderItem(it)
     }
     
-    itemDsl(index = 0) {
-        staggerFullSpan(true)
-        
+    renderFootersByDsl(mutableListOf("Footer1", "Footer2")) { text ->
         xml(R.layout.header_item)
-        render {
-            it.tv_header.text = "This is a dsl Header"
-            it.setOnClickListener { toast("DSL Header Clicked") }
+        render { view ->
+            view.header_item_tv.text = text
+            view.setOnClickListener { }
         }
     }
     
-    data.forEach { each ->
-        item {
-            ListItem(each.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
-        }
+    renderItems(dataSource.list) { item ->
+        ListItem(item.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
     }
 }
 ```
