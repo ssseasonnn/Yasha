@@ -1,3 +1,4 @@
 package zlc.season.yaksa
 
-class YaksaPlaceholderAdapter : YaksaAdapter()
+class YaksaPlaceholderAdapter : YaksaCommonAdapter() {
+}

@@ -16,7 +16,6 @@ open class ExampleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_example)
 
         viewModel = ViewModelProviders.of(this).get(ExampleViewModel::class.java)
-        viewModel.observerLiveData(this, ::onChange)
 
         refresh.setOnRefreshListener {
             viewModel.loadData(true)

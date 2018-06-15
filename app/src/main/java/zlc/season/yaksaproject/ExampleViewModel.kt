@@ -1,30 +1,24 @@
 package zlc.season.yaksaproject
 
-import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import kotlin.concurrent.thread
 
 class ExampleViewModel : ViewModel() {
-    private val exampleData: MutableLiveData<ExampleData> = MutableLiveData()
+    private val testData = mutableListOf<ItemData>()
     private val pageSize = 5
     private var start = 0
 
-    private val testData = mutableListOf<ItemData>()
-
     private var isLoading = false
+
+    val itemData: MutableLiveData<List<ItemData>> = MutableLiveData()
+    val state: MutableLiveData<State> = MutableLiveData()
 
     init {
         for (i in 0 until 50) {
             testData.add(ItemData("this is item $i"))
+            state.update(State.Loading())
         }
-    }
-
-    fun observerLiveData(owner: LifecycleOwner, onChange: (t: ExampleData?) -> Unit) {
-        exampleData.observe(owner, Observer {
-            onChange(it)
-        })
     }
 
     fun loadData(isRefresh: Boolean = false) {
@@ -37,12 +31,12 @@ class ExampleViewModel : ViewModel() {
         }
 
         if (start == 20) {
-            exampleData.update(ExampleData(emptyList(), false, State.Error()))
+            state.update(State.Error())
             start += pageSize
             return
         }
         if (start >= 25) {
-            exampleData.update(ExampleData(emptyList(), false, State.Empty()))
+            state.update(State.Empty())
             return
         }
 
@@ -51,7 +45,9 @@ class ExampleViewModel : ViewModel() {
 
             isLoading = true
             Thread.sleep(1500)
-            exampleData.update(ExampleData(testData.slice(IntRange(start, start + pageSize - 1)), isRefresh))
+
+            itemData.update(testData.slice(IntRange(start, start + pageSize - 1)))
+
             start += pageSize
 
             isLoading = false
@@ -61,7 +57,7 @@ class ExampleViewModel : ViewModel() {
     data class ExampleData(
             val list: List<ItemData>,
             val isRefresh: Boolean = true,
-            val state: State = State.None()
+            val state: State = State.Loading()
     )
 
     data class ItemData(
@@ -69,7 +65,7 @@ class ExampleViewModel : ViewModel() {
     )
 
     sealed class State {
-        class None : State()
+        class Loading : State()
         class Error : State()
         class Empty : State()
     }

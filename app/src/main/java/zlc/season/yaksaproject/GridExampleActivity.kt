@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.header_item.view.*
-import kotlinx.android.synthetic.main.list_item.view.*
 import zlc.season.yaksa.YaksaItem
 import zlc.season.yaksa.grid
-import zlc.season.yaksa.gridWithPlaceholder
 
 class GridExampleActivity : ExampleActivity() {
 
@@ -17,43 +15,36 @@ class GridExampleActivity : ExampleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        example_rv.gridWithPlaceholder {
-            spanCount(2)
+
+        example_rv.grid {
+            spanCount(SPAN_COUNT)
+
 
             renderPlaceholdersByDsl(List(20) { it }) {
                 xml(R.layout.placeholder_item)
             }
-        }
-    }
 
-    override fun onChange(data: ExampleViewModel.ExampleData?) {
-        super.onChange(data)
-        data?.let { dataSource ->
-            example_rv.grid {
-                spanCount(SPAN_COUNT)
-
-                if (dataSource.isRefresh) {
-                    clearAll()
-
-                    renderHeaders(mutableListOf("Header1", "Header2")) {
-                        HeaderItem(it)
-                    }
-
-                    renderFooters(mutableListOf("Footer1", "Footer2")) {
-                        HeaderItem(it)
-                    }
-
-                }
-
-                renderItemsByDsl(dataSource.list) { item ->
-                    xml(R.layout.list_item)
-
-                    render { view ->
-                        view.list_item_tv.text = item.title
-                        view.setOnClickListener { toast("Item Clicked") }
-                    }
-                }
-            }
+//            if (dataSource.isRefresh) {
+//                clearAll()
+//
+//                renderHeaders(mutableListOf("Header1", "Header2")) {
+//                    HeaderItem(it)
+//                }
+//
+//                renderFooters(mutableListOf("Footer1", "Footer2")) {
+//                    HeaderItem(it)
+//                }
+//
+//            }
+//
+//            renderItemsByDsl(dataSource.list) { item ->
+//                xml(R.layout.list_item)
+//
+//                render { view ->
+//                    view.list_item_tv.text = item.title
+//                    view.setOnClickListener { toast("Item Clicked") }
+//                }
+//            }
         }
     }
 

@@ -6,62 +6,48 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.HORIZONTAL
 import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
-import kotlinx.android.synthetic.main.header_item.view.*
-import kotlinx.android.synthetic.main.list_item.view.*
 import kotlinx.android.synthetic.main.nested_header_item.view.*
 import kotlinx.android.synthetic.main.nested_header_layout.view.*
 import zlc.season.yaksa.YaksaItem
 import zlc.season.yaksa.linear
-import zlc.season.yaksa.linearWithPlaceholder
 
 
 class NestedExampleActivity : ExampleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        example_rv.linearWithPlaceholder {
-            renderPlaceholdersByDsl(List(10) { it }) {
-                xml(R.layout.placeholder_item)
-            }
-        }
-    }
+        example_rv.linear {
 
-    override fun onChange(data: ExampleViewModel.ExampleData?) {
-        super.onChange(data)
-        data?.let { dataSource ->
-            example_rv.linear {
-
-                if (dataSource.isRefresh) {
-                    clearAll()
-
-                    renderHeadersByDsl(mutableListOf("Header1", "Header2")) {
-                        xml(R.layout.header_item)
-                        render { view ->
-                            view.header_item_tv.text = it
-                        }
-                    }
-
-                    renderFootersByDsl(mutableListOf("Footer1", "Footer2")) {
-                        xml(R.layout.header_item)
-                        render { view ->
-                            view.header_item_tv.text = it
-                        }
-                    }
-
-                    renderHeaders(mutableListOf(dataSource)) {
-                        NestedHeaderItem(it)
-                    }
-                }
-
-                renderItemsByDsl(dataSource.list) { item ->
-                    xml(R.layout.list_item)
-
-                    render { view ->
-                        view.list_item_tv.text = item.title
-                        view.setOnClickListener { toast("Item Clicked") }
-                    }
-                }
-            }
+//            if (dataSource.isRefresh) {
+//                clearAll()
+//
+//                renderHeadersByDsl(mutableListOf("Header1", "Header2")) {
+//                    xml(R.layout.header_item)
+//                    render { view ->
+//                        view.header_item_tv.text = it
+//                    }
+//                }
+//
+//                renderFootersByDsl(mutableListOf("Footer1", "Footer2")) {
+//                    xml(R.layout.header_item)
+//                    render { view ->
+//                        view.header_item_tv.text = it
+//                    }
+//                }
+//
+//                renderHeaders(mutableListOf(dataSource)) {
+//                    NestedHeaderItem(it)
+//                }
+//            }
+//
+//            renderItemsByDsl(dataSource.list) { item ->
+//                xml(R.layout.list_item)
+//
+//                render { view ->
+//                    view.list_item_tv.text = item.title
+//                    view.setOnClickListener { toast("Item Clicked") }
+//                }
+//            }
         }
     }
 

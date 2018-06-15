@@ -9,7 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-open class YaksaAdapter : ListAdapter<YaksaItem, YaksaAdapter.YaksaViewHolder>(DiffCallback()) {
+abstract class YaksaAdapter : ListAdapter<YaksaItem, YaksaAdapter.YaksaViewHolder>(DiffCallback()) {
+
+    internal abstract fun update()
+
+    fun getYaksaItem(position: Int): YaksaItem {
+        return getItem(position)
+    }
 
     override fun getItemViewType(position: Int): Int {
         return getItem(position).xml()

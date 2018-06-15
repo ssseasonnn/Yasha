@@ -3,15 +3,31 @@ package zlc.season.yaksa
 import android.os.Handler
 import android.os.Looper
 
-class YaksaRealAdapter : YaksaAdapter() {
-    private var headerList = mutableListOf<YaksaItem>()
-    private var itemList = mutableListOf<YaksaItem>()
-    private var footerList = mutableListOf<YaksaItem>()
-    private var extraList = mutableListOf<YaksaItem>()
+open class YaksaCommonAdapter : YaksaAdapter() {
+    internal var headerList = mutableListOf<YaksaItem>()
+    internal var itemList = mutableListOf<YaksaItem>()
+    internal var footerList = mutableListOf<YaksaItem>()
+    internal var extraList = mutableListOf<YaksaItem>()
+    internal var placeholderList = mutableListOf<YaksaItem>()
 
     private var state: YaksaState? = null
 
-    private fun setState(newState: YaksaState) {
+    protected open fun items(): List<YaksaItem> {
+        val result = mutableListOf<YaksaItem>()
+        result.addAll(headerList)
+        result.addAll(itemList)
+        result.addAll(footerList)
+        result.addAll(extraList)
+        result.addAll(placeholderList)
+        return result
+    }
+
+    @Synchronized
+    override fun update() {
+        submitList(items())
+    }
+
+    internal fun setState(newState: YaksaState) {
         val hadStateItem = hasStateItem()
 
         val previousState = this.state
@@ -50,23 +66,5 @@ class YaksaRealAdapter : YaksaAdapter() {
 
     override fun getItemCount(): Int {
         return super.getItemCount() + if (hasStateItem()) 1 else 0
-    }
-
-    internal fun stash(dsl: YaksaDsl) {
-        this.headerList = dsl.headerList
-        this.itemList = dsl.itemList
-        this.footerList = dsl.footerList
-        this.extraList = dsl.extraList
-
-        if (dsl.state != null) {
-            this.setState(dsl.state!!)
-        }
-    }
-
-    internal fun pop(dsl: YaksaDsl) {
-        dsl.headerList = this.headerList
-        dsl.itemList = this.itemList
-        dsl.footerList = this.footerList
-        dsl.extraList = this.extraList
     }
 }

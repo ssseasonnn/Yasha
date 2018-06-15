@@ -6,47 +6,34 @@ import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import zlc.season.yaksa.YaksaItem
-import zlc.season.yaksa.linearWithPlaceholder
 import zlc.season.yaksa.stagger
-import java.util.*
 
 class StaggerExampleActivity : ExampleActivity() {
     private val HEIGHTS = arrayOf(60, 80, 100, 120, 140, 160)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        example_rv.linearWithPlaceholder {
-            renderPlaceholdersByDsl(List(10) { it }) {
-                xml(R.layout.placeholder_item)
-            }
+        example_rv.stagger {
+            spanCount(3)
+
+//            if (dataSource.isRefresh) {
+//                clearAll()
+//
+//                renderHeaders(mutableListOf("Header1", "Header2")) {
+//                    HeaderItem(it)
+//                }
+//
+//                renderFooters(mutableListOf("Footer1", "Footer2")) {
+//                    HeaderItem(it)
+//                }
+//            }
+//
+//            renderItems(dataSource.list) { item ->
+//                ListItem(item.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
+//            }
         }
     }
 
-    override fun onChange(data: ExampleViewModel.ExampleData?) {
-        super.onChange(data)
-
-        data?.let { dataSource ->
-            example_rv.stagger {
-                spanCount(3)
-
-                if (dataSource.isRefresh) {
-                    clearAll()
-
-                    renderHeaders(mutableListOf("Header1", "Header2")) {
-                        HeaderItem(it)
-                    }
-
-                    renderFooters(mutableListOf("Footer1", "Footer2")) {
-                        HeaderItem(it)
-                    }
-                }
-
-                renderItems(dataSource.list) { item ->
-                    ListItem(item.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
-                }
-            }
-        }
-    }
 
     private class HeaderItem(val title: String) : YaksaItem {
         override fun render(position: Int, view: View) {
