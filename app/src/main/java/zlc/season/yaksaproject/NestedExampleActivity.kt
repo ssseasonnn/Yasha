@@ -18,7 +18,7 @@ class NestedExampleActivity : ExampleActivity() {
         super.onCreate(savedInstanceState)
         example_rv.linear {
 
-//            if (dataSource.isRefresh) {
+            //            if (dataSource.isRefresh) {
 //                clearAll()
 //
 //                renderHeadersByDsl(mutableListOf("Header1", "Header2")) {
@@ -51,7 +51,7 @@ class NestedExampleActivity : ExampleActivity() {
         }
     }
 
-    private class NestedHeaderItem(val data: ExampleViewModel.ExampleData) : YaksaItem {
+    private class NestedHeaderItem(val data: List<ExampleViewModel.ItemData>) : YaksaItem {
         var scrollState = ScrollState(0, 0)
 
         override fun xml(): Int {
@@ -63,7 +63,7 @@ class NestedExampleActivity : ExampleActivity() {
             view.nested_header_rv.linear {
                 orientation(HORIZONTAL)
 
-                renderItemsByDsl(data.list) { item ->
+                renderItemsByDsl(data) { item ->
                     xml(R.layout.nested_header_item)
 
                     render { view ->

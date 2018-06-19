@@ -20,9 +20,6 @@ class GridExampleActivity : ExampleActivity() {
             spanCount(SPAN_COUNT)
 
 
-            renderPlaceholdersByDsl(List(20) { it }) {
-                xml(R.layout.placeholder_item)
-            }
 
 //            if (dataSource.isRefresh) {
 //                clearAll()

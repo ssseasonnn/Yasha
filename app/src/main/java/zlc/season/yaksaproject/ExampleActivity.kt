@@ -1,11 +1,12 @@
 package zlc.season.yaksaproject
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_example.*
-import zlc.season.yaksaproject.ExampleViewModel.ExampleData
 
 @SuppressLint("Registered")
 open class ExampleActivity : AppCompatActivity() {
@@ -18,16 +19,25 @@ open class ExampleActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(ExampleViewModel::class.java)
 
         refresh.setOnRefreshListener {
-            viewModel.loadData(true)
+            onRefresh()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.loadData(true)
+        onRefresh()
     }
 
-    open fun onChange(data: ExampleData?) {
-        refresh.isRefreshing = false
+    private fun onRefresh() {
+        viewModel.loadHeaderData()
+        viewModel.loadData(true)
+        viewModel.loadFooterData()
+    }
+
+    fun <T> LiveData<T>.observeX(block: (T) -> Unit) {
+        this.observe(this@ExampleActivity, Observer {
+            refresh.isRefreshing = false
+            it?.let(block)
+        })
     }
 }

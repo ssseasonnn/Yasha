@@ -2,28 +2,62 @@ package zlc.season.yaksaproject
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import java.util.*
 import kotlin.concurrent.thread
 
 class ExampleViewModel : ViewModel() {
-    private val testData = mutableListOf<ItemData>()
+    private val HEADER_DATA = mutableListOf<HeaderData>()
+    private val ITEM_DATA = mutableListOf<ItemData>()
+    private val FOOTER_DATA = mutableListOf<FooterData>()
+
     private val pageSize = 5
     private var start = 0
 
     private var isLoading = false
 
-    val itemData: MutableLiveData<List<ItemData>> = MutableLiveData()
+    val headerData: MutableLiveData<List<HeaderData>> = MutableLiveData()
+    val itemData: MutableLiveData<ItemDataWrap> = MutableLiveData()
+    val footerData: MutableLiveData<List<FooterData>> = MutableLiveData()
+
     val state: MutableLiveData<State> = MutableLiveData()
 
     init {
         for (i in 0 until 50) {
-            testData.add(ItemData("this is item $i"))
-            state.update(State.Loading())
+            ITEM_DATA.add(ItemData("this is item $i"))
+
+        }
+
+        for (i in 0 until 2) {
+            HEADER_DATA.add(HeaderData("Header $i"))
+        }
+
+        for (i in 0 until 2) {
+            FOOTER_DATA.add(FooterData("Footer $i"))
+        }
+    }
+
+    fun loadHeaderData() {
+        thread(start = true) {
+            Thread.sleep((Math.random() * 1000).toLong())
+            headerData.update(HEADER_DATA)
+        }
+    }
+
+    fun loadFooterData() {
+        thread(start = true) {
+            Thread.sleep((Math.random() * 1000).toLong())
+            footerData.update(FOOTER_DATA)
         }
     }
 
     fun loadData(isRefresh: Boolean = false) {
         if (isRefresh) {
             start = 0
+//            thread(start = true) {
+//                Thread.sleep(2000)
+//                state.update(State.Loading())
+//            }
+            state.update(State.Loading())
         }
 
         if (isLoading) {
@@ -44,9 +78,9 @@ class ExampleViewModel : ViewModel() {
             if (start >= 25) return@thread
 
             isLoading = true
-            Thread.sleep(1500)
+            Thread.sleep((Math.random() * 1000).toLong())
 
-            itemData.update(testData.slice(IntRange(start, start + pageSize - 1)))
+            itemData.update(ItemDataWrap(isRefresh, ITEM_DATA.slice(IntRange(start, start + pageSize - 1))))
 
             start += pageSize
 
@@ -54,14 +88,21 @@ class ExampleViewModel : ViewModel() {
         }
     }
 
-    data class ExampleData(
-            val list: List<ItemData>,
-            val isRefresh: Boolean = true,
-            val state: State = State.Loading()
+    data class ItemDataWrap(
+            val isRefresh: Boolean,
+            val data: List<ItemData>
     )
 
     data class ItemData(
             val title: String
+    )
+
+    data class HeaderData(
+            val header: String
+    )
+
+    data class FooterData(
+            val footer: String
     )
 
     sealed class State {
