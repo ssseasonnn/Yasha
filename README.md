@@ -126,13 +126,111 @@ Output:
 <img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot-stagger.png" width="300">
 
 
-Others such as Header, Footer, and multiple type types also support，and importantly, 
-none of these require you to write any ViewHolder and Adapter
+### Combines powerful real-time rendering with LiveData
 
-Start yaksa now and start your super-god!
+```kotlin
+example_rv.linear {
+    headerLiveData.observe {
+        renderHeaders(it, clear = true) { headerData ->
+            HeaderItem(headerData.header)
+        }
+    }
+    
+    footerLiveData.observe {
+        renderFootersByDsl(it, clear = true) { footerData ->
+            xml(R.layout.header_item)
+            render { view ->
+                view.header_item_tv.text = footerData.footer
+                view.setOnClickListener { }
+            }
+        }
+    }
+    
+    itemLiveData.observe {
+        renderItemsByDsl(it.data, clear = it.isRefresh) { item ->
+            xml(R.layout.list_item)
+            render { view ->
+                view.list_item_tv.text = item.title
+                view.setOnClickListener { toast("Item Clicked") }
+            }
+        }
+    }
+}
+```
+
+This means that when the data changes, Yaksa can refresh in real time, 
+truly data-driven, let your attention on data and rendering.
 
 
-Gif:
+### Strong ability to expand
+
+Dsl comes with limited features? It doesn't matter, Yaksa's powerful 
+customization capabilities can allow you to break through the limits 
+and really let you do whatever you want!
+
+```kotlin
+// Custom placeholder adapter.
+class YaksaPlaceholderAdapter : YaksaCommonStateAdapter() {
+    internal var placeholderList = mutableListOf<YaksaItem>()
+
+    fun updatePlaceholderIf(updateImmediately: Boolean) {
+        if (updateImmediately) {
+            submitList(placeholderList)
+        }
+    }
+}
+
+// Custom placeholder dsl.
+class YaksaPlaceholderDsl(override val adapter: YaksaPlaceholderAdapter) : YaksaCommonStateDsl(adapter) {
+   
+    fun <T> renderPlaceholders(dataSource: List<T>,
+                               clear: Boolean = false,
+                               updateImmediately: Boolean = true,
+                               block: (T) -> YaksaItem) {
+        adapter.placeholderList.clearIf(clear)
+        dataSource.forEach {
+            adapter.placeholderList.add(block(it))
+        }
+        adapter.updatePlaceholderIf(updateImmediately)
+    }
+
+    fun <T> renderPlaceholdersByDsl(dataSource: List<T>,
+                                    clear: Boolean = false,
+                                    updateImmediately: Boolean = true,
+                                    block: YaksaItemDsl.(T) -> Unit) {
+        adapter.placeholderList.clearIf(clear)
+        dataSource.forEach {
+            val dsl = YaksaItemDsl()
+            dsl.block(it)
+            adapter.placeholderList.add(dsl.internalItem())
+        }
+        adapter.updatePlaceholderIf(updateImmediately)
+    }
+}
+
+
+// Use custom adapter and custom dsl.
+example_rv.linear(::YaksaPlaceholderAdapter, ::YaksaPlaceholderDsl) {
+    renderPlaceholdersByDsl(List(20) { it }) {
+        xml(R.layout.placeholder_item)
+    }
+    
+    itemLiveData.observe {
+        renderItemsByDsl(it, clear = true) { headerData ->
+            xml(R.layout.header_item)
+            render { view ->
+                view.header_item_tv.text = title
+                view.setOnClickListener { }
+            }
+        }
+    }
+}
+```
+
+### Start yaksa now and start your super-god!
+
+
+### Finally Gif:
 
 <img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/example.gif" width="300">
 

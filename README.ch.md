@@ -120,12 +120,108 @@ example_rv.stagger {
 <img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/screenshot-stagger.png" width="300">
 
 
-其余的Header,Footer,多种type类型更是不在话下，而且重要的是，这些都不需要你写任何的ViewHolder和Adapter
+### 与LiveData结合发挥强大的实时渲染功效
 
-现在就开始装备夜叉吧，开启你的超神之路！
+```kotlin
+example_rv.linear {
+    headerLiveData.observe {
+        renderHeaders(it, clear = true) { headerData ->
+            HeaderItem(headerData.header)
+        }
+    }
+    
+    footerLiveData.observe {
+        renderFootersByDsl(it, clear = true) { footerData ->
+            xml(R.layout.header_item)
+            render { view ->
+                view.header_item_tv.text = footerData.footer
+                view.setOnClickListener { }
+            }
+        }
+    }
+    
+    itemLiveData.observe {
+        renderItemsByDsl(it.data, clear = it.isRefresh) { item ->
+            xml(R.layout.list_item)
+            render { view ->
+                view.list_item_tv.text = item.title
+                view.setOnClickListener { toast("Item Clicked") }
+            }
+        }
+    }
+}
+```
+
+这意味着当数据变化时，Yaksa能够实时的进行刷新，真正实现了数据驱动，让你的注意力放在数据和渲染上.
 
 
-动图:
+### 强大的扩展能力
+
+自带的Dsl功能有限？没关系，Yaksa强大的定制能力可以让你突破限制，真正让你为所欲为！
+
+```kotlin
+// Custom placeholder adapter.
+class YaksaPlaceholderAdapter : YaksaCommonStateAdapter() {
+    internal var placeholderList = mutableListOf<YaksaItem>()
+
+    fun updatePlaceholderIf(updateImmediately: Boolean) {
+        if (updateImmediately) {
+            submitList(placeholderList)
+        }
+    }
+}
+
+// Custom placeholder dsl.
+class YaksaPlaceholderDsl(override val adapter: YaksaPlaceholderAdapter) : YaksaCommonStateDsl(adapter) {
+   
+    fun <T> renderPlaceholders(dataSource: List<T>,
+                               clear: Boolean = false,
+                               updateImmediately: Boolean = true,
+                               block: (T) -> YaksaItem) {
+        adapter.placeholderList.clearIf(clear)
+        dataSource.forEach {
+            adapter.placeholderList.add(block(it))
+        }
+        adapter.updatePlaceholderIf(updateImmediately)
+    }
+
+    fun <T> renderPlaceholdersByDsl(dataSource: List<T>,
+                                    clear: Boolean = false,
+                                    updateImmediately: Boolean = true,
+                                    block: YaksaItemDsl.(T) -> Unit) {
+        adapter.placeholderList.clearIf(clear)
+        dataSource.forEach {
+            val dsl = YaksaItemDsl()
+            dsl.block(it)
+            adapter.placeholderList.add(dsl.internalItem())
+        }
+        adapter.updatePlaceholderIf(updateImmediately)
+    }
+}
+
+
+// Use custom adapter and custom dsl.
+example_rv.linear(::YaksaPlaceholderAdapter, ::YaksaPlaceholderDsl) {
+    renderPlaceholdersByDsl(List(20) { it }) {
+        xml(R.layout.placeholder_item)
+    }
+    
+    itemLiveData.observe {
+        renderItemsByDsl(it, clear = true) { headerData ->
+            xml(R.layout.header_item)
+            render { view ->
+                view.header_item_tv.text = title
+                view.setOnClickListener { }
+            }
+        }
+    }
+}
+```
+
+### 现在就开始装备夜叉吧，开启你的超神之路！
+
+
+### 动图:
 
 <img src="https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/example.gif" width="300">
 
