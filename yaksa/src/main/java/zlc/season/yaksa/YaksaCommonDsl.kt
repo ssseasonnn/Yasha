@@ -1,8 +1,17 @@
 package zlc.season.yaksa
 
 open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaBaseDsl(adapter) {
+
     /**
-     * Render headers with given data
+     * Render headers with given data.
+     *
+     * @param dataSource The data source that will be used to render the header.
+     *
+     * @param clear If true, the old data will be cleared. Default is false.
+     *
+     * @param updateImmediately  If true, the Adapter will be updated immediately. Default is true.
+     *
+     * @param block Render block.
      */
     fun <T> renderHeaders(dataSource: List<T>,
                           clear: Boolean = false,
@@ -16,6 +25,17 @@ open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaBaseD
     }
 
 
+    /**
+     * Render headers with given data.
+     *
+     * @param dataSource The data source that will be used to render the header.
+     *
+     * @param clear If true, the old data will be cleared. Default is false.
+     *
+     * @param updateImmediately  If true, the Adapter will be updated immediately. Default is true.
+     *
+     * @param block Render block.
+     */
     fun <T> renderHeadersByDsl(dataSource: List<T>,
                                clear: Boolean = false,
                                updateImmediately: Boolean = true,
@@ -30,7 +50,15 @@ open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaBaseD
     }
 
     /**
-     * Render items with given data
+     * Render items with given data.
+     *
+     * @param dataSource The data source that will be used to render the item.
+     *
+     * @param clear If true, the old data will be cleared. Default is false.
+     *
+     * @param updateImmediately  If true, the Adapter will be updated immediately. Default is true.
+     *
+     * @param block Render block.
      */
     fun <T> renderItems(dataSource: List<T>,
                         clear: Boolean = false,
@@ -43,7 +71,17 @@ open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaBaseD
         adapter.updateIf(updateImmediately)
     }
 
-
+    /**
+     * Render items by dsl with given data.
+     *
+     * @param dataSource The data source that will be used to render the item.
+     *
+     * @param clear If true, the old data will be cleared. Default is false.
+     *
+     * @param updateImmediately  If true, the Adapter will be updated immediately. Default is true.
+     *
+     * @param block Render block.
+     */
     fun <T> renderItemsByDsl(dataSource: List<T>,
                              clear: Boolean = false,
                              updateImmediately: Boolean = true,
@@ -59,7 +97,15 @@ open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaBaseD
     }
 
     /**
-     * Render footers with given data
+     * Render footers with given data.
+     *
+     * @param dataSource The data source that will be used to render the footer.
+     *
+     * @param clear If true, the old data will be cleared. Default is false.
+     *
+     * @param updateImmediately  If true, the Adapter will be updated immediately. Default is true.
+     *
+     * @param block Render block.
      */
     fun <T> renderFooters(dataSource: List<T>,
                           clear: Boolean = false,
@@ -73,6 +119,17 @@ open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaBaseD
         adapter.updateIf(updateImmediately)
     }
 
+    /**
+     * Render footers by dsl with given data.
+     *
+     * @param dataSource The data source that will be used to render the footer.
+     *
+     * @param clear If true, the old data will be cleared. Default is false.
+     *
+     * @param updateImmediately  If true, the Adapter will be updated immediately. Default is true.
+     *
+     * @param block Render block.
+     */
     fun <T> renderFootersByDsl(dataSource: List<T>,
                                clear: Boolean = false,
                                updateImmediately: Boolean = true,
