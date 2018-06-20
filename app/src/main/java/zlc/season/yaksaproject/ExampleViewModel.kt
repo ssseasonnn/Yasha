@@ -37,23 +37,21 @@ class ExampleViewModel : ViewModel() {
         }
     }
 
-    fun loadHeaderData() {
+    fun loadHeaderData(delayMills: Long = 0L) {
         thread(start = true) {
-            Thread.sleep((Math.random() * 2000).toLong())
+            Thread.sleep(if (delayMills == 0L) (Math.random() * 2000).toLong() else delayMills)
             headerData.update(HEADER_DATA)
         }
     }
 
-    fun loadFooterData() {
+    fun loadFooterData(delayMills: Long = 0L) {
         thread(start = true) {
-            Thread.sleep((Math.random() * 2000).toLong())
+            Thread.sleep(if (delayMills == 0L) (Math.random() * 2000).toLong() else delayMills)
             footerData.update(FOOTER_DATA)
         }
     }
 
-    fun loadData(isRefresh: Boolean = false) {
-        state.update(State.Loading())
-        
+    fun loadData(isRefresh: Boolean = false, delayMills: Long = 0L) {
         if (isRefresh) {
             start = 0
         }
@@ -76,7 +74,10 @@ class ExampleViewModel : ViewModel() {
             if (start >= end) return@thread
 
             isLoading = true
-            Thread.sleep((Math.random() * 2000).toLong())
+
+            Thread.sleep(if (delayMills == 0L) (Math.random() * 2000).toLong() else delayMills)
+
+            state.update(State.Loading())
 
             itemData.update(ItemDataWrap(isRefresh, ITEM_DATA.slice(IntRange(start, start + pageSize - 1))))
 

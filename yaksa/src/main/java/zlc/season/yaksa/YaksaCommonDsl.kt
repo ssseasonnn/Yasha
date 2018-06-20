@@ -26,7 +26,7 @@ open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaBaseD
 
 
     /**
-     * Render headers with given data.
+     * Render headers by dsl with given data.
      *
      * @param dataSource The data source that will be used to render the header.
      *

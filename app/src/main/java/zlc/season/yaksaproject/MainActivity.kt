@@ -25,5 +25,9 @@ class MainActivity : AppCompatActivity() {
         nested.setOnClickListener {
             startActivity(NestedExampleActivity::class.java)
         }
+
+        custom.setOnClickListener {
+            startActivity(CustomAdapterAndDslActivity::class.java)
+        }
     }
 }
