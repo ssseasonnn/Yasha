@@ -6,11 +6,14 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.HORIZONTAL
 import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
+import kotlinx.android.synthetic.main.error_item.view.*
+import kotlinx.android.synthetic.main.header_item.view.*
+import kotlinx.android.synthetic.main.list_item.view.*
 import kotlinx.android.synthetic.main.nested_header_item.view.*
 import kotlinx.android.synthetic.main.nested_header_layout.view.*
 import zlc.season.yaksa.YaksaItem
 import zlc.season.yaksa.linear
-
+import zlc.season.yaksaproject.ExampleViewModel.State
 
 class NestedExampleActivity : ExampleActivity() {
 
@@ -18,40 +21,84 @@ class NestedExampleActivity : ExampleActivity() {
         super.onCreate(savedInstanceState)
         example_rv.linear {
 
-            //            if (dataSource.isRefresh) {
-//                clearAll()
-//
-//                renderHeadersByDsl(mutableListOf("Header1", "Header2")) {
-//                    xml(R.layout.header_item)
-//                    render { view ->
-//                        view.header_item_tv.text = it
-//                    }
-//                }
-//
-//                renderFootersByDsl(mutableListOf("Footer1", "Footer2")) {
-//                    xml(R.layout.header_item)
-//                    render { view ->
-//                        view.header_item_tv.text = it
-//                    }
-//                }
-//
-//                renderHeaders(mutableListOf(dataSource)) {
-//                    NestedHeaderItem(it)
-//                }
-//            }
-//
-//            renderItemsByDsl(dataSource.list) { item ->
-//                xml(R.layout.list_item)
-//
-//                render { view ->
-//                    view.list_item_tv.text = item.title
-//                    view.setOnClickListener { toast("Item Clicked") }
-//                }
-//            }
+            viewModel.headerData.observeX {
+                renderHeadersByDsl(it, clear = true) { headerData ->
+                    xml(R.layout.header_item)
+                    render { view ->
+                        view.header_item_tv.text = headerData.header
+                    }
+                }
+                renderHeaders(mutableListOf(mutableListOf(
+                        "nested header1",
+                        "nested header2",
+                        "nested header3",
+                        "nested header4",
+                        "nested header5"
+                ))) {
+                    NestedHeaderItem(it)
+                }
+            }
+
+            viewModel.footerData.observeX {
+                renderFootersByDsl(it, clear = true) { footerData ->
+                    xml(R.layout.header_item)
+                    render { view ->
+                        view.header_item_tv.text = footerData.footer
+                        view.setOnClickListener { }
+                    }
+                }
+            }
+
+            viewModel.itemData.observeX {
+                renderItemsByDsl(it.data, clear = it.isRefresh) { item ->
+                    xml(R.layout.list_item)
+                    render { view ->
+                        view.list_item_tv.text = item.title
+                        view.setOnClickListener { toast("Item Clicked") }
+                    }
+                }
+            }
+
+            viewModel.state.observeX {
+                when (it) {
+                    is State.Loading -> {
+                        /**
+                         * Render a LOAD_MORE item that triggers load more action when it is displayed on the screen
+                         */
+                        renderStateItemByDsl("loading") {
+                            xml(R.layout.loading_item)
+                            onItemAttachWindow {
+                                viewModel.loadData()
+                            }
+                        }
+                    }
+
+                    is State.Empty ->
+                        /**
+                         * render a NO_MORE state item
+                         */
+                        renderStateItemByDsl("empty") {
+                            xml(R.layout.empty_item)
+                        }
+
+                    is State.Error ->
+                        /**
+                         * render an ERROR state item
+                         */
+                        renderStateItemByDsl("error") {
+                            xml(R.layout.error_item)
+                            render {
+                                it.retry.setOnClickListener {
+                                    viewModel.loadData()
+                                }
+                            }
+                        }
+                }
+            }
         }
     }
 
-    private class NestedHeaderItem(val data: List<ExampleViewModel.ItemData>) : YaksaItem {
+    private class NestedHeaderItem(val data: List<String>) : YaksaItem {
         var scrollState = ScrollState(0, 0)
 
         override fun xml(): Int {
@@ -67,7 +114,7 @@ class NestedExampleActivity : ExampleActivity() {
                     xml(R.layout.nested_header_item)
 
                     render { view ->
-                        view.nested_header_item_tv.text = item.title
+                        view.nested_header_item_tv.text = item
                         view.setOnClickListener { toast(view, "Item Clicked") }
                     }
                 }

@@ -10,7 +10,8 @@ class ExampleViewModel : ViewModel() {
     private val ITEM_DATA = mutableListOf<ItemData>()
     private val FOOTER_DATA = mutableListOf<FooterData>()
 
-    private val pageSize = 5
+    private val end = 200
+    private val pageSize = 20
     private var start = 0
 
     private var isLoading = false
@@ -22,7 +23,7 @@ class ExampleViewModel : ViewModel() {
     val state: MutableLiveData<State> = MutableLiveData()
 
     init {
-        for (i in 0 until 50) {
+        for (i in 0 until end) {
             ITEM_DATA.add(ItemData("this is item $i"))
 
         }
@@ -38,47 +39,44 @@ class ExampleViewModel : ViewModel() {
 
     fun loadHeaderData() {
         thread(start = true) {
-            Thread.sleep((Math.random() * 1000).toLong())
+            Thread.sleep((Math.random() * 2000).toLong())
             headerData.update(HEADER_DATA)
         }
     }
 
     fun loadFooterData() {
         thread(start = true) {
-            Thread.sleep((Math.random() * 1000).toLong())
+            Thread.sleep((Math.random() * 2000).toLong())
             footerData.update(FOOTER_DATA)
         }
     }
 
     fun loadData(isRefresh: Boolean = false) {
+        state.update(State.Loading())
+        
         if (isRefresh) {
             start = 0
-//            thread(start = true) {
-//                Thread.sleep(2000)
-//                state.update(State.Loading())
-//            }
-            state.update(State.Loading())
         }
 
         if (isLoading) {
             return
         }
 
-        if (start == 20) {
+        if (start == pageSize * 5) {
             state.update(State.Error())
             start += pageSize
             return
         }
-        if (start >= 25) {
+        if (start >= pageSize * 8) {
             state.update(State.Empty())
             return
         }
 
         thread(start = true) {
-            if (start >= 25) return@thread
+            if (start >= end) return@thread
 
             isLoading = true
-            Thread.sleep((Math.random() * 1000).toLong())
+            Thread.sleep((Math.random() * 2000).toLong())
 
             itemData.update(ItemDataWrap(isRefresh, ITEM_DATA.slice(IntRange(start, start + pageSize - 1))))
 

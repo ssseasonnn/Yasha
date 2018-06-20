@@ -13,24 +13,24 @@ class LinearExampleActivity : ExampleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        example_rv.linear(enableDiff = false) {
+        example_rv.linear(enableDiff = true) {
 
-//            viewModel.headerData.observeX {
-//                renderHeaders(it, clear = true) { headerData ->
-//                    HeaderItem(headerData.header)
-//                }
-//            }
+            viewModel.headerData.observeX {
+                renderHeaders(it, clear = true) { headerData ->
+                    HeaderItem(headerData.header)
+                }
+            }
 
-//            viewModel.footerData.observeX {
-//                renderFootersByDsl(it, clear = true) { footerData ->
-//                    xml(R.layout.header_item)
-//                    render { view ->
-//                        view.header_item_tv.text = footerData.footer
-//                        view.setOnClickListener { }
-//                    }
-//                }
-//            }
-//
+            viewModel.footerData.observeX {
+                renderFootersByDsl(it, clear = true) { footerData ->
+                    xml(R.layout.header_item)
+                    render { view ->
+                        view.header_item_tv.text = footerData.footer
+                        view.setOnClickListener { }
+                    }
+                }
+            }
+
             viewModel.itemData.observeX {
                 renderItemsByDsl(it.data, clear = it.isRefresh) { item ->
                     xml(R.layout.list_item)
@@ -44,7 +44,6 @@ class LinearExampleActivity : ExampleActivity() {
             viewModel.state.observeX {
                 when (it) {
                     is State.Loading -> {
-                        println("loading")
                         /**
                          * Render a LOAD_MORE item that triggers load more action when it is displayed on the screen
                          */
