@@ -30,7 +30,7 @@ class LinearExampleActivity : ExampleActivity() {
 //                    }
 //                }
 //            }
-
+//
             viewModel.itemData.observeX {
                 renderItemsByDsl(it.data, clear = it.isRefresh) { item ->
                     xml(R.layout.list_item)
@@ -44,6 +44,7 @@ class LinearExampleActivity : ExampleActivity() {
             viewModel.state.observeX {
                 when (it) {
                     is State.Loading -> {
+                        println("loading")
                         /**
                          * Render a LOAD_MORE item that triggers load more action when it is displayed on the screen
                          */

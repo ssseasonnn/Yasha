@@ -1,7 +1,6 @@
 package zlc.season.yaksa
 
-open class YaksaCommonStateDsl(override val adapter: YaksaCommonStateAdapter)
-    : YaksaCommonDsl(adapter) {
+open class YaksaCommonStateDsl(override val adapter: YaksaCommonStateAdapter) : YaksaCommonDsl(adapter) {
 
     /**
      * Render a state item, such as error, empty, or loading indicator

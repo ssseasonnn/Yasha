@@ -4,15 +4,17 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v7.widget.RecyclerView
 
-open class YaksaCommonStateAdapter : YaksaCommonAdapter() {
 
-    init {
+open class YaksaCommonStateAdapter : YaksaCommonAdapter() {
+    private var state: YaksaState? = null
+    lateinit var recyclerView: RecyclerView
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
     }
 
-    private var state: YaksaState? = null
-
     internal fun setState(newState: YaksaState) {
-        println("set state")
         val hadStateItem = hasStateItem()
 
         val previousState = this.state
@@ -22,32 +24,25 @@ open class YaksaCommonStateAdapter : YaksaCommonAdapter() {
 
         if (hadStateItem != hasStateItem) {
             if (hadStateItem) {
-                post { notifyItemRemoved(super.getItemCount()) }
+                notifyItemRemoved(super.getItemCount())
             } else {
-                post { notifyItemInserted(super.getItemCount()) }
+                notifyItemInserted(super.getItemCount())
             }
         } else if (hasStateItem && previousState != newState) {
-            post { notifyItemChanged(itemCount - 1) }
+            postNotify {
+                notifyItemChanged(itemCount - 1)
+            }
         }
     }
 
-    @Synchronized
-    override fun update() {
-        println("update")
-        super.update()
-    }
-
-    private fun post(block: () -> Unit) {
-//        Handler(Looper.getMainLooper()).post {
-//            block()
-//        }
-        if (!recyclerView.isComputingLayout){
-            block()
-        }else{
-            Handler(Looper.getMainLooper()).postDelayed({
+    private fun postNotify(delayMillis: Long = 0L, block: () -> Unit) {
+        Handler(Looper.myLooper()).postDelayed({
+            if (!recyclerView.isComputingLayout) {
                 block()
-            },1000)
-        }
+            } else {
+                postNotify(delayMillis + 500, block)
+            }
+        }, delayMillis)
     }
 
     private fun hasStateItem(): Boolean {
@@ -63,12 +58,10 @@ open class YaksaCommonStateAdapter : YaksaCommonAdapter() {
     }
 
     override fun getItemCount(): Int {
-        return super.getItemCount() + if (hasStateItem()) 1 else 0
-    }
-
-    lateinit var recyclerView:RecyclerView
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        this.recyclerView = recyclerView
+        return if (hasStateItem()) {
+            super.getItemCount() + 1
+        } else {
+            super.getItemCount()
+        }
     }
 }

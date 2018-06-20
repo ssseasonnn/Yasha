@@ -1,6 +1,6 @@
 package zlc.season.yaksa
 
-open class YaksaCommonAdapter : YaksaAdapter() {
+open class YaksaCommonAdapter : YaksaBaseAdapter() {
 
     internal var headerList = mutableListOf<YaksaItem>()
     internal var itemList = mutableListOf<YaksaItem>()

@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.support.v7.widget.StaggeredGridLayoutManager
 
-open class YaksaDsl(open val adapter: YaksaAdapter) {
+open class YaksaBaseDsl(open val adapter: YaksaBaseAdapter) {
     private var orientation = VERTICAL
     private var reverse = false
     private var spanCount = 1
@@ -48,12 +48,12 @@ open class YaksaDsl(open val adapter: YaksaAdapter) {
         }
     }
 
-    open fun configureLayoutManager(target: RecyclerView, diffAdapter: YaksaAdapter) {
+    open fun configureLayoutManager(target: RecyclerView, adapter: YaksaBaseAdapter) {
         val layoutManager = target.layoutManager
         if (layoutManager is GridLayoutManager) {
             layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return diffAdapter.getItem(position).gridSpanSize()
+                    return adapter.getItem(position).gridSpanSize()
                 }
             }
         }

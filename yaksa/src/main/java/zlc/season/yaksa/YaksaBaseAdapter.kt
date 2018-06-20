@@ -5,13 +5,15 @@ import android.support.v7.recyclerview.extensions.AsyncListDiffer
 import android.support.v7.util.AdapterListUpdateCallback
 import android.support.v7.util.DiffUtil
 
-abstract class YaksaAdapter : YaksaAbstractAdapter() {
+abstract class YaksaBaseAdapter : YaksaAbstractAdapter() {
     var enableDiff: Boolean = false
 
     private val data = mutableListOf<YaksaItem>()
-    private val asyncListDiffer: AsyncListDiffer<YaksaItem> =
-            AsyncListDiffer(AdapterListUpdateCallback(this),
-                    AsyncDifferConfig.Builder(DiffCallback()).build())
+
+    private val asyncListDiffer by lazy {
+        AsyncListDiffer(AdapterListUpdateCallback(this),
+                AsyncDifferConfig.Builder(DiffCallback()).build())
+    }
 
     override fun submitList(list: List<YaksaItem>) {
         if (enableDiff) {
@@ -19,8 +21,7 @@ abstract class YaksaAdapter : YaksaAbstractAdapter() {
         } else {
             this.data.clear()
             this.data.addAll(list)
-//            notifyDataSetChanged()
-            notifyItemRangeChanged(0, this.data.size+1)
+            notifyDataSetChanged()
         }
     }
 

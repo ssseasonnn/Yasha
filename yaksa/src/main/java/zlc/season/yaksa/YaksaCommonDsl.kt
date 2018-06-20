@@ -1,6 +1,6 @@
 package zlc.season.yaksa
 
-open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaDsl(adapter) {
+open class YaksaCommonDsl(override val adapter: YaksaCommonAdapter) : YaksaBaseDsl(adapter) {
     /**
      * Render headers with given data
      */

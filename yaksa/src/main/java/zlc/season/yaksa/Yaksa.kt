@@ -6,35 +6,20 @@ const val LINEAR_LAYOUT = 0
 const val GRID_LAYOUT = 1
 const val STAGGERED_LAYOUT = 2
 
-fun adapter1(): YaksaCommonStateAdapter {
-    return YaksaCommonStateAdapter()
-}
-
-fun dsl1(adapter: YaksaCommonStateAdapter) :YaksaCommonStateDsl{
-    return YaksaCommonStateDsl(adapter)
-}
-
 /**
  * This function is used to create a Linear list.
  *
  *@param block Item dsl
  */
-fun RecyclerView.linear(enableDiff: Boolean = false,
+fun RecyclerView.linear(enableDiff: Boolean = true,
                         block: YaksaCommonStateDsl.() -> Unit) {
     linear(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
-//    val adapter = YaksaCommonStateAdapter()
-//    adapter.enableDiff = enableDiff
-//    this.adapter = adapter
-//    val dsl = YaksaCommonStateDsl(adapter)
-//    dsl.block()
-//    dsl.initLayoutManager(this, LINEAR_LAYOUT)
-//    dsl.configureLayoutManager(this, adapter)
 }
 
-fun <Adapter : YaksaAdapter, Dsl : YaksaDsl> RecyclerView.linear(
+fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.linear(
         adapterFactory: () -> Adapter,
         dslFactory: (Adapter) -> Dsl,
-        enableDiff: Boolean = false,
+        enableDiff: Boolean = true,
         block: Dsl.() -> Unit) {
 
     initDsl(this, LINEAR_LAYOUT,
@@ -47,15 +32,15 @@ fun <Adapter : YaksaAdapter, Dsl : YaksaDsl> RecyclerView.linear(
  *
  *@param block Item dsl
  */
-fun RecyclerView.grid(enableDiff: Boolean = false,
+fun RecyclerView.grid(enableDiff: Boolean = true,
                       block: YaksaCommonStateDsl.() -> Unit) {
     grid(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
 }
 
-fun <Adapter : YaksaAdapter, Dsl : YaksaDsl> RecyclerView.grid(
+fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.grid(
         adapterFactory: () -> Adapter,
         dslFactory: (Adapter) -> Dsl,
-        enableDiff: Boolean = false,
+        enableDiff: Boolean = true,
         block: Dsl.() -> Unit
 ) {
     initDsl(this, GRID_LAYOUT,
@@ -68,15 +53,15 @@ fun <Adapter : YaksaAdapter, Dsl : YaksaDsl> RecyclerView.grid(
  *
  *@param block Item dsl
  */
-fun RecyclerView.stagger(enableDiff: Boolean = false,
+fun RecyclerView.stagger(enableDiff: Boolean = true,
                          block: YaksaCommonStateDsl.() -> Unit) {
     stagger(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
 }
 
-fun <Adapter : YaksaAdapter, Dsl : YaksaDsl> RecyclerView.stagger(
+fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.stagger(
         adapterFactory: () -> Adapter,
         dslFactory: (Adapter) -> Dsl,
-        enableDiff: Boolean = false,
+        enableDiff: Boolean = true,
         block: Dsl.() -> Unit
 ) {
     initDsl(this, STAGGERED_LAYOUT,
@@ -84,17 +69,17 @@ fun <Adapter : YaksaAdapter, Dsl : YaksaDsl> RecyclerView.stagger(
             enableDiff, block)
 }
 
-private fun <Adapter : YaksaAdapter, Dsl : YaksaDsl> initDsl(
-        target: RecyclerView,
-        type: Int,
+private fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> initDsl(
+        target: RecyclerView, type: Int,
         adapterFactory: () -> Adapter,
         dslFactory: (Adapter) -> Dsl,
-        enableDiff: Boolean = false,
+        enableDiff: Boolean = true,
         block: Dsl.() -> Unit
 ) {
     val adapter = adapterFactory()
     adapter.enableDiff = enableDiff
     target.adapter = adapter
+
     val dsl = dslFactory(adapter)
     dsl.block()
     dsl.initLayoutManager(target, type)
