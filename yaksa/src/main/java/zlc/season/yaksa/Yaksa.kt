@@ -7,15 +7,32 @@ const val GRID_LAYOUT = 1
 const val STAGGERED_LAYOUT = 2
 
 /**
- * This function is used to create a Linear list.
+ * Create a linear list with default Adapter and default Dsl.
  *
- *@param block Item dsl
+ * Adapter default is [zlc.season.yaksa.YaksaCommonStateAdapter].
+ *
+ * Dsl default is [zlc.season.yaksa.YaksaCommonStateDsl].
+ *
+ * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
+ *
+ * @param block Item dsl.
  */
 fun RecyclerView.linear(enableDiff: Boolean = true,
                         block: YaksaCommonStateDsl.() -> Unit) {
     linear(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
 }
 
+/**
+ * Create a linear list with default Adapter and default Dsl.
+ *
+ * @param adapterFactory A method to create a custom Adapter.
+ *
+ * @param dslFactory  A method to create a custom Dsl.
+ *
+ * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
+ *
+ * @param block Item dsl.
+ */
 fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.linear(
         adapterFactory: () -> Adapter,
         dslFactory: (Adapter) -> Dsl,
@@ -28,15 +45,32 @@ fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.linear(
 }
 
 /**
- * This function is used to create a Grid list.
+ * Create a grid list with default Adapter and default Dsl.
  *
- *@param block Item dsl
+ * Adapter default is [zlc.season.yaksa.YaksaCommonStateAdapter].
+ *
+ * Dsl default is [zlc.season.yaksa.YaksaCommonStateDsl].
+ *
+ * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
+ *
+ * @param block Item dsl
  */
 fun RecyclerView.grid(enableDiff: Boolean = true,
                       block: YaksaCommonStateDsl.() -> Unit) {
     grid(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
 }
 
+/**
+ * Create a grid list with default Adapter and default Dsl.
+ *
+ * @param adapterFactory A method to create a custom Adapter.
+ *
+ * @param dslFactory  A method to create a custom Dsl.
+ *
+ * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
+ *
+ * @param block Item dsl.
+ */
 fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.grid(
         adapterFactory: () -> Adapter,
         dslFactory: (Adapter) -> Dsl,
@@ -49,15 +83,32 @@ fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.grid(
 }
 
 /**
- * This function is used to create a Stagger list.
+ * Create a stagger list with default Adapter and default Dsl.
  *
- *@param block Item dsl
+ * Adapter default is [zlc.season.yaksa.YaksaCommonStateAdapter].
+ *
+ * Dsl default is [zlc.season.yaksa.YaksaCommonStateDsl].
+ *
+ * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
+ *
+ * @param block Item dsl
  */
 fun RecyclerView.stagger(enableDiff: Boolean = true,
                          block: YaksaCommonStateDsl.() -> Unit) {
     stagger(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
 }
 
+/**
+ * Create a stagger list with default Adapter and default Dsl.
+ *
+ * @param adapterFactory A method to create a custom Adapter.
+ *
+ * @param dslFactory  A method to create a custom Dsl.
+ *
+ * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
+ *
+ * @param block Item dsl.
+ */
 fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.stagger(
         adapterFactory: () -> Adapter,
         dslFactory: (Adapter) -> Dsl,
