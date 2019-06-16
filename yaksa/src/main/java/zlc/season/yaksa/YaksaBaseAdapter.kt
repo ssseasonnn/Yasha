@@ -5,7 +5,7 @@ import android.support.v7.recyclerview.extensions.AsyncListDiffer
 import android.support.v7.util.AdapterListUpdateCallback
 import android.support.v7.util.DiffUtil
 
-abstract class YaksaBaseAdapter : YaksaAbstractAdapter() {
+abstract class YaksaBaseAdapter : YaksaAdapter() {
     var enableDiff: Boolean = false
 
     private val data = mutableListOf<YaksaItem>()

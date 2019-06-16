@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.support.v7.widget.StaggeredGridLayoutManager
 
-open class YaksaBaseDsl(open val adapter: YaksaBaseAdapter) {
+open class YaksaBaseDsl(open val adapter: YaksaAdapter) {
     private var orientation = VERTICAL
     private var reverse = false
     private var spanCount = 1

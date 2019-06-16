@@ -1,11 +1,12 @@
 package zlc.season.yaksa
 
 import android.view.View
+import zlc.season.paging.PagingItem
 
 /**
  * Item interface
  */
-interface YaksaItem {
+interface YaksaItem : PagingItem {
     /**
      *  Render item
      *
