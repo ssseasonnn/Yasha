@@ -112,7 +112,7 @@
 //        this.onItemRecycledBlockX = block
 //    }
 //
-//    internal fun internalItem(): YaksaItem {
+//    internal fun builder(): YaksaItem {
 //        if (resId == 0) {
 //            throw IllegalStateException("You must call the res() method to pass your layout resource id!")
 //        }

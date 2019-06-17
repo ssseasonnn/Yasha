@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import zlc.season.paging.MultiDataSource
 import zlc.season.paging.PagingItem
-import zlc.season.yasha.YaksaItem
 import kotlin.concurrent.thread
 
 class ExampleViewModel : ViewModel() {
@@ -28,7 +27,7 @@ class ExampleViewModel : ViewModel() {
 
     init {
         for (i in 0 until end) {
-            ITEM_DATA.add(ItemData("this is item $i"))
+            ITEM_DATA.add(ItemData(i, "this is item $i"))
 
         }
 
@@ -96,17 +95,6 @@ class ExampleViewModel : ViewModel() {
             val data: List<ItemData>
     )
 
-    data class ItemData(
-            val title: String
-    ) : YaksaItem
-
-    data class HeaderData(
-            val header: String
-    ) : YaksaItem
-
-    data class FooterData(
-            val footer: String
-    ) : YaksaItem
 
     sealed class State {
         class Loading : State()

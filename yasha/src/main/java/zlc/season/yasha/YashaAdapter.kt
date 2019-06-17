@@ -2,6 +2,7 @@ package zlc.season.yasha
 
 import android.support.v7.widget.RecyclerView.NO_POSITION
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import zlc.season.paging.DataSource
@@ -18,6 +19,7 @@ class YashaAdapter(dataSource: DataSource<YaksaItem>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YashaViewHolder {
+//        Log.d("Yasha","on create viewholder")
         val viewHolderBuilder = builderMap[viewType]
         if (viewHolderBuilder == null) {
             throw IllegalStateException("Not supported view type")
@@ -27,6 +29,7 @@ class YashaAdapter(dataSource: DataSource<YaksaItem>) :
     }
 
     override fun onBindViewHolder(holder: YashaViewHolder, position: Int) {
+//        Log.d("Yasha","on bind viewholder")
         holder.onBind(getItem(position))
     }
 

@@ -45,7 +45,7 @@ open class YaksaBaseDsl(val adapter: YashaAdapter) {
     ) {
         val dsl = YashaItemDsl<T>()
         dsl.block()
-        adapter.builderMap[T::class.hashCode()] = dsl::internalItem
+        adapter.builderMap[T::class.hashCode()] = dsl::builder
     }
 
     open fun initLayoutManager(target: RecyclerView, type: Int) {

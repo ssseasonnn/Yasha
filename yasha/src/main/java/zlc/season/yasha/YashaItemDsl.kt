@@ -5,14 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
 
-class YashaItemDsl<T> : LayoutContainer {
-    private var rootView: View? = null
-    override var containerView: View? = rootView
-
-    var resId: Int = 0
-
-    var onBind: (t: T) -> Unit = {}
-    var onBindWithView: (view: View, t: T) -> Unit = { view: View, t: T -> }
+class YashaItemDsl<T> {
+    private var resId: Int = 0
+    private var onBind: OnBindScope.(t: T) -> Unit = {}
 
     /**
      * Set item res layout resource
@@ -21,26 +16,22 @@ class YashaItemDsl<T> : LayoutContainer {
         this.resId = res
     }
 
-    fun onBind(block: (t: T) -> Unit) {
+    fun onBind(block: OnBindScope.(t: T) -> Unit) {
         this.onBind = block
     }
 
-    fun onBindWithView(block: (view: View, t: T) -> Unit) {
-        this.onBindWithView = block
-    }
-
-    fun internalItem(viewGroup: ViewGroup): YashaViewHolder {
-
+    fun builder(viewGroup: ViewGroup): YashaViewHolder {
         val view = LayoutInflater.from(viewGroup.context).inflate(this.resId, viewGroup, false)
-        rootView = view
-        containerView = view
-
         return object : YashaViewHolder(view) {
             override fun onBind(t: YaksaItem) {
                 t as T
-                this@YashaItemDsl.onBind(t)
-                this@YashaItemDsl.onBindWithView(view, t)
+                val onBindScopeDsl = OnBindScope(view)
+                onBindScopeDsl.onBind(t)
             }
         }
+
     }
+
+
+    class OnBindScope(override val containerView: View) : LayoutContainer
 }
