@@ -1,39 +1,45 @@
 package zlc.season.yasha
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.extensions.LayoutContainer
 
-class YashaItemDsl {
+class YashaItemDsl<T> : LayoutContainer {
+    private var rootView: View? = null
+    override var containerView: View? = rootView
+
     var resId: Int = 0
-    var renderBlock: (view: View) -> Unit = {}
-    var clazz: Class<*>? = null
 
-    fun item(clazz: Class<*>) {
-        this.clazz = clazz
-    }
+    var onBind: (t: T) -> Unit = {}
+    var onBindWithView: (view: View, t: T) -> Unit = { view: View, t: T -> }
 
     /**
-     * Set item xml layout resource
+     * Set item res layout resource
      */
-    fun xml(res: Int) {
+    fun res(res: Int) {
         this.resId = res
     }
 
-    /**
-     * Render item
-     *
-     * @param block  Call when item render
-     */
-    fun render(block: (view: View) -> Unit) {
-        this.renderBlock = block
+    fun onBind(block: (t: T) -> Unit) {
+        this.onBind = block
+    }
+
+    fun onBindWithView(block: (view: View, t: T) -> Unit) {
+        this.onBindWithView = block
     }
 
     fun internalItem(viewGroup: ViewGroup): YashaViewHolder {
 
-        return object : YashaViewHolder(viewGroup, this.resId) {
+        val view = LayoutInflater.from(viewGroup.context).inflate(this.resId, viewGroup, false)
+        rootView = view
+        containerView = view
+
+        return object : YashaViewHolder(view) {
             override fun onBind(t: YaksaItem) {
-                super.onBind(t)
-                renderBlock(t)
+                t as T
+                this@YashaItemDsl.onBind(t)
+                this@YashaItemDsl.onBindWithView(view, t)
             }
         }
     }

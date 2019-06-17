@@ -1,9 +1,10 @@
 package zlc.season.yasha
 
+import android.view.View
 import android.view.ViewGroup
 import zlc.season.paging.PagingViewHolder
 
-abstract class YashaViewHolder(parent: ViewGroup, res: Int) : PagingViewHolder<YaksaItem>(parent, res) {
+abstract class YashaViewHolder(containerView: View) : PagingViewHolder<YaksaItem>(containerView) {
     fun onAttach() {
 
     }

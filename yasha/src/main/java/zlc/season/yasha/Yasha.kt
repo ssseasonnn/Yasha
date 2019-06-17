@@ -1,6 +1,7 @@
 package zlc.season.yasha
 
 import android.support.v7.widget.RecyclerView
+import zlc.season.paging.DataSource
 
 const val LINEAR_LAYOUT = 0
 const val GRID_LAYOUT = 1
@@ -17,32 +18,10 @@ const val STAGGERED_LAYOUT = 2
  *
  * @param block Item dsl.
  */
-fun RecyclerView.linear(enableDiff: Boolean = true,
-                        block: YaksaCommonStateDsl.() -> Unit) {
-    linear(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
+fun RecyclerView.linear(dataSource: DataSource<YaksaItem>, block: YaksaBaseDsl.() -> Unit) {
+    initDsl(this, LINEAR_LAYOUT, dataSource, block)
 }
 
-/**
- * Create a linear list with default Adapter and default Dsl.
- *
- * @param adapterFactory A method to create a custom Adapter.
- *
- * @param dslFactory  A method to create a custom Dsl.
- *
- * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
- *
- * @param block Item dsl.
- */
-fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.linear(
-        adapterFactory: () -> Adapter,
-        dslFactory: (Adapter) -> Dsl,
-        enableDiff: Boolean = true,
-        block: Dsl.() -> Unit) {
-
-    initDsl(this, LINEAR_LAYOUT,
-            adapterFactory, dslFactory,
-            enableDiff, block)
-}
 
 /**
  * Create a grid list with default Adapter and default Dsl.
@@ -55,32 +34,10 @@ fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.linear(
  *
  * @param block Item dsl
  */
-fun RecyclerView.grid(enableDiff: Boolean = true,
-                      block: YaksaCommonStateDsl.() -> Unit) {
-    grid(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
+fun RecyclerView.grid(dataSource: DataSource<YaksaItem>, block: YaksaBaseDsl.() -> Unit) {
+    initDsl(this, GRID_LAYOUT, dataSource, block)
 }
 
-/**
- * Create a grid list with default Adapter and default Dsl.
- *
- * @param adapterFactory A method to create a custom Adapter.
- *
- * @param dslFactory  A method to create a custom Dsl.
- *
- * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
- *
- * @param block Item dsl.
- */
-fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.grid(
-        adapterFactory: () -> Adapter,
-        dslFactory: (Adapter) -> Dsl,
-        enableDiff: Boolean = true,
-        block: Dsl.() -> Unit
-) {
-    initDsl(this, GRID_LAYOUT,
-            adapterFactory, dslFactory,
-            enableDiff, block)
-}
 
 /**
  * Create a stagger list with default Adapter and default Dsl.
@@ -93,46 +50,21 @@ fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.grid(
  *
  * @param block Item dsl
  */
-fun RecyclerView.stagger(enableDiff: Boolean = true,
-                         block: YaksaCommonStateDsl.() -> Unit) {
-    stagger(::YaksaCommonStateAdapter, ::YaksaCommonStateDsl, enableDiff, block)
+fun RecyclerView.stagger(dataSource: DataSource<YaksaItem>, block: YaksaBaseDsl.() -> Unit) {
+    initDsl(this, STAGGERED_LAYOUT, dataSource, block)
 }
 
-/**
- * Create a stagger list with default Adapter and default Dsl.
- *
- * @param adapterFactory A method to create a custom Adapter.
- *
- * @param dslFactory  A method to create a custom Dsl.
- *
- * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
- *
- * @param block Item dsl.
- */
-fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> RecyclerView.stagger(
-        adapterFactory: () -> Adapter,
-        dslFactory: (Adapter) -> Dsl,
-        enableDiff: Boolean = true,
-        block: Dsl.() -> Unit
-) {
-    initDsl(this, STAGGERED_LAYOUT,
-            adapterFactory, dslFactory,
-            enableDiff, block)
-}
 
-private fun <Adapter : YaksaBaseAdapter, Dsl : YaksaBaseDsl> initDsl(
+private fun initDsl(
         target: RecyclerView, type: Int,
-        adapterFactory: () -> Adapter,
-        dslFactory: (Adapter) -> Dsl,
-        enableDiff: Boolean = true,
-        block: Dsl.() -> Unit
+        dataSource: DataSource<YaksaItem>,
+        block: YaksaBaseDsl.() -> Unit
 ) {
-    val adapter = adapterFactory()
-    adapter.enableDiff = enableDiff
+    val adapter = YashaAdapter(dataSource)
     target.adapter = adapter
 
-    val dsl = dslFactory(adapter)
+    val dsl = YaksaBaseDsl(adapter)
     dsl.block()
     dsl.initLayoutManager(target, type)
-    dsl.configureLayoutManager(target, adapter)
+    dsl.configureLayoutManager(target)
 }

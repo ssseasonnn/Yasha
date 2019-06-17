@@ -2,13 +2,17 @@ package zlc.season.yaksaproject
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import java.util.*
+import zlc.season.paging.MultiDataSource
+import zlc.season.paging.PagingItem
+import zlc.season.yasha.YaksaItem
 import kotlin.concurrent.thread
 
 class ExampleViewModel : ViewModel() {
     private val HEADER_DATA = mutableListOf<HeaderData>()
     private val ITEM_DATA = mutableListOf<ItemData>()
     private val FOOTER_DATA = mutableListOf<FooterData>()
+
+    val dataSource = MultiDataSource<PagingItem>()
 
     private val end = 200
     private val pageSize = 20
@@ -94,15 +98,15 @@ class ExampleViewModel : ViewModel() {
 
     data class ItemData(
             val title: String
-    )
+    ) : YaksaItem
 
     data class HeaderData(
             val header: String
-    )
+    ) : YaksaItem
 
     data class FooterData(
             val footer: String
-    )
+    ) : YaksaItem
 
     sealed class State {
         class Loading : State()

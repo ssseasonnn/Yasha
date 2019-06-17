@@ -14,20 +14,20 @@ class MainActivity : AppCompatActivity() {
             startActivity(LinearExampleActivity::class.java)
         }
 
-        grid.setOnClickListener {
-            startActivity(GridExampleActivity::class.java)
-        }
-
-        stagger.setOnClickListener {
-            startActivity(StaggerExampleActivity::class.java)
-        }
-
-        nested.setOnClickListener {
-            startActivity(NestedExampleActivity::class.java)
-        }
-
-        custom.setOnClickListener {
-            startActivity(CustomAdapterAndDslActivity::class.java)
-        }
+//        grid.setOnClickListener {
+//            startActivity(GridExampleActivity::class.java)
+//        }
+//
+//        stagger.setOnClickListener {
+//            startActivity(StaggerExampleActivity::class.java)
+//        }
+//
+//        nested.setOnClickListener {
+//            startActivity(NestedExampleActivity::class.java)
+//        }
+//
+//        custom.setOnClickListener {
+//            startActivity(CustomAdapterAndDslActivity::class.java)
+//        }
     }
 }

@@ -19,12 +19,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.github.ssseasonnn:Paging:744a40f708'
+    api 'com.github.ssseasonnn:Paging:81118621'
 
     testImplementation 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-reflect:1.3.31"

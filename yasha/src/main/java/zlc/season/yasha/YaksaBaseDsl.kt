@@ -5,8 +5,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.support.v7.widget.StaggeredGridLayoutManager
+import zlc.season.paging.PagingItem
 
-open class YaksaBaseDsl(open val adapter: YaksaAdapter) {
+open class YaksaBaseDsl(val adapter: YashaAdapter) {
     private var orientation = VERTICAL
     private var reverse = false
     private var spanCount = 1
@@ -39,6 +40,14 @@ open class YaksaBaseDsl(open val adapter: YaksaAdapter) {
         this.spanCount = spanCount
     }
 
+    inline fun <reified T : PagingItem> renderItem(
+            block: YashaItemDsl<T>.() -> Unit
+    ) {
+        val dsl = YashaItemDsl<T>()
+        dsl.block()
+        adapter.builderMap[T::class.hashCode()] = dsl::internalItem
+    }
+
     open fun initLayoutManager(target: RecyclerView, type: Int) {
         target.layoutManager = when (type) {
             LINEAR_LAYOUT -> LinearLayoutManager(target.context, orientation, reverse)
@@ -48,14 +57,14 @@ open class YaksaBaseDsl(open val adapter: YaksaAdapter) {
         }
     }
 
-    open fun configureLayoutManager(target: RecyclerView, adapter: YaksaBaseAdapter) {
-        val layoutManager = target.layoutManager
-        if (layoutManager is GridLayoutManager) {
-            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return adapter.getItem(position).gridSpanSize()
-                }
-            }
-        }
+    open fun configureLayoutManager(target: RecyclerView) {
+//        val layoutManager = target.layoutManager
+//        if (layoutManager is GridLayoutManager) {
+//            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+//                override fun getSpanSize(position: Int): Int {
+//                    return adapter.getItem(position).gridSpanSize()
+//                }
+//            }
+//        }
     }
 }

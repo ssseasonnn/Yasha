@@ -11,7 +11,7 @@ group = "zlc.season"       // Maven Group ID for the artifact，一般填你唯�
 
 install {
     repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
+        // This generates POM.res with proper parameters
         pom.artifactId = "yaksa"
 
         pom {
