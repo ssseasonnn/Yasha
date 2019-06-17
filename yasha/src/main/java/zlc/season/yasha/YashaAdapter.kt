@@ -7,30 +7,27 @@ import android.view.ViewGroup
 import zlc.season.paging.DataSource
 import zlc.season.paging.MultiPagingAdapter
 import zlc.season.paging.PagingViewHolder
-import kotlin.reflect.KClass
-import kotlin.reflect.KType
 
-fun KType.isClass(cls: KClass<*>): Boolean {
-    return this.classifier == cls
-}
-
-class YaksaAdapter(dataSource: DataSource<YaksaItem>) :
+class YashaAdapter(dataSource: DataSource<YaksaItem>) :
         MultiPagingAdapter<YaksaItem, YashaViewHolder>(dataSource) {
 
-    val viewHolderMap = mutableMapOf<Int, (ViewGroup) -> YashaViewHolder>()
+    val builderMap = mutableMapOf<Int, (ViewGroup) -> YashaViewHolder>()
 
     override fun getItemViewType(position: Int): Int {
-        return getItem(position).xml()
+        return getItem(position)::class.hashCode()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, resId: Int): YashaViewHolder {
-//        return YaksaViewHolder(parent, resId)
-        return viewHolderMap[resId]!!(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YashaViewHolder {
+        val viewHolderBuilder = builderMap[viewType]
+        if (viewHolderBuilder == null) {
+            throw IllegalStateException("Not supported view type")
+        } else {
+            return viewHolderBuilder(parent)
+        }
     }
 
     override fun onBindViewHolder(holder: YashaViewHolder, position: Int) {
         holder.onBind(getItem(position))
-//        getItem(position).render(position, holder.itemView)
     }
 
     override fun onViewAttachedToWindow(holder: YashaViewHolder) {
@@ -64,12 +61,12 @@ class YaksaAdapter(dataSource: DataSource<YaksaItem>) :
     private fun specialStaggerItem(view: View, item: YaksaItem) {
         val layoutParams = view.layoutParams
         if (layoutParams != null && layoutParams is StaggeredGridLayoutManager.LayoutParams) {
-            layoutParams.isFullSpan = item.staggerFullSpan()
+//            layoutParams.isFullSpan = item.staggerFullSpan()
         }
     }
 
-    class YaksaViewHolder(parent: ViewGroup, res: Int) :
-            PagingViewHolder<YaksaItem>(parent, res) {
+    class YaksaViewHolder(containerView: View) :
+            PagingViewHolder<YaksaItem>(containerView) {
 
         fun checkPositionAndRun(block: (position: Int, view: View) -> Unit) {
             if (this.adapterPosition != NO_POSITION) {
