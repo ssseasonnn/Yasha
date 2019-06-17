@@ -6,7 +6,7 @@ import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.error_item.view.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
-import zlc.season.yaksa.*
+import zlc.season.yasha.*
 import zlc.season.yaksaproject.ExampleViewModel.State
 
 class LinearExampleActivity : ExampleActivity() {

@@ -6,8 +6,8 @@ import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.error_item.view.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
-import zlc.season.yaksa.YaksaItem
-import zlc.season.yaksa.stagger
+import zlc.season.yasha.YaksaItem
+import zlc.season.yasha.stagger
 import zlc.season.yaksaproject.ExampleViewModel.State
 import java.util.*
 

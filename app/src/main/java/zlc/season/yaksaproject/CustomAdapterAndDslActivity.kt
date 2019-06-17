@@ -5,9 +5,9 @@ import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.error_item.view.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
-import zlc.season.yaksa.YaksaPlaceholderAdapter
-import zlc.season.yaksa.YaksaPlaceholderDsl
-import zlc.season.yaksa.linear
+import zlc.season.yasha.YaksaPlaceholderAdapter
+import zlc.season.yasha.YaksaPlaceholderDsl
+import zlc.season.yasha.linear
 import zlc.season.yaksaproject.ExampleViewModel.State
 
 class CustomAdapterAndDslActivity : ExampleActivity() {

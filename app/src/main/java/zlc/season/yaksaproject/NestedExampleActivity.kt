@@ -11,8 +11,8 @@ import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
 import kotlinx.android.synthetic.main.nested_header_item.view.*
 import kotlinx.android.synthetic.main.nested_header_layout.view.*
-import zlc.season.yaksa.YaksaItem
-import zlc.season.yaksa.linear
+import zlc.season.yasha.YaksaItem
+import zlc.season.yasha.linear
 import zlc.season.yaksaproject.ExampleViewModel.State
 
 class NestedExampleActivity : ExampleActivity() {

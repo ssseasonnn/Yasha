@@ -5,9 +5,9 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_example.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import kotlinx.android.synthetic.main.list_item.view.*
-import zlc.season.yaksa.YaksaItem
-import zlc.season.yaksa.YaksaState
-import zlc.season.yaksa.grid
+import zlc.season.yasha.YaksaItem
+import zlc.season.yasha.YaksaState
+import zlc.season.yasha.grid
 import zlc.season.yaksaproject.ExampleViewModel.State
 
 class GridExampleActivity : ExampleActivity() {
