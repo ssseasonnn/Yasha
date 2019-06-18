@@ -1,70 +1,59 @@
 package zlc.season.yasha
 
 import android.support.v7.widget.RecyclerView
-import zlc.season.paging.DataSource
+import zlc.season.sange.DataSource
 
 const val LINEAR_LAYOUT = 0
 const val GRID_LAYOUT = 1
 const val STAGGERED_LAYOUT = 2
 
 /**
- * Create a linear list with default Adapter and default Dsl.
+ * Create a linear list .
  *
- * Adapter default is [zlc.season.yasha.YaksaCommonStateAdapter].
+ * @param dataSource The data source.
  *
- * Dsl default is [zlc.season.yasha.YaksaCommonStateDsl].
- *
- * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
- *
- * @param block Item dsl.
  */
-fun RecyclerView.linear(dataSource: DataSource<YaksaItem>, block: YaksaBaseDsl.() -> Unit) {
+fun RecyclerView.linear(dataSource: DataSource<YashaItem>,
+                        block: YashaDsl.() -> Unit) {
     initDsl(this, LINEAR_LAYOUT, dataSource, block)
 }
 
 
 /**
- * Create a grid list with default Adapter and default Dsl.
+ * Create a grid list .
  *
- * Adapter default is [zlc.season.yasha.YaksaCommonStateAdapter].
+ * @param dataSource The data source.
  *
- * Dsl default is [zlc.season.yasha.YaksaCommonStateDsl].
- *
- * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
- *
- * @param block Item dsl
  */
-fun RecyclerView.grid(dataSource: DataSource<YaksaItem>, block: YaksaBaseDsl.() -> Unit) {
+fun RecyclerView.grid(dataSource: DataSource<YashaItem>,
+                      block: YashaDsl.() -> Unit) {
     initDsl(this, GRID_LAYOUT, dataSource, block)
 }
 
 
 /**
- * Create a stagger list with default Adapter and default Dsl.
+ * Create a stagger list .
  *
- * Adapter default is [zlc.season.yasha.YaksaCommonStateAdapter].
+ * @param dataSource The data source.
  *
- * Dsl default is [zlc.season.yasha.YaksaCommonStateDsl].
- *
- * @param enableDiff If true，yaksa will use [android.support.v7.util.DiffUtil], default is true.
- *
- * @param block Item dsl
  */
-fun RecyclerView.stagger(dataSource: DataSource<YaksaItem>, block: YaksaBaseDsl.() -> Unit) {
+fun RecyclerView.stagger(dataSource: DataSource<YashaItem>,
+                         block: YashaDsl.() -> Unit) {
     initDsl(this, STAGGERED_LAYOUT, dataSource, block)
 }
 
 
 private fun initDsl(
-        target: RecyclerView, type: Int,
-        dataSource: DataSource<YaksaItem>,
-        block: YaksaBaseDsl.() -> Unit
+        target: RecyclerView,
+        type: Int,
+        dataSource: DataSource<YashaItem>,
+        block: YashaDsl.() -> Unit
 ) {
     val adapter = YashaAdapter(dataSource)
-    target.adapter = adapter
 
-    val dsl = YaksaBaseDsl(adapter)
+    val dsl = YashaDsl(adapter)
     dsl.block()
     dsl.initLayoutManager(target, type)
-    dsl.configureLayoutManager(target)
+
+    target.adapter = adapter
 }

@@ -1,7 +1,7 @@
 ![](https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/yaksa.png)
 
 
-# Yaksa
+# Yasha
 
 一个轻量级的RecyclerView工具，让你像Javascript一样渲染Item.
 

@@ -6,7 +6,7 @@
 //import kotlinx.android.synthetic.main.error_item.view.*
 //import kotlinx.android.synthetic.main.header_item.view.*
 //import kotlinx.android.synthetic.main.list_item.view.*
-//import zlc.season.yasha.YaksaItem
+//import zlc.season.yasha.YashaItem
 //import zlc.season.yasha.stagger
 //import zlc.season.yaksaproject.ExampleViewModel.State
 //import java.util.*
@@ -87,7 +87,7 @@
 //        }
 //    }
 //
-//    private class HeaderItem(val title: String) : YaksaItem {
+//    private class HeaderItem(val title: String) : YashaItem {
 //        override fun render(position: Int, view: View) {
 //            view.header_item_tv.text = title
 //            view.setOnClickListener { }
@@ -102,7 +102,7 @@
 //        }
 //    }
 //
-//    private class ListItem(val str: String, val height: Int) : YaksaItem {
+//    private class ListItem(val str: String, val height: Int) : YashaItem {
 //        override fun render(position: Int, view: View) {
 //            view.layoutParams.height = height
 //            view.list_item_tv.text = str

@@ -11,7 +11,7 @@
 //import kotlinx.android.synthetic.main.list_item.view.*
 //import kotlinx.android.synthetic.main.nested_header_item.view.*
 //import kotlinx.android.synthetic.main.nested_header_layout.view.*
-//import zlc.season.yasha.YaksaItem
+//import zlc.season.yasha.YashaItem
 //import zlc.season.yasha.linear
 //import zlc.season.yaksaproject.ExampleViewModel.State
 //
@@ -98,7 +98,7 @@
 //        }
 //    }
 //
-//    private class NestedHeaderItem(val data: List<String>) : YaksaItem {
+//    private class NestedHeaderItem(val data: List<String>) : YashaItem {
 //        var scrollState = ScrollState(0, 0)
 //
 //        override fun res(): Int {

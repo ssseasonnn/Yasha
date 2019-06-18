@@ -1,80 +1,67 @@
 package zlc.season.yasha
 
-import android.support.v7.widget.RecyclerView.NO_POSITION
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
-import android.util.Log
-import android.view.View
 import android.view.ViewGroup
-import zlc.season.paging.DataSource
-import zlc.season.paging.MultiPagingAdapter
-import zlc.season.paging.PagingViewHolder
+import zlc.season.sange.DataSource
+import zlc.season.sange.MultiPagingAdapter
 
-class YashaAdapter(dataSource: DataSource<YaksaItem>) :
-        MultiPagingAdapter<YaksaItem, YashaViewHolder>(dataSource) {
 
-    val builderMap = mutableMapOf<Int, (ViewGroup) -> YashaViewHolder>()
+class YashaAdapter(dataSource: DataSource<YashaItem>) :
+        MultiPagingAdapter<YashaItem, YashaViewHolder>(dataSource) {
+
+    private val itemBuilderMap = mutableMapOf<Int, YashaItemBuilder>()
+
+    fun setItemBuilder(key: Int, value: YashaItemBuilder) {
+        itemBuilderMap[key] = value
+    }
+
+    private fun itemBuilder(position: Int): YashaItemBuilder? {
+        return itemBuilderMap[getItemViewType(position)]
+    }
 
     override fun getItemViewType(position: Int): Int {
         return getItem(position)::class.hashCode()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YashaViewHolder {
-//        Log.d("Yasha","on create viewholder")
-        val viewHolderBuilder = builderMap[viewType]
-        if (viewHolderBuilder == null) {
+        val itemBuilder = itemBuilderMap[viewType]
+        if (itemBuilder == null) {
             throw IllegalStateException("Not supported view type")
         } else {
-            return viewHolderBuilder(parent)
+            return itemBuilder.viewHolder(parent)
         }
-    }
-
-    override fun onBindViewHolder(holder: YashaViewHolder, position: Int) {
-//        Log.d("Yasha","on bind viewholder")
-        holder.onBind(getItem(position))
     }
 
     override fun onViewAttachedToWindow(holder: YashaViewHolder) {
         super.onViewAttachedToWindow(holder)
-        holder.onAttach()
-//        holder.checkPositionAndRun { position, view ->
-//            getItem(position).onItemAttachWindow(position, view)
-//            /**
-//             * special handle stagger layout
-//             */
-//            specialStaggerItem(view, getItem(position))
-//        }
+        specialStaggeredGridLayout(holder)
     }
 
-    override fun onViewDetachedFromWindow(holder: YashaViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        holder.onDetach()
-//        holder.checkPositionAndRun { position, view ->
-//            getItem(position).onItemDetachWindow(position, view)
-//        }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        val layoutManager = recyclerView.layoutManager
+
+        specialGridLayout(layoutManager)
     }
 
-    override fun onViewRecycled(holder: YashaViewHolder) {
-        super.onViewRecycled(holder)
-        holder.onRecycled()
-//        holder.checkPositionAndRun { position, view ->
-//            getItem(position).onItemRecycled(position, view)
-//        }
-    }
-
-    private fun specialStaggerItem(view: View, item: YaksaItem) {
-        val layoutParams = view.layoutParams
-        if (layoutParams != null && layoutParams is StaggeredGridLayoutManager.LayoutParams) {
-//            layoutParams.isFullSpan = item.staggerFullSpan()
+    private fun specialGridLayout(layoutManager: RecyclerView.LayoutManager?) {
+        if (layoutManager is GridLayoutManager) {
+            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return itemBuilder(position)?.gridSpanSize ?: 1
+                }
+            }
         }
     }
 
-    class YaksaViewHolder(containerView: View) :
-            PagingViewHolder<YaksaItem>(containerView) {
-
-        fun checkPositionAndRun(block: (position: Int, view: View) -> Unit) {
-            if (this.adapterPosition != NO_POSITION) {
-                block(this.adapterPosition, this.itemView)
-            }
+    private fun specialStaggeredGridLayout(holder: YashaViewHolder) {
+        val layoutParams = holder.itemView.layoutParams
+        if (layoutParams != null && layoutParams is StaggeredGridLayoutManager.LayoutParams) {
+            val position = holder.adapterPosition
+            layoutParams.isFullSpan = itemBuilder(position)?.staggerFullSpan ?: false
         }
     }
 }

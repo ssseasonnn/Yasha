@@ -1,16 +1,16 @@
 package zlc.season.yaksaproject
 
-import zlc.season.yasha.YaksaItem
+import zlc.season.yasha.YashaItem
 
 data class ItemData(
         val index: Int,
         val title: String
-) : YaksaItem
+) : YashaItem
 
 data class HeaderData(
         val header: String
-) : YaksaItem
+) : YashaItem
 
 data class FooterData(
         val footer: String
-) : YaksaItem
+) : YashaItem

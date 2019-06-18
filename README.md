@@ -1,7 +1,7 @@
 ![](https://raw.githubusercontent.com/ssseasonnn/Yaksa/master/yaksa.png)
 
 
-# Yaksa
+# Yasha
 
 A lightweight RecyclerView tool that lets you render items like Javascript.
 
