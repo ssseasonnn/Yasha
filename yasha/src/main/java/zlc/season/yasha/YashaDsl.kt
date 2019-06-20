@@ -12,15 +12,6 @@ class YashaDsl(val adapter: YashaAdapter) {
     private var reverse = false
     private var spanCount = 1
 
-    init {
-        renderItem<YashaStateItem> {
-            res(R.layout.yasha_state_view_holder)
-            onBind {
-                state_view.setState(it)
-            }
-        }
-    }
-
     /**
      * Set the orientation
      *
@@ -55,11 +46,27 @@ class YashaDsl(val adapter: YashaAdapter) {
     }
 
     fun initLayoutManager(target: RecyclerView, type: Int) {
+        setDefaultStateItem()
+
         target.layoutManager = when (type) {
             LINEAR_LAYOUT -> LinearLayoutManager(target.context, orientation, reverse)
             GRID_LAYOUT -> GridLayoutManager(target.context, spanCount, orientation, reverse)
             STAGGERED_LAYOUT -> StaggeredGridLayoutManager(spanCount, orientation)
             else -> throw IllegalStateException("This should never happen!")
+        }
+    }
+
+    private fun setDefaultStateItem() {
+        renderItem<YashaStateItem> {
+            res(R.layout.yasha_state_view_holder)
+
+            onBind {
+                state_view.setState(it)
+            }
+
+            gridSpanSize(spanCount)
+
+            staggerFullSpan(true)
         }
     }
 }

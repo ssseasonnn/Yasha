@@ -1,11 +1,10 @@
 package zlc.season.yaksaproject
 
 import android.arch.lifecycle.MutableLiveData
-import zlc.season.sange.MultiDataSource
-import zlc.season.sange.SangeItem
+import zlc.season.yasha.YashaDataSource
 import zlc.season.yasha.YashaItem
 
-class DemoDataSource : MultiDataSource<YashaItem>() {
+class DemoDataSource : YashaDataSource() {
     val refresh = MutableLiveData<Boolean>()
     var page = 0
 
@@ -56,10 +55,5 @@ class DemoDataSource : MultiDataSource<YashaItem>() {
         }
 
         loadCallback.setResult(items)
-    }
-
-    override fun onStateChanged(newState: Int) {
-        super.onStateChanged(newState)
-        setState(StateItem(newState, ::retry))
     }
 }

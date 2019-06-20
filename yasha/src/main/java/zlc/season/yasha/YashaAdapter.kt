@@ -17,10 +17,6 @@ class YashaAdapter(dataSource: DataSource<YashaItem>) :
         itemBuilderMap[key] = value
     }
 
-    private fun itemBuilder(position: Int): YashaItemBuilder? {
-        return itemBuilderMap[getItemViewType(position)]
-    }
-
     override fun getItemViewType(position: Int): Int {
         return getItem(position)::class.hashCode()
     }
@@ -39,7 +35,6 @@ class YashaAdapter(dataSource: DataSource<YashaItem>) :
         specialStaggeredGridLayout(holder)
     }
 
-
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         val layoutManager = recyclerView.layoutManager
@@ -47,11 +42,12 @@ class YashaAdapter(dataSource: DataSource<YashaItem>) :
         specialGridLayout(layoutManager)
     }
 
+
     private fun specialGridLayout(layoutManager: RecyclerView.LayoutManager?) {
         if (layoutManager is GridLayoutManager) {
             layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    return itemBuilder(position)?.gridSpanSize ?: 1
+                    return getItemBuilder(position)?.gridSpanSize ?: 1
                 }
             }
         }
@@ -61,7 +57,11 @@ class YashaAdapter(dataSource: DataSource<YashaItem>) :
         val layoutParams = holder.itemView.layoutParams
         if (layoutParams != null && layoutParams is StaggeredGridLayoutManager.LayoutParams) {
             val position = holder.adapterPosition
-            layoutParams.isFullSpan = itemBuilder(position)?.staggerFullSpan ?: false
+            layoutParams.isFullSpan = getItemBuilder(position)?.staggerFullSpan ?: false
         }
+    }
+
+    private fun getItemBuilder(position: Int): YashaItemBuilder? {
+        return itemBuilderMap[getItemViewType(position)]
     }
 }
