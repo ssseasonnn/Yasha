@@ -30,83 +30,27 @@ dependencies {
 Step 3. Usage
 
 
-Render a Linear list:
-
 ```kotlin
-example_rv.linear {
-    renderHeaders(mutableListOf("Header1", "Header2")) {
-        HeaderItem(it)
-    }
-    
-    renderFootersByDsl(mutableListOf("Footer1", "Footer2")) { text ->
-        xml(R.layout.header_item)
-        render { view ->
-            view.header_item_tv.text = text
-            view.setOnClickListener { }
+recycler_view.linear(demoViewModel.dataSource) {
+    renderItem<NormalItem> {
+        res(R.layout.view_holder_normal)
+        onBind {
+            tv_normal_content.text = it.toString()
         }
     }
-    
-    renderItemsByDsl(dataSource.list) { item ->
-        xml(R.layout.list_item)
-        render { view ->
-            view.list_item_tv.text = item.title
-            view.setOnClickListener { toast("Item Clicked") }
+    renderItem<HeaderItem> {
+        res(R.layout.view_holder_header)
+        onBind {
+            tv_header_content.text = it.toString()
         }
     }
-}
-```
-
-Render a Grid list:
-
-```kotlin
-example_rv.grid {
-    spanCount(SPAN_COUNT)
-    
-    renderHeaders(mutableListOf("Header1", "Header2")) {
-        HeaderItem(it)
-    }
-    
-    renderFootersByDsl(mutableListOf("Footer1", "Footer2")) { text ->
-        xml(R.layout.header_item)
-        render { view ->
-            view.header_item_tv.text = text
-            view.setOnClickListener { }
+    renderItem<FooterItem> {
+        res(R.layout.view_holder_footer)
+        onBind {
+            tv_footer_content.text = it.toString()
         }
     }
-    
-    renderItemsByDsl(dataSource.list) { item ->
-        xml(R.layout.list_item)
-        render { view ->
-            view.list_item_tv.text = item.title
-            view.setOnClickListener { toast("Item Clicked") }
-        }
-    }
-}
-
-```
-
-Waterfall flow? No problem:
-
-```kotlin
-example_rv.stagger {
-    spanCount(3)
-    
-    renderHeaders(mutableListOf("Header1", "Header2")) {
-        HeaderItem(it)
-    }
-    
-    renderFootersByDsl(mutableListOf("Footer1", "Footer2")) { text ->
-        xml(R.layout.header_item)
-        render { view ->
-            view.header_item_tv.text = text
-            view.setOnClickListener { }
-        }
-    }
-    
-    renderItems(dataSource.list) { item ->
-        ListItem(item.title, HEIGHTS[Random().nextInt(HEIGHTS.size)].px)
-    }
-}
+}    
 ```
 
 
