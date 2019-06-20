@@ -43,34 +43,6 @@ class DemoActivity : AppCompatActivity() {
                     tv_footer_content.text = it.toString()
                 }
             }
-
-            renderItem<StateItem> {
-                res(R.layout.view_holder_state)
-                onBind {
-                    tv_state_content.setOnClickListener { _ ->
-                        it.retry()
-                    }
-
-                    when {
-                        it.state == FetchingState.FETCHING -> {
-                            state_loading.visibility = View.VISIBLE
-                            tv_state_content.visibility = View.GONE
-                        }
-                        it.state == FetchingState.FETCHING_ERROR -> {
-                            state_loading.visibility = View.GONE
-                            tv_state_content.visibility = View.VISIBLE
-                        }
-                        it.state == FetchingState.DONE_FETCHING -> {
-                            state_loading.visibility = View.GONE
-                            tv_state_content.visibility = View.GONE
-                        }
-                        else -> {
-                            state_loading.visibility = View.GONE
-                            tv_state_content.visibility = View.GONE
-                        }
-                    }
-                }
-            }
         }
 
 

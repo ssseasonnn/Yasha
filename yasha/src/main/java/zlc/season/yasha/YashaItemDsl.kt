@@ -3,15 +3,17 @@ package zlc.season.yasha
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.extensions.LayoutContainer
 
 class YashaItemDsl<T> {
     private var resId: Int = 0
-    private var onBind: YashaViewHolderScope.(t: T) -> Unit = {}
-    private var onBindPayload: YashaViewHolderScope.(t: T, payload: List<Any>) -> Unit = { _: T, _: List<Any> -> }
-    private var onAttach: YashaViewHolderScope.(t: T) -> Unit = {}
-    private var onDetach: YashaViewHolderScope.(t: T) -> Unit = {}
-    private var onRecycled: YashaViewHolderScope.(t: T) -> Unit = {}
+    private var view: View? = null
+
+    private var onBind: YashaVHScope.(t: T) -> Unit = {}
+    private var onBindPayload: YashaVHScope.(t: T, payload: List<Any>) -> Unit = { _: T, _: List<Any> -> }
+
+    private var onAttach: YashaVHScope.(t: T) -> Unit = {}
+    private var onDetach: YashaVHScope.(t: T) -> Unit = {}
+    private var onRecycled: YashaVHScope.(t: T) -> Unit = {}
 
     private var gridSpanSize = 1
     private var staggerFullSpan = false
@@ -23,23 +25,27 @@ class YashaItemDsl<T> {
         this.resId = res
     }
 
-    fun onBind(block: YashaViewHolderScope.(t: T) -> Unit) {
+    fun view(view: View) {
+        this.view = view
+    }
+
+    fun onBind(block: YashaVHScope.(t: T) -> Unit) {
         this.onBind = block
     }
 
-    fun onBindPayload(block: YashaViewHolderScope.(t: T, payload: List<Any>) -> Unit) {
+    fun onBindPayload(block: YashaVHScope.(t: T, payload: List<Any>) -> Unit) {
         this.onBindPayload = block
     }
 
-    fun onAttach(block: YashaViewHolderScope.(t: T) -> Unit) {
+    fun onAttach(block: YashaVHScope.(t: T) -> Unit) {
         this.onAttach = block
     }
 
-    fun onDetach(block: YashaViewHolderScope.(t: T) -> Unit) {
+    fun onDetach(block: YashaVHScope.(t: T) -> Unit) {
         this.onDetach = block
     }
 
-    fun onRecycled(block: YashaViewHolderScope.(t: T) -> Unit) {
+    fun onRecycled(block: YashaVHScope.(t: T) -> Unit) {
         this.onRecycled = block
     }
 
@@ -75,11 +81,11 @@ class YashaItemDsl<T> {
 
     @Suppress("UNCHECKED_CAST")
     private fun builder(viewGroup: ViewGroup): YashaViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
+        val view = this.view ?: LayoutInflater.from(viewGroup.context)
                 .inflate(this.resId, viewGroup, false)
 
         return object : YashaViewHolder(view) {
-            var viewHolderScope = YashaViewHolderScope(view)
+            var viewHolderScope = YashaVHScope(view)
 
             override fun onBind(t: YashaItem) {
                 t as T
