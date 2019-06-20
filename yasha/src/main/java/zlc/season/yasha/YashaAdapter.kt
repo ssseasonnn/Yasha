@@ -5,11 +5,11 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.ViewGroup
 import zlc.season.sange.DataSource
-import zlc.season.sange.MultiPagingAdapter
+import zlc.season.sange.SangeMultiAdapter
 
 
 class YashaAdapter(dataSource: DataSource<YashaItem>) :
-        MultiPagingAdapter<YashaItem, YashaViewHolder>(dataSource) {
+        SangeMultiAdapter<YashaItem, YashaViewHolder>(dataSource) {
 
     private val itemBuilderMap = mutableMapOf<Int, YashaItemBuilder>()
 

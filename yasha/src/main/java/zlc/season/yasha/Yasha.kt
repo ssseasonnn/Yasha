@@ -18,7 +18,6 @@ fun RecyclerView.linear(dataSource: DataSource<YashaItem>,
     initDsl(this, LINEAR_LAYOUT, dataSource, block)
 }
 
-
 /**
  * Create a grid list .
  *
@@ -30,7 +29,6 @@ fun RecyclerView.grid(dataSource: DataSource<YashaItem>,
     initDsl(this, GRID_LAYOUT, dataSource, block)
 }
 
-
 /**
  * Create a stagger list .
  *
@@ -41,7 +39,6 @@ fun RecyclerView.stagger(dataSource: DataSource<YashaItem>,
                          block: YashaDsl.() -> Unit) {
     initDsl(this, STAGGERED_LAYOUT, dataSource, block)
 }
-
 
 private fun initDsl(
         target: RecyclerView,

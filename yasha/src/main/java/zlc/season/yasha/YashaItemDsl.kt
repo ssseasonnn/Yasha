@@ -7,11 +7,11 @@ import kotlinx.android.extensions.LayoutContainer
 
 class YashaItemDsl<T> {
     private var resId: Int = 0
-    private var onBind: OnBindScope.(t: T) -> Unit = {}
-    private var onBindPayload: OnBindScope.(t: T, payload: List<Any>) -> Unit = { _: T, _: List<Any> -> }
-    private var onAttach: OnBindScope.(t: T) -> Unit = {}
-    private var onDetach: OnBindScope.(t: T) -> Unit = {}
-    private var onRecycled: OnBindScope.(t: T) -> Unit = {}
+    private var onBind: YashaViewHolderScope.(t: T) -> Unit = {}
+    private var onBindPayload: YashaViewHolderScope.(t: T, payload: List<Any>) -> Unit = { _: T, _: List<Any> -> }
+    private var onAttach: YashaViewHolderScope.(t: T) -> Unit = {}
+    private var onDetach: YashaViewHolderScope.(t: T) -> Unit = {}
+    private var onRecycled: YashaViewHolderScope.(t: T) -> Unit = {}
 
     private var gridSpanSize = 1
     private var staggerFullSpan = false
@@ -23,23 +23,23 @@ class YashaItemDsl<T> {
         this.resId = res
     }
 
-    fun onBind(block: OnBindScope.(t: T) -> Unit) {
+    fun onBind(block: YashaViewHolderScope.(t: T) -> Unit) {
         this.onBind = block
     }
 
-    fun onBindPayload(block: OnBindScope.(t: T, payload: List<Any>) -> Unit) {
+    fun onBindPayload(block: YashaViewHolderScope.(t: T, payload: List<Any>) -> Unit) {
         this.onBindPayload = block
     }
 
-    fun onAttach(block: OnBindScope.(t: T) -> Unit) {
+    fun onAttach(block: YashaViewHolderScope.(t: T) -> Unit) {
         this.onAttach = block
     }
 
-    fun onDetach(block: OnBindScope.(t: T) -> Unit) {
+    fun onDetach(block: YashaViewHolderScope.(t: T) -> Unit) {
         this.onDetach = block
     }
 
-    fun onRecycled(block: OnBindScope.(t: T) -> Unit) {
+    fun onRecycled(block: YashaViewHolderScope.(t: T) -> Unit) {
         this.onRecycled = block
     }
 
@@ -79,34 +79,32 @@ class YashaItemDsl<T> {
                 .inflate(this.resId, viewGroup, false)
 
         return object : YashaViewHolder(view) {
-            var onBindScope = OnBindScope(view)
+            var viewHolderScope = YashaViewHolderScope(view)
 
             override fun onBind(t: YashaItem) {
                 t as T
-                onBindScope.onBind(t)
+                viewHolderScope.onBind(t)
             }
 
             override fun onBindPayload(t: YashaItem, payload: MutableList<Any>) {
                 t as T
-                onBindScope.onBindPayload(t, payload)
+                viewHolderScope.onBindPayload(t, payload)
             }
 
             override fun onAttach(t: YashaItem) {
                 t as T
-                onBindScope.onAttach(t)
+                viewHolderScope.onAttach(t)
             }
 
             override fun onDetach(t: YashaItem) {
                 t as T
-                onBindScope.onDetach(t)
+                viewHolderScope.onDetach(t)
             }
 
             override fun onRecycled(t: YashaItem) {
                 t as T
-                onBindScope.onRecycled(t)
+                viewHolderScope.onRecycled(t)
             }
         }
     }
-
-    class OnBindScope(override val containerView: View) : LayoutContainer
 }

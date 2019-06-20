@@ -2,18 +2,20 @@ package zlc.season.yasha
 
 import android.view.View
 import android.view.ViewGroup
-import zlc.season.sange.PagingItem
-import zlc.season.sange.PagingViewHolder
+import kotlinx.android.extensions.LayoutContainer
+import zlc.season.sange.SangeItem
+import zlc.season.sange.SangeViewHolder
 
 /**
  * Item interface
  */
-interface YashaItem : PagingItem
+interface YashaItem : SangeItem
 
 
 open class YashaViewHolder(containerView: View) :
-        PagingViewHolder<YashaItem>(containerView)
+        SangeViewHolder<YashaItem>(containerView)
 
+class YashaViewHolderScope(override val containerView: View) : LayoutContainer
 
 class YashaItemBuilder(
         val gridSpanSize: Int,
