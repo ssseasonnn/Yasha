@@ -5,11 +5,21 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.VERTICAL
 import android.support.v7.widget.StaggeredGridLayoutManager
+import kotlinx.android.synthetic.main.yasha_state_view_holder.*
 
 class YashaDsl(val adapter: YashaAdapter) {
     private var orientation = VERTICAL
     private var reverse = false
     private var spanCount = 1
+
+    init {
+        renderItem<YashaStateItem> {
+            res(R.layout.yasha_state_view_holder)
+            onBind {
+                state_view.setState(it)
+            }
+        }
+    }
 
     /**
      * Set the orientation

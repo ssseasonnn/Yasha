@@ -1,13 +1,10 @@
 package zlc.season.yasha
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 
 class YashaItemDsl<T> {
     private var resId: Int = 0
-    private var view: View? = null
-
     private var onBind: YashaVHScope.(t: T) -> Unit = {}
     private var onBindPayload: YashaVHScope.(t: T, payload: List<Any>) -> Unit = { _: T, _: List<Any> -> }
 
@@ -23,10 +20,6 @@ class YashaItemDsl<T> {
      */
     fun res(res: Int) {
         this.resId = res
-    }
-
-    fun view(view: View) {
-        this.view = view
     }
 
     fun onBind(block: YashaVHScope.(t: T) -> Unit) {
@@ -81,7 +74,7 @@ class YashaItemDsl<T> {
 
     @Suppress("UNCHECKED_CAST")
     private fun builder(viewGroup: ViewGroup): YashaViewHolder {
-        val view = this.view ?: LayoutInflater.from(viewGroup.context)
+        val view = LayoutInflater.from(viewGroup.context)
                 .inflate(this.resId, viewGroup, false)
 
         return object : YashaViewHolder(view) {
