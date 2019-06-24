@@ -1,8 +1,8 @@
 package zlc.season.yasha
 
-import zlc.season.sange.MultiDataSource
+import zlc.season.sange.SangeDataSource
 
-open class YashaDataSource : MultiDataSource<YashaItem>() {
+open class YashaDataSource : SangeDataSource<YashaItem>() {
     override fun onStateChanged(newState: Int) {
         setState(YashaStateItem(newState, ::retry))
     }

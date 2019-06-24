@@ -2,26 +2,26 @@
 
 [![](https://jitpack.io/v/ssseasonnn/Yasha.svg)](https://jitpack.io/#ssseasonnn/Yasha)
 
-# Yasha
+# Yasha (夜叉)
 
 *Read this in other languages: [中文](README.zh.md), [English](README.md)*
 
-A lightweight library that quickly implements RecyclerView paging loading.
+一个快速渲染RecyclerView的轻量级库.
 
 
-> Item introduction：
+> 物品介绍：
 >
-> Sange is an extremely accurate weapon. It has incredible spirituality, as if it would find its own weaknesses to attack.
+> 散华是一件异常精准的武器。它具有不可思议的灵性，就好像它会自己寻找对手的弱点进行攻击。
 >
-> Increase the power of 16.
+> 增加16点的力量。
 >
-> Increase the attack power by 10.
+> 增加10点的攻击力。
 >
-> Disabled (passive): There is a 15% chance that the target will be disabled in the attack. The disability effect reduces the target's movement speed by 20% for 4 sec.
+> 残废（被动）：在攻击中有15%的几率使目标残废。残废效果降低目标20%的移动速度，持续4秒。
 
 ## Prepare
 
-1. Add jitpack to build.gradle
+1. 添加jitpack到build.gradle
 ```gradle
 allprojects {
     repositories {
@@ -31,11 +31,11 @@ allprojects {
 }
 ```
 
-2. Add dependency
+2. 添加依赖
 
 ```gradle
 dependencies {
-    // Replace xyz with a specific version number, for example 1.0.0
+    // 替换 xyz 为具体的版本号, 例如 1.0.0
 	implementation 'com.github.ssseasonnn:Yasha:xyz'
 }
 ```
@@ -44,59 +44,59 @@ dependencies {
 
 ### First Blood
 
-- The function of the Sange core is **DataSource**, which makes it easy to initialize and page load data in a few simple steps.
+- 散华核心的功能是**DataSource**, 利用它,只需几个简单的步骤,即可轻松实现数据的初始化及分页加载.
 
-    Before that, we have to define our data types first, remember to implement the **SangeItem** interface. For example:
-
+    在此之前, 我们得先定义好我们的数据类型,记得实现**SangeItem**接口 例如:
+    
     ```kotlin
     class NormalItem(val number: Int): SangeItem
-    ```
+    ```  
 
-- Next create your own DataSource.
+- 接下来创建你自己的DataSource.
 
-    As shown below, we inherit **MultiDataSource** and treat **SangeItem** as a generic parameter, then implement the **loadInitial** and **loadAfter** methods:
+    如下所示,我们继承了**MultiDataSource**, 并把**SangeItem**当作泛型参数, 然后实现**loadInitial**和**loadAfter**方法:
 
     ```kotlin
     class DemoDataSource : MultiDataSource<SangeItem>() {
-
+    
         override fun loadInitial(loadCallback: LoadCallback<SangeItem>) {
-
-            //loadInitial will be called in the io thread, so there is no need to worry about any time-consuming operations
+    
+            //loadInitial 将会在子线程中调用, 因此无需担心任何耗时操作
             Thread.sleep(2000)
-
-            // loading...
+    
+            // 加载数据
             val items = mutableListOf<SangeItem>()
             for (i in 0 until 10) {
                 items.add(NormalItem(i))
             }
-
-            //set loading result
+    
+            //将加载之后的数据传递给 LoadCallback, 即可轻松更新RecyclerView
             loadCallback.setResult(items)
         }
-
+    
         override fun loadAfter(loadCallback: LoadCallback<SangeItem>) {
-            //loadAfter will be called in the io thread
+            //loadAfter 将会在子线程中调用, 因此无需担心任何耗时操作
             Thread.sleep(2000)
-
+    
             val items = mutableListOf<SangeItem>()
             for (i in page * 10 until (page + 1) * 10) {
                 items.add(NormalItem(i))
             }
-
+    
             loadCallback.setResult(items)
         }
     }
-
+    
     ```
 
-    Both the loadInitial and loadAfter methods will be called in the child thread, so there is no need to worry about any time-consuming operations in both methods.
+    loadInitial和loadAfter方法都将在子线程中调用, 因此无需担心在这两个方法中做的任何耗时操作.
 
-    After the data is loaded, just call LoadCallback's setResult(list) method, and Sange will do everything else for you.
-    Including thread switching, notification interface updates, etc., you need to do, just focus on the loading of data.
+    数据加载完成后, 只需调用LoadCallback的setResult(list)方法即可, 散华会替你做好其他的一切工作,
+    包括线程切换,通知界面更新等, 你需要做的, 仅仅只是关注于数据的加载.
+    
+- 接下来创建一个用于展示的ViewHolder吧, 通过继承散华提供的**SangeViewHolder**, 你可以省略很多其他繁琐的工作.
 
-- Next, create a ViewHolder for display. By inheriting the **SangeViewHolder** provided by the Sange, you can omit many other tedious tasks.
-
-    E.g:
+    例如:
 
     ```kotlin
     class NormalViewHolder(containerView: View) :
@@ -109,9 +109,9 @@ dependencies {
     }
     ```
 
-- The next step is to create your own Adapter. By inheriting the **SangeMultiAdapter** provided by Sange, you can easily combine the DataSources.
+- 下一步就是创建一个你自己的Adapter,通过继承散华提供的**SangeMultiAdapter**, 你可以轻松的将DataSource结合起来.
 
-    E.g:
+    例如:
 
     ```kotlin
     class DemoAdapter(dataSource: DataSource<SangeItem>) :
@@ -123,29 +123,29 @@ dependencies {
     }
     ```
 
-- Finally, associate the RecyclerView with the Adapter:
+- 最后, 将RecyclerView和Adapter关联起来:
 
     ```kotlin
     recycler_view.layoutManager = LinearLayoutManager(this)
     recycler_view.adapter = DemoAdapter(DemoDataSource())
     ```
 
-    That's it, you don't need to care about the logic of paging, you just need to focus on what you really should pay attention to: Load the data, and leave it to the Sange!
+    就是这样, 你无需关心分页的逻辑, 你只需要专注于你真正应该关注的东西: 加载数据, 其他的就交给散华吧!
 
 ### Double Kill
 
-So far we have all gone well, but it seems that we lack the status display of page load. Let's implement it.
+到目前为止我们一切进展很顺利, 可是似乎缺少了分页加载的状态显示, 下面来实现它吧.
 
-- In order to display the loaded state, we first create a data type that represents the state:
+- 为了显示加载的状态,我们先创建一个表示状态的数据类型:
 
     ```kotlin
     class StateItem(val state: Int, val retry: () -> Unit) : SangeItem {
         override fun viewType() = STATE
     }
     ```
-    > As you can see, we also implemented the **SangeItem** interface and implemented the viewType method, which returns a new Type type in the method.
+    > 如你所见, 我们同样实现了**SangeItem**接口, 并且实现了viewType方法, 在该方法中返回了一个新的Type类型
 
-- Then we slightly modify the DataSource, we implement an additional method: **onStateChanged(newState)**.
+- 接着我们稍微改造一下DataSource,我们实现一个额外的方法: **onStateChanged(newState)**.
 
     ```kotlin
     class DemoDataSource : MultiDataSource<SangeItem>() {
@@ -165,12 +165,12 @@ So far we have all gone well, but it seems that we lack the status display of pa
     }
     ```
 
-    This method will be called at different stages of the page load to tell us the current state of the DataSource, such as loading, loading failure, loading success, etc.
-    By implementing this method, we can control the display of the loading state and customize the style of the display.
+    这个方法会在分页加载的不同阶段来调用,用来告诉我们目前DataSource的状态, 例如加载中, 加载失败, 加载成功等.
+    通过实现这个方法, 我们便可以自行控制加载状态的显示与否, 以及对显示的样式进行定制.
 
-    As shown above, we have added a Data Item item to represent the status.
+    如上所示, 我们添加了一个用来表示状态的数据Item项.
 
-- Again, we need a ViewHolder that renders the State:
+- 同样的, 我们需要一个渲染State的ViewHolder:
 
     ```kotlin
     class StateViewHolder(containerView: View) :
@@ -206,7 +206,7 @@ So far we have all gone well, but it seems that we lack the status display of pa
     }
     ```
 
-- Finally, the loading status is displayed.
+- 最后,显示加载状态
 
     ```kotlin
     class DemoAdapter(dataSource: DataSource<SangeItem>) :
@@ -225,16 +225,14 @@ So far we have all gone well, but it seems that we lack the status display of pa
 
 ### Triple Kill
 
-- Refresh and retry
+- 刷新与重试
 
-    The Sange DataSource provides **invalidate()** and **retry()** methods.
-    When the data needs to be refreshed, the **invalidate()** method can be called.
-    When the load fails and needs to be retried, it is called. **retry()** method.
+    散华的DataSource提供了 **invalidate()** 和 **retry()** 方法, 当需要刷新数据时, 调用 **invalidate()** 方法即可,
+    当加载失败需要重试时, 调用 **retry()** 方法即可
 
-- Custom DiffCallback
+- 定制DiffCallback
 
-    Sange uses DiffUtil to update RecyclerView efficiently.
-    You can change the comparison logic according to your actual situation:
+    散华使用了DiffUtil来高效的更新RecyclerView,你可以根据你的实际情况来改变比较逻辑:
 
     ```kotlin
     class NormalItem(val i: Int) : SangeItem {
@@ -256,9 +254,9 @@ So far we have all gone well, but it seems that we lack the status display of pa
     ```
 
 ## END
-
+    
 ![](https://github.com/ssseasonnn/Sange/raw/master/multi.gif)
-
+    
 
 ### License
 
