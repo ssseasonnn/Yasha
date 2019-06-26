@@ -24,7 +24,7 @@ class YashaAdapter(dataSource: DataSource<YashaItem>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YashaViewHolder {
         val itemBuilder = itemBuilderMap[viewType]
         if (itemBuilder == null) {
-            throw IllegalStateException("Not supported view type: [$viewType]")
+            throw IllegalStateException("Not supported view type: [$viewType]!")
         } else {
             return itemBuilder.viewHolder(parent)
         }
