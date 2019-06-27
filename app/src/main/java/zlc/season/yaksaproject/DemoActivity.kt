@@ -24,21 +24,21 @@ class DemoActivity : AppCompatActivity() {
             renderItem<NormalItem> {
                 res(R.layout.view_holder_normal)
                 onBind {
-                    tv_normal_content.text = it.toString()
+                    tv_normal_content.text = data.toString()
                 }
             }
 
             renderItem<HeaderItem> {
                 res(R.layout.view_holder_header)
                 onBind {
-                    tv_header_content.text = it.toString()
+                    tv_header_content.text = data.toString()
                 }
             }
 
             renderItem<FooterItem> {
                 res(R.layout.view_holder_footer)
                 onBind {
-                    tv_footer_content.text = it.toString()
+                    tv_footer_content.text = data.toString()
                 }
             }
         }
