@@ -8,7 +8,9 @@ import zlc.season.sange.SangeViewHolder
 interface YashaItem : SangeItem
 
 
-class YashaScope(override val containerView: View) : LayoutContainer
+class YashaScope<T : YashaItem>(override val containerView: View) : LayoutContainer {
+    lateinit var data: T
+}
 
 
 class YashaStateItem(val state: Int, val retry: () -> Unit) : YashaItem

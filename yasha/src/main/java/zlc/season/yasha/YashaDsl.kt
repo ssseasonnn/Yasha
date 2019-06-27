@@ -61,7 +61,7 @@ class YashaDsl(val adapter: YashaAdapter) {
             res(R.layout.yasha_state_view_holder)
 
             onBind {
-                state_view.setState(it)
+                state_view.setState(data)
             }
 
             gridSpanSize(spanCount)
