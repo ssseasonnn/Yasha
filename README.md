@@ -1,23 +1,27 @@
-![](https://raw.githubusercontent.com/ssseasonnn/Yasha/master/yasha.png)
+![](yasha.png)
 
 [![](https://jitpack.io/v/ssseasonnn/Yasha.svg)](https://jitpack.io/#ssseasonnn/Yasha)
 
-# Yasha
+# Yasha 
 
 *Read this in other languages: [中文](README.zh.md), [English](README.md)*
 
-A lightweight library that quickly implements RecyclerView paging loading.
+A lightweight library that quickly renders Recycler View.
 
 
-> Item introduction：
+> Item introduction:
 >
-> Sange is an extremely accurate weapon. It has incredible spirituality, as if it would find its own weaknesses to attack.
+> Yasha can be called the lightest weapon ever.
 >
-> Increase the power of 16.
+> Increase the agility by 16 points.
 >
-> Increase the attack power by 10.
+> Increase the attack power by 12 points.
 >
-> Disabled (passive): There is a 15% chance that the target will be disabled in the attack. The disability effect reduces the target's movement speed by 20% for 4 sec.
+> Increase the movement speed by 20 points.
+
+> Yasha and Sange are good friends, they can synthesize more advanced weapons.
+>
+> ![](yasha.png) + ![](sange.png) = ![](yasha_and_sange.png)
 
 ## Prepare
 
@@ -42,202 +46,166 @@ dependencies {
 
 ## Start
 
+Yasha is built on the basis of Sange. The function of Yasha core is also **DataSource** in Sange. 
+Therefore, you need to know a little about Sange.
+
 ### First Blood
 
-- The function of the Sange core is **DataSource**, which makes it easy to initialize and page load data in a few simple steps.
-
-    Before that, we have to define our data types first, remember to implement the **SangeItem** interface. For example:
+- Similarly, we have to define our data type first, this time to implement the **YashaItem** interface, for example
 
     ```kotlin
-    class NormalItem(val number: Int): SangeItem
-    ```
-
+    class NormalItem(val number: Int): YashaItem
+  
+    class HeaderItem(val text:String): YashaItem
+  
+    class FooterItem(val text:String): YashaItem
+    ```  
+    
+    As you can see, we no longer need to override the **viewType()** method to specify the item type!
+    Yasha will automatically determine the type of each item!
+    
 - Next create your own DataSource.
 
-    As shown below, we inherit **MultiDataSource** and treat **SangeItem** as a generic parameter, then implement the **loadInitial** and **loadAfter** methods:
+    As shown below, we have inherited **YashaDataSource**
 
     ```kotlin
-    class DemoDataSource : MultiDataSource<SangeItem>() {
-
-        override fun loadInitial(loadCallback: LoadCallback<SangeItem>) {
-
+    class DemoDataSource : YashaDataSource() {
+    
+        override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
+    
             //loadInitial will be called in the io thread, so there is no need to worry about any time-consuming operations
             Thread.sleep(2000)
-
-            // loading...
-            val items = mutableListOf<SangeItem>()
+    
+            // loading
+            val items = mutableListOf<YashaItem>()
             for (i in 0 until 10) {
                 items.add(NormalItem(i))
             }
-
-            //set loading result
+    
+            //set result
             loadCallback.setResult(items)
         }
-
-        override fun loadAfter(loadCallback: LoadCallback<SangeItem>) {
-            //loadAfter will be called in the io thread
+    
+        override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
+            //in the io thread
             Thread.sleep(2000)
-
-            val items = mutableListOf<SangeItem>()
+    
+            val items = mutableListOf<YashaItem>()
             for (i in page * 10 until (page + 1) * 10) {
                 items.add(NormalItem(i))
             }
-
+    
             loadCallback.setResult(items)
         }
     }
-
+    
     ```
-
-    Both the loadInitial and loadAfter methods will be called in the child thread, so there is no need to worry about any time-consuming operations in both methods.
-
-    After the data is loaded, just call LoadCallback's setResult(list) method, and Sange will do everything else for you.
-    Including thread switching, notification interface updates, etc., you need to do, just focus on the loading of data.
-
-- Next, create a ViewHolder for display. By inheriting the **SangeViewHolder** provided by the Sange, you can omit many other tedious tasks.
-
-    E.g:
+    
+- Then, start rendering!
 
     ```kotlin
-    class NormalViewHolder(containerView: View) :
-            SangeViewHolder<SangeItem>(containerView) {
-
-        override fun onBind(t: SangeItem) {
-            t as NormalItem
-            tv_normal_content.text = t.toString()
-        }
-    }
+   recycler_view.linear(dataSource) {
+       renderItem<NormalItem> {
+           res(R.layout.view_holder_normal)
+           onBind {
+               tv_normal_content.text = data.toString()
+           }
+       }
+       renderItem<HeaderItem> {
+           res(R.layout.view_holder_header)
+           onBind {
+               tv_header_content.text = data.toString()
+           }
+       }
+       renderItem<FooterItem> {
+           res(R.layout.view_holder_footer)
+           onBind {
+               tv_footer_content.text = data.toString()
+           }
+       }
+   }
     ```
-
-- The next step is to create your own Adapter. By inheriting the **SangeMultiAdapter** provided by Sange, you can easily combine the DataSources.
-
-    E.g:
-
-    ```kotlin
-    class DemoAdapter(dataSource: DataSource<SangeItem>) :
-            SangeMultiAdapter<SangeItem, SangeViewHolder<SangeItem>>(dataSource) {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SangeViewHolder<SangeItem> {
-            return NormalViewHolder(inflate(parent, R.layout.view_holder_normal))
-        }
-    }
-    ```
-
-- Finally, associate the RecyclerView with the Adapter:
-
-    ```kotlin
-    recycler_view.layoutManager = LinearLayoutManager(this)
-    recycler_view.adapter = DemoAdapter(DemoDataSource())
-    ```
-
-    That's it, you don't need to care about the logic of paging, you just need to focus on what you really should pay attention to: Load the data, and leave it to the Sange!
+    
+   As you can see, we don't have an Adapter, no ViewHolder! Yes, this is the power of the Yasha!
 
 ### Double Kill
 
-So far we have all gone well, but it seems that we lack the status display of page load. Let's implement it.
+By default, Yasha will show us a built-in loading status. If you want to change it, it's very convenient. Let's take a look. 
 
-- In order to display the loaded state, we first create a data type that represents the state:
+- Let's first create a data type that represents the state:
 
     ```kotlin
-    class StateItem(val state: Int, val retry: () -> Unit) : SangeItem {
-        override fun viewType() = STATE
-    }
+    class StateItem(val state: Int, val retry: () -> Unit) : YashaItem
     ```
-    > As you can see, we also implemented the **SangeItem** interface and implemented the viewType method, which returns a new Type type in the method.
-
-- Then we slightly modify the DataSource, we implement an additional method: **onStateChanged(newState)**.
+  
+- Similarly add our state Item in the DataSource:
 
     ```kotlin
-    class DemoDataSource : MultiDataSource<SangeItem>() {
+    class DemoDataSource : YashaDataSource() {
 
-        override fun loadInitial(loadCallback: LoadCallback<SangeItem>) {
+        override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
             //...
         }
 
-        override fun loadAfter(loadCallback: LoadCallback<SangeItem>) {
+        override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
             //...
         }
 
         override fun onStateChanged(newState: Int) {
-            //利用DataSource的setState方法, 添加一个额外的状态Item
+            //Add an extra state Item using the DataSource's setState method
             setState(StateItem(state = newState, retry = ::retry))
         }
     }
     ```
-
-    This method will be called at different stages of the page load to tell us the current state of the DataSource, such as loading, loading failure, loading success, etc.
-    By implementing this method, we can control the display of the loading state and customize the style of the display.
-
-    As shown above, we have added a Data Item item to represent the status.
-
-- Again, we need a ViewHolder that renders the State:
+    
+- Finally, render it! Remember, we no longer need an Adapter and no longer need ViewHolder!
 
     ```kotlin
-    class StateViewHolder(containerView: View) :
-            SangeViewHolder<SangeItem>(containerView) {
-
-        override fun onBind(t: SangeItem) {
-            super.onBind(t)
-            t as StateItem
-
-            tv_state_content.setOnClickListener {
-                t.retry()
-            }
-
-            when {
-                t.state == FetchingState.FETCHING -> {
-                    state_loading.visibility = View.VISIBLE
-                    tv_state_content.visibility = View.GONE
+    recycler_view.linear(dataSource) {
+        
+        renderItem<StateItem> {
+            res(R.layout.view_holder_state)
+            onBind {
+                tv_state_content.setOnClickListener {
+                    data.retry()
                 }
-                t.state == FetchingState.FETCHING_ERROR -> {
-                    state_loading.visibility = View.GONE
-                    tv_state_content.visibility = View.VISIBLE
-                }
-                t.state == FetchingState.DONE_FETCHING -> {
-                    state_loading.visibility = View.GONE
-                    tv_state_content.visibility = View.GONE
-                }
-                else -> {
-                    state_loading.visibility = View.GONE
-                    tv_state_content.visibility = View.GONE
+                when {
+                    data.state == FetchingState.FETCHING -> {
+                        state_loading.visibility = View.VISIBLE
+                        tv_state_content.visibility = View.GONE
+                    }
+                    data.state == FetchingState.FETCHING_ERROR -> {
+                        state_loading.visibility = View.GONE
+                        tv_state_content.visibility = View.VISIBLE
+                    }
+                    data.state == FetchingState.DONE_FETCHING -> {
+                        state_loading.visibility = View.GONE
+                        tv_state_content.visibility = View.GONE
+                    }
+                    else -> {
+                        state_loading.visibility = View.GONE
+                        tv_state_content.visibility = View.GONE
+                    }
                 }
             }
         }
     }
-    ```
-
-- Finally, the loading status is displayed.
-
-    ```kotlin
-    class DemoAdapter(dataSource: DataSource<SangeItem>) :
-            SangeMultiAdapter<SangeItem, SangeViewHolder<SangeItem>>(dataSource) {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SangeViewHolder<SangeItem> {
-            return when (viewType) {
-                STATE -> StateViewHolder(inflate(parent, R.layout.view_holder_state))
-                else -> NormalViewHolder(inflate(parent, R.layout.view_holder_normal))
-            }
-        }
-    }
-
-
     ```
 
 ### Triple Kill
 
 - Refresh and retry
 
-    The Sange DataSource provides **invalidate()** and **retry()** methods.
-    When the data needs to be refreshed, the **invalidate()** method can be called.
-    When the load fails and needs to be retried, it is called. **retry()** method.
+    Since the Yasha uses the DataSource of the Sange, the same is true, when the data needs to be refreshed, 
+    the **invalidate()** method is called.
+    When the load fails and needs to be retried, call the **retry()** method.
 
 - Custom DiffCallback
 
-    Sange uses DiffUtil to update RecyclerView efficiently.
-    You can change the comparison logic according to your actual situation:
+    Like Sange, you can change the comparison logic according to your actual situation:
 
     ```kotlin
-    class NormalItem(val i: Int) : SangeItem {
+    class NormalItem(val i: Int) : YashaItem {
 
         override fun areContentsTheSame(other: Differ): Boolean {
             //use your own diff logic
@@ -256,9 +224,9 @@ So far we have all gone well, but it seems that we lack the status display of pa
     ```
 
 ## END
-
+    
 ![](https://github.com/ssseasonnn/Sange/raw/master/multi.gif)
-
+    
 
 ### License
 
