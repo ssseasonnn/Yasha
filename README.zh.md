@@ -8,6 +8,21 @@
 
 ![](yasha_usage.png)
 
+> 物品介绍：
+>
+> 夜叉是一个基于[散华](https://github.com/ssseasonnn/Sange)打造的快速渲染RecyclerView的DSL工具.
+> 
+> 功能介绍:
+> - 无需Adapter
+> - 无需ViewHolder
+> - 支持初始化数据加载
+> - 支持数据分页加载
+> - 支持MultiViewType
+> - 支持Header和Footer
+> - 支持DiffUtil
+> - 支持Loading State
+> - 支持CleanUp, 释放资源避免内存泄漏
+
 ## Prepare
 
 1. 添加jitpack到build.gradle
@@ -32,7 +47,7 @@ dependencies {
 
 ## First Blood
 
-- 快速渲染: 
+- 渲染Linear列表: 
 
     ```kotlin
       recycler_view.linear(dataSource) {
@@ -59,82 +74,69 @@ dependencies {
 
 ## Double Kill
 
-- 定制DataSource:
+- 渲染Grid列表:
 
     ```kotlin
-    class DemoDataSource : YashaDataSource() {
-        
-        override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
-            // 加载初始化数据
-            val items = mutableListOf<YashaItem>()
-            for (i in 0 until 10) {
-                items.add(NormalItem(i))
-            }
-            //将加载之后的数据传递给 LoadCallback, 即可轻松更新RecyclerView
-            loadCallback.setResult(items)
-        }
-        override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
-            // 加载分页数据
-            val items = mutableListOf<YashaItem>()
-            for (i in page * 10 until (page + 1) * 10) {
-                items.add(NormalItem(i))
-            }
-            loadCallback.setResult(items)
-        }
-    }
-    ```
-
-- 定制加载状态:
-
-    ```kotlin
-    class StateItem(val state: Int, val retry: () -> Unit) : YashaItem
-    ```
+      recycler_view.grid(dataSource) {
+          //设置SpanCount
+          spanCount(3)
   
-    ```kotlin
-    class DemoDataSource : YashaDataSource() {
-
-        override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
-            //...
-        }
-
-        override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
-            //...
-        }
-
-        override fun onStateChanged(newState: Int) {
-            //利用DataSource的setState方法, 添加一个额外的状态Item
-            setState(StateItem(state = newState, retry = ::retry))
-        }
-    }
-    ```
-    
-    ```kotlin
-    recycler_view.linear(dataSource) {
+          renderItem<HeaderItem> {
+              res(R.layout.view_holder_header)
+              onBind {
+                  tv_header_content.text = data.toString()
+              }
+              
+              //设置Item的SpanSize
+              gridSpanSize(3)
+          }
         
-        renderItem<StateItem> {
-            res(R.layout.view_holder_state)
-            onBind {
-                tv_state_content.setOnClickListener {
-                    data.retry()
-                }
-            }
-        }
-    }
-    ```
+          renderItem<NormalItem> {
+              res(R.layout.view_holder_normal)
+              onBind {
+                  tv_normal_content.text = data.toString()
+              }
+          }
+
+          renderItem<FooterItem> {
+              res(R.layout.view_holder_footer)
+              onBind {
+                  tv_footer_content.text = data.toString()
+              }
+          }
+      }
+    ```    
+
 
 ## Triple Kill
 
-- 刷新
+- 渲染Grid列表:
 
     ```kotlin
-    dataSource.invalidate()    
-    ```
-    
-- 重试
-
-    ```kotlin
-    dataSource.retry()
-    ```
+      recycler_view.stagger(dataSource) {
+          //设置SpanCount
+          spanCount(3)
+        
+          renderItem<HeaderItem> {
+              res(R.layout.view_holder_header)
+              onBind {
+                  tv_header_content.text = data.toString()
+              }
+              
+              //设置Item是否为full span
+              staggerFullSpan(true)
+          }
+          renderItem<NormalItem> {
+              res(R.layout.view_holder_normal)
+              onBind {
+                  tv_normal_content.text = data.toString()
+              }
+          }
+          renderItem<FooterItem> {
+              res(R.layout.view_holder_footer)
+              onBind {
+      }
+    ```   
     
 ## License
 

@@ -2,15 +2,30 @@
 
 [![](https://jitpack.io/v/ssseasonnn/Yasha.svg)](https://jitpack.io/#ssseasonnn/Yasha)
 
-# Yasha (夜叉)
+# Yasha 
 
 *Read this in other languages: [中文](README.zh.md), [English](README.md), [Changelog](CHANGELOG.md)*
 
 ![](yasha_usage.png)
 
+> Item introduction：
+>
+> Yasha is a DSL tool for fast rendering of RecyclerView based on [Sange](https://github.com/ssseasonnn/Sange).
+> 
+> Features:
+> - No Adapter required
+> - No ViewHolder required
+> - Support for initial data loading
+> - Support data paging loading
+> - Support for MultiViewType
+> - Support for Header and Footer
+> - Support DiffUtil
+> - Support Loading State
+> - Support CleanUp, free resources to avoid memory leaks
+
 ## Prepare
 
-1. Add jitpack repo:
+1. Add jitpack to build.gradle
 ```gradle
 allprojects {
     repositories {
@@ -24,6 +39,7 @@ allprojects {
 
 ```gradle
 dependencies {
+    // Replace xyz with a specific version number, for example 1.0.0
 	implementation 'com.github.ssseasonnn:Yasha:xyz'
 }
 ```
@@ -31,7 +47,7 @@ dependencies {
 
 ## First Blood
 
-- Quick render: 
+- Rendering a Linear list: 
 
     ```kotlin
       recycler_view.linear(dataSource) {
@@ -58,82 +74,69 @@ dependencies {
 
 ## Double Kill
 
-- Custom DataSource:
+- Render Grid list:
 
     ```kotlin
-    class DemoDataSource : YashaDataSource() {
-        
-        override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
-            // Load initial data
-            val items = mutableListOf<YashaItem>()
-            for (i in 0 until 10) {
-                items.add(NormalItem(i))
-            }
-            //set result to dataSource, 
-            loadCallback.setResult(items)
-        }
-        override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
-            // Load next page data
-            val items = mutableListOf<YashaItem>()
-            for (i in page * 10 until (page + 1) * 10) {
-                items.add(NormalItem(i))
-            }
-            loadCallback.setResult(items)
-        }
-    }
-    ```
-
-- Custom load state:
-
-    ```kotlin
-    class StateItem(val state: Int, val retry: () -> Unit) : YashaItem
-    ```
+      recycler_view.grid(dataSource) {
+          //Set SpanCount
+          spanCount(3)
   
-    ```kotlin
-    class DemoDataSource : YashaDataSource() {
-
-        override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
-            //...
-        }
-
-        override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
-            //...
-        }
-
-        override fun onStateChanged(newState: Int) {
-            //set our state item
-            setState(StateItem(state = newState, retry = ::retry))
-        }
-    }
-    ```
-    
-    ```kotlin
-    recycler_view.linear(dataSource) {
+          renderItem<HeaderItem> {
+              res(R.layout.view_holder_header)
+              onBind {
+                  tv_header_content.text = data.toString()
+              }
+              
+              //Set the SpanSize of the Item
+              gridSpanSize(3)
+          }
         
-        renderItem<StateItem> {
-            res(R.layout.view_holder_state)
-            onBind {
-                tv_state_content.setOnClickListener {
-                    data.retry()
-                }
-            }
-        }
-    }
-    ```
+          renderItem<NormalItem> {
+              res(R.layout.view_holder_normal)
+              onBind {
+                  tv_normal_content.text = data.toString()
+              }
+          }
+
+          renderItem<FooterItem> {
+              res(R.layout.view_holder_footer)
+              onBind {
+                  tv_footer_content.text = data.toString()
+              }
+          }
+      }
+    ```    
+
 
 ## Triple Kill
 
-- Refresh:
+- Render Grid list:
 
     ```kotlin
-    dataSource.invalidate()    
-    ```
-    
-- Retry:
-
-    ```kotlin
-    dataSource.retry()
-    ```
+      recycler_view.stagger(dataSource) {
+          //Set SpanCount
+          spanCount(3)
+        
+          renderItem<HeaderItem> {
+              res(R.layout.view_holder_header)
+              onBind {
+                  tv_header_content.text = data.toString()
+              }
+              
+              //Set whether the item is full span
+              staggerFullSpan(true)
+          }
+          renderItem<NormalItem> {
+              res(R.layout.view_holder_normal)
+              onBind {
+                  tv_normal_content.text = data.toString()
+              }
+          }
+          renderItem<FooterItem> {
+              res(R.layout.view_holder_footer)
+              onBind {
+      }
+    ```   
     
 ## License
 
