@@ -1,6 +1,6 @@
 package zlc.season.yaksaproject
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 
 class DemoViewModel : ViewModel() {
     val dataSource = DemoDataSource()

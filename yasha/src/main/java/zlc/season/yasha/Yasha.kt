@@ -1,6 +1,6 @@
 package zlc.season.yasha
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import zlc.season.sange.DataSource
 
 const val LINEAR_LAYOUT = 0

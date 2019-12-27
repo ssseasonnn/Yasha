@@ -1,6 +1,6 @@
 package zlc.season.yaksaproject
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import zlc.season.yasha.YashaDataSource
 import zlc.season.yasha.YashaItem
 
