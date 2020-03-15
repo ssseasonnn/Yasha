@@ -22,8 +22,14 @@ class DemoActivity : AppCompatActivity() {
         recycler_view.linear(demoViewModel.dataSource) {
 
             renderItem<NormalItem> {
+                initScope {
+                    set("test", Any())
+                }
+
                 res(R.layout.view_holder_normal)
                 onBind {
+                    val a = get<Any>("test")
+                    println(a.toString())
                     tv_normal_content.text = data.toString()
                 }
             }

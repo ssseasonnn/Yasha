@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 
 class YashaItemDsl<T : YashaItem> {
+    private var initScope: YashaScope<T>.() -> Unit = {}
+
     private var resId: Int = 0
     private var onBind: YashaScope<T>.() -> Unit = {}
     private var onBindPayload: YashaScope<T>.(payload: List<Any>) -> Unit = { _: List<Any> -> }
@@ -14,6 +16,10 @@ class YashaItemDsl<T : YashaItem> {
 
     private var gridSpanSize = 1
     private var staggerFullSpan = false
+
+    fun initScope(block: YashaScope<T>.() -> Unit) {
+        this.initScope = block
+    }
 
     /**
      * Set item res layout resource
@@ -79,6 +85,10 @@ class YashaItemDsl<T : YashaItem> {
 
         return object : YashaViewHolder(view) {
             var viewHolderScope = YashaScope<T>(view)
+
+            init {
+                viewHolderScope.initScope()
+            }
 
             override fun onBind(t: YashaItem) {
                 t as T

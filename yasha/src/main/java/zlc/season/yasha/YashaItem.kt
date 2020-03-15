@@ -10,6 +10,21 @@ interface YashaItem : SangeItem
 
 class YashaScope<T : YashaItem>(override val containerView: View) : LayoutContainer {
     lateinit var data: T
+
+    val map = mutableMapOf<String, Any>()
+
+    fun set(key: String, value: Any) {
+        map[key] = value
+    }
+
+    inline fun <reified R> get(key: String): R? {
+        val find = map[key] ?: return null
+        if (find is R) {
+            return find
+        } else {
+            throw IllegalStateException("Type not match!")
+        }
+    }
 }
 
 
