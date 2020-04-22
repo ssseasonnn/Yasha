@@ -1,13 +1,13 @@
 package zlc.season.yaksaproject
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_demo.*
-import kotlinx.android.synthetic.main.view_holder_footer.*
-import kotlinx.android.synthetic.main.view_holder_header.*
-import kotlinx.android.synthetic.main.view_holder_normal.*
+import kotlinx.android.synthetic.main.view_holder_footer.view.*
+import kotlinx.android.synthetic.main.view_holder_header.view.*
+import kotlinx.android.synthetic.main.view_holder_normal.view.*
 import zlc.season.yasha.linear
 
 class DemoActivity : AppCompatActivity() {
@@ -30,21 +30,21 @@ class DemoActivity : AppCompatActivity() {
                 onBind {
                     val a = get<Any>("test")
                     println(a.toString())
-                    tv_normal_content.text = data.toString()
+                    containerView.tv_normal_content.text = data.toString()
                 }
             }
 
             renderItem<HeaderItem> {
                 res(R.layout.view_holder_header)
                 onBind {
-                    tv_header_content.text = data.toString()
+                    containerView.tv_header_content.text = data.toString()
                 }
             }
 
             renderItem<FooterItem> {
                 res(R.layout.view_holder_footer)
                 onBind {
-                    tv_footer_content.text = data.toString()
+                    containerView.tv_footer_content.text = data.toString()
                 }
             }
         }
