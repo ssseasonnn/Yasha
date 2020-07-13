@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.activity_demo.*
 import kotlinx.android.synthetic.main.view_holder_footer.*
 import kotlinx.android.synthetic.main.view_holder_header.*
 import kotlinx.android.synthetic.main.view_holder_normal.*
+import kotlinx.android.synthetic.main.view_holder_normal.view.*
 import zlc.season.yasha.linear
 
 class DemoActivity : AppCompatActivity() {
@@ -78,9 +79,5 @@ class DemoActivity : AppCompatActivity() {
             if (it == null) return@Observer
             swipe_refresh_layout.isRefreshing = it
         })
-
-        button.setOnClickListener {
-            demoViewModel.changeHeader()
-        }
     }
 }
