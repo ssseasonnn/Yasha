@@ -1,12 +1,16 @@
 package zlc.season.yasha
 
 import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
 import zlc.season.sange.SangeItem
 import zlc.season.sange.SangeViewHolder
 
-interface YashaItem : SangeItem
+interface TypeConflictStrategy {
+    fun typeConflict(): String? = null
+}
 
+interface YashaItem : SangeItem, TypeConflictStrategy
 
 class YashaScope<T : YashaItem>(override val containerView: View) : LayoutContainer {
     lateinit var data: T
@@ -33,3 +37,9 @@ class YashaStateItem(val state: Int, val retry: () -> Unit) : YashaItem
 
 open class YashaViewHolder(containerView: View) : SangeViewHolder<YashaItem>(containerView)
 
+
+class YashaItemBuilder(
+    val gridSpanSize: Int,
+    val staggerFullSpan: Boolean,
+    val viewHolder: (ViewGroup) -> YashaViewHolder
+)

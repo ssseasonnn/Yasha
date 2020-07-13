@@ -13,9 +13,12 @@ const val STAGGERED_LAYOUT = 2
  * @param dataSource The data source.
  *
  */
-fun RecyclerView.linear(dataSource: DataSource<YashaItem>,
-                        block: YashaDsl.() -> Unit) {
-    initDsl(this, LINEAR_LAYOUT, dataSource, block)
+fun RecyclerView.linear(
+    dataSource: DataSource<YashaItem>,
+    enableDefaultState: Boolean = true,
+    block: YashaDsl.() -> Unit
+) {
+    initDsl(this, LINEAR_LAYOUT, dataSource, enableDefaultState, block)
 }
 
 /**
@@ -24,9 +27,12 @@ fun RecyclerView.linear(dataSource: DataSource<YashaItem>,
  * @param dataSource The data source.
  *
  */
-fun RecyclerView.grid(dataSource: DataSource<YashaItem>,
-                      block: YashaDsl.() -> Unit) {
-    initDsl(this, GRID_LAYOUT, dataSource, block)
+fun RecyclerView.grid(
+    dataSource: DataSource<YashaItem>,
+    enableDefaultState: Boolean = true,
+    block: YashaDsl.() -> Unit
+) {
+    initDsl(this, GRID_LAYOUT, dataSource, enableDefaultState, block)
 }
 
 /**
@@ -35,22 +41,26 @@ fun RecyclerView.grid(dataSource: DataSource<YashaItem>,
  * @param dataSource The data source.
  *
  */
-fun RecyclerView.stagger(dataSource: DataSource<YashaItem>,
-                         block: YashaDsl.() -> Unit) {
-    initDsl(this, STAGGERED_LAYOUT, dataSource, block)
+fun RecyclerView.stagger(
+    dataSource: DataSource<YashaItem>,
+    enableDefaultState: Boolean = true,
+    block: YashaDsl.() -> Unit
+) {
+    initDsl(this, STAGGERED_LAYOUT, dataSource, enableDefaultState, block)
 }
 
 private fun initDsl(
-        target: RecyclerView,
-        type: Int,
-        dataSource: DataSource<YashaItem>,
-        block: YashaDsl.() -> Unit
+    target: RecyclerView,
+    type: Int,
+    dataSource: DataSource<YashaItem>,
+    enableDefaultState: Boolean,
+    block: YashaDsl.() -> Unit
 ) {
     val adapter = YashaAdapter(dataSource)
 
     val dsl = YashaDsl(adapter)
     dsl.block()
-    dsl.initLayoutManager(target, type)
+    dsl.init(target, type, enableDefaultState)
 
     target.adapter = adapter
 }

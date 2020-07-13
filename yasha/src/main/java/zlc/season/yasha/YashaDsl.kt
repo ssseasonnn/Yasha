@@ -39,20 +39,23 @@ class YashaDsl(val adapter: YashaAdapter) {
         this.spanCount = spanCount
     }
 
-    inline fun <reified T : YashaItem> renderItem(block: YashaItemDsl<T>.() -> Unit) {
+    inline fun <reified T : YashaItem> renderItem(typeConflict: String? = null, block: YashaItemDsl<T>.() -> Unit) {
         val dsl = YashaItemDsl<T>()
         dsl.block()
-        dsl.prepare(T::class.hashCode(), adapter)
+        dsl.prepare(type<T>(typeConflict), adapter)
     }
 
-    fun initLayoutManager(target: RecyclerView, type: Int) {
-        setDefaultStateItem()
+    fun init(target: RecyclerView, type: Int, enableDefaultState: Boolean) {
 
         target.layoutManager = when (type) {
             LINEAR_LAYOUT -> LinearLayoutManager(target.context, orientation, reverse)
             GRID_LAYOUT -> GridLayoutManager(target.context, spanCount, orientation, reverse)
             STAGGERED_LAYOUT -> StaggeredGridLayoutManager(spanCount, orientation)
             else -> throw IllegalStateException("This should never happen!")
+        }
+
+        if (enableDefaultState) {
+            setDefaultStateItem()
         }
     }
 

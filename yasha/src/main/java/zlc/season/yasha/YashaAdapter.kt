@@ -9,16 +9,16 @@ import zlc.season.sange.SangeMultiAdapter
 
 
 class YashaAdapter(dataSource: DataSource<YashaItem>) :
-        SangeMultiAdapter<YashaItem, YashaViewHolder>(dataSource) {
+    SangeMultiAdapter<YashaItem, YashaViewHolder>(dataSource) {
 
     private val itemBuilderMap = mutableMapOf<Int, YashaItemBuilder>()
 
-    fun setItemBuilder(key: Int, value: YashaItemBuilder) {
-        itemBuilderMap[key] = value
+    fun registerItemBuilder(type: Int, value: YashaItemBuilder) {
+        itemBuilderMap[type] = value
     }
 
     override fun getItemViewType(position: Int): Int {
-        return getItem(position)::class.hashCode()
+        return getItem(position).type()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): YashaViewHolder {

@@ -16,6 +16,8 @@ class DemoDataSource : YashaDataSource() {
         Thread.sleep(1500)
 
         val headers = mutableListOf<YashaItem>()
+        headers.add(HeaderItem(-1, "A1", typeConflict = "AAA"))
+        headers.add(HeaderItem(-2, "B1", typeConflict = "BBB"))
         for (i in 0 until 2) {
             headers.add(HeaderItem(i))
         }

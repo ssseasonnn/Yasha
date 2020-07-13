@@ -66,22 +66,20 @@ class YashaItemDsl<T : YashaItem> {
         this.staggerFullSpan = fullSpan
     }
 
-    fun prepare(key: Int, adapter: YashaAdapter) {
-        adapter.setItemBuilder(key, generateItemBuilder())
-    }
-
-    private fun generateItemBuilder(): YashaItemBuilder {
-        return YashaItemBuilder(
+    fun prepare(type: Int, adapter: YashaAdapter) {
+        adapter.registerItemBuilder(
+            type, YashaItemBuilder(
                 gridSpanSize,
                 staggerFullSpan,
                 ::builder
+            )
         )
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun builder(viewGroup: ViewGroup): YashaViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-                .inflate(this.resId, viewGroup, false)
+            .inflate(this.resId, viewGroup, false)
 
         return object : YashaViewHolder(view) {
             var viewHolderScope = YashaScope<T>(view)
