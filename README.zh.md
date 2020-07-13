@@ -15,7 +15,7 @@
 > 物品特点:
 > - 无需Adapter
 > - 无需ViewHolder
-> - 支持初始化数据加载
+> - 支持协程
 > - 支持数据分页加载
 > - 支持MultiViewType
 > - 支持Header和Footer
@@ -39,7 +39,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Yasha:1.0.8'
+	implementation 'com.github.ssseasonnn:Yasha:1.1.0'
 }
 ```
 

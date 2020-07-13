@@ -15,8 +15,8 @@
 > Item Features:
 > - No Adapter required
 > - No ViewHolder required
-> - Support for initial data loading
-> - Support data paging loading
+> - Support Coroutine
+> - Support page loading
 > - Support for MultiViewType
 > - Support for Header and Footer
 > - Support DiffUtil
@@ -39,7 +39,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Yasha:1.0.8'
+	implementation 'com.github.ssseasonnn:Yasha:1.1.0'
 }
 ```
 
