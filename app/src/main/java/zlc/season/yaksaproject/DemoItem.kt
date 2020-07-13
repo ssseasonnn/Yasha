@@ -1,13 +1,10 @@
 package zlc.season.yaksaproject
 
-import android.util.Log
-import io.reactivex.Flowable
-import io.reactivex.disposables.Disposable
 import zlc.season.sange.Differ
 import zlc.season.yasha.YashaItem
-import java.util.concurrent.TimeUnit
 
 class NormalItem(val i: Int, val text: String = "") : YashaItem {
+
     override fun toString() = "Item $i $text"
 
 //    private val disposable: Disposable
@@ -26,22 +23,41 @@ class NormalItem(val i: Int, val text: String = "") : YashaItem {
 
     override fun areContentsTheSame(other: Differ): Boolean {
         if (other !is NormalItem) return false
-        return (other as NormalItem).text == text
+        return other.text == text
     }
 
     override fun areItemsTheSame(other: Differ): Boolean {
         if (other !is NormalItem) return false
-        return (other as NormalItem).i == i
+        return other.i == i
     }
 
     override fun getChangePayload(other: Differ): Any? {
         if (other !is NormalItem) return null
-        return (other as NormalItem).text
+        return other.text
     }
 }
 
-class HeaderItem(val i: Int) : YashaItem {
-    override fun toString() = "Header $i"
+class HeaderItem(val i: Int, val text: String = "", var typeConflict: String? = null) : YashaItem {
+    override fun typeConflict(): String? {
+        return typeConflict
+    }
+
+    override fun toString() = "Header $i $text"
+
+    override fun areItemsTheSame(other: Differ): Boolean {
+        if (other !is HeaderItem) return false
+        return other.i == i && other.typeConflict == typeConflict
+    }
+
+    override fun areContentsTheSame(other: Differ): Boolean {
+        if (other !is HeaderItem) return false
+        return other.text == text
+    }
+
+    override fun getChangePayload(other: Differ): Any? {
+        if (other !is HeaderItem) return null
+        return other.text
+    }
 }
 
 class FooterItem(val i: Int) : YashaItem {

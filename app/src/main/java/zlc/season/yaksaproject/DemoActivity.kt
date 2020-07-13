@@ -41,6 +41,26 @@ class DemoActivity : AppCompatActivity() {
                 }
             }
 
+            renderItem<HeaderItem>("AAA") {
+                res(R.layout.view_holder_normal)
+                onBind {
+                    containerView.tv_normal_content.text = data.toString()
+                }
+                onBindPayload {
+                    containerView.tv_normal_content.text = data.toString()
+                }
+            }
+
+            renderItem<HeaderItem>("BBB") {
+                res(R.layout.view_holder_normal)
+                onBind {
+                    containerView.tv_normal_content.text = data.toString()
+                }
+                onBindPayload {
+                    containerView.tv_normal_content.text = data.toString()
+                }
+            }
+
             renderItem<FooterItem> {
                 res(R.layout.view_holder_footer)
                 onBind {
@@ -58,5 +78,9 @@ class DemoActivity : AppCompatActivity() {
             if (it == null) return@Observer
             swipe_refresh_layout.isRefreshing = it
         })
+
+        button.setOnClickListener {
+            demoViewModel.changeHeader()
+        }
     }
 }
