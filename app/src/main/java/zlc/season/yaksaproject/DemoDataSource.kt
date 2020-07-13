@@ -1,6 +1,7 @@
 package zlc.season.yaksaproject
 
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.delay
 import zlc.season.yasha.YashaDataSource
 import zlc.season.yasha.YashaItem
 
@@ -8,12 +9,12 @@ class DemoDataSource : YashaDataSource() {
     val refresh = MutableLiveData<Boolean>()
     var page = 0
 
-    override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
+    override suspend fun loadInitial(): List<YashaItem>? {
         page = 0
 
         refresh.postValue(true)
 
-        Thread.sleep(1500)
+        delay(1500)
 
         val headers = mutableListOf<YashaItem>()
         headers.add(HeaderItem(-1, "A1", typeConflict = "AAA"))
@@ -35,27 +36,26 @@ class DemoDataSource : YashaDataSource() {
         addHeaders(headers, delay = true)
         addFooters(footers, delay = true)
 
-        loadCallback.setResult(items)
-
         refresh.postValue(false)
+
+        return items
     }
 
-    override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
+    override suspend fun loadAfter(): List<YashaItem>? {
         page++
 
         //Mock load failed.
         //模拟加载失败.
         if (page % 3 == 0) {
-            loadCallback.setResult(null)
-            return
+            return null
         }
 
-        Thread.sleep(1500)
+        delay(1500)
         val items = mutableListOf<YashaItem>()
         for (i in page * 10 until (page + 1) * 10) {
             items.add(NormalItem(i))
         }
 
-        loadCallback.setResult(items)
+        return items
     }
 }
