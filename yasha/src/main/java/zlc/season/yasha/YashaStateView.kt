@@ -4,8 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
-import kotlinx.android.synthetic.main.layout_yasha_state.view.*
+import android.widget.ProgressBar
 import zlc.season.sange.FetchingState
 
 class YashaStateView @JvmOverloads constructor(
@@ -13,6 +14,8 @@ class YashaStateView @JvmOverloads constructor(
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
+    private var failedBtn: Button
+    private var loading: ProgressBar
 
     init {
         LayoutInflater.from(context).inflate(
@@ -20,29 +23,32 @@ class YashaStateView @JvmOverloads constructor(
                 this,
                 true
         )
+
+        failedBtn = findViewById(R.id.yasha_state_failed_btn)
+        loading = findViewById(R.id.yasha_state_loading)
     }
 
     fun setState(newState: YashaStateItem) {
-        yasha_state_failed_btn.setOnClickListener {
+        failedBtn.setOnClickListener {
             newState.retry()
         }
 
-        when {
-            newState.state == FetchingState.FETCHING -> {
-                yasha_state_loading.visibility = View.VISIBLE
-                yasha_state_failed_btn.visibility = View.GONE
+        when (newState.state) {
+            FetchingState.FETCHING -> {
+                loading.visibility = View.VISIBLE
+                failedBtn.visibility = View.GONE
             }
-            newState.state == FetchingState.FETCHING_ERROR -> {
-                yasha_state_loading.visibility = View.GONE
-                yasha_state_failed_btn.visibility = View.VISIBLE
+            FetchingState.FETCHING_ERROR -> {
+                loading.visibility = View.GONE
+                failedBtn.visibility = View.VISIBLE
             }
-            newState.state == FetchingState.DONE_FETCHING -> {
-                yasha_state_loading.visibility = View.GONE
-                yasha_state_failed_btn.visibility = View.GONE
+            FetchingState.DONE_FETCHING -> {
+                loading.visibility = View.GONE
+                failedBtn.visibility = View.GONE
             }
             else -> {
-                yasha_state_loading.visibility = View.GONE
-                yasha_state_failed_btn.visibility = View.GONE
+                loading.visibility = View.GONE
+                failedBtn.visibility = View.GONE
             }
         }
     }

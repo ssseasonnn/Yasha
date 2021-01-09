@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import kotlinx.android.synthetic.main.yasha_state_view_holder.*
 
 class YashaDsl(val adapter: YashaAdapter) {
     private var orientation = VERTICAL
@@ -64,7 +63,7 @@ class YashaDsl(val adapter: YashaAdapter) {
             res(R.layout.yasha_state_view_holder)
 
             onBind {
-                state_view.setState(data)
+                containerView.findViewById<YashaStateView>(R.id.state_view).setState(data)
             }
 
             gridSpanSize(spanCount)
