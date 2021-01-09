@@ -17,12 +17,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    api 'com.github.ssseasonnn:Sange:1.1.0'
+    api 'com.github.ssseasonnn:Sange:-SNAPSHOT'
 
     testImplementation 'junit:junit:4.12'
 }

@@ -1,50 +1,51 @@
 package zlc.season.yasha
 
 import android.view.LayoutInflater
+import android.view.LayoutInflater.from
 import android.view.ViewGroup
+import androidx.viewbinding.ViewBinding
+import java.lang.reflect.Method
 
-class YashaItemDsl<T : YashaItem> {
-    private var initScope: YashaScope<T>.() -> Unit = {}
+class YashaBindingItemDsl<T : YashaItem, VB : ViewBinding>(private val inflateMethod: Method?) {
+    private var inflateFunction: ((LayoutInflater, ViewGroup, Boolean) -> VB)? = null
 
-    private var resId: Int = 0
-    private var onBind: YashaScope<T>.() -> Unit = {}
-    private var onBindPayload: YashaScope<T>.(payload: List<Any>) -> Unit = { _: List<Any> -> }
+    private var initScope: YashaBindingScope<T, VB>.() -> Unit = {}
 
-    private var onAttach: YashaScope<T>.() -> Unit = {}
-    private var onDetach: YashaScope<T>.() -> Unit = {}
-    private var onRecycled: YashaScope<T>.() -> Unit = {}
+    private var onBind: YashaBindingScope<T, VB>.() -> Unit = {}
+    private var onBindPayload: YashaBindingScope<T, VB>.(payload: List<Any>) -> Unit = { _: List<Any> -> }
+
+    private var onAttach: YashaBindingScope<T, VB>.() -> Unit = {}
+    private var onDetach: YashaBindingScope<T, VB>.() -> Unit = {}
+    private var onRecycled: YashaBindingScope<T, VB>.() -> Unit = {}
 
     private var gridSpanSize = 1
     private var staggerFullSpan = false
 
-    fun initScope(block: YashaScope<T>.() -> Unit) {
+    fun viewBinding(function: (LayoutInflater, ViewGroup, Boolean) -> VB) {
+        this.inflateFunction = function
+    }
+
+    fun initScope(block: YashaBindingScope<T, VB>.() -> Unit) {
         this.initScope = block
     }
 
-    /**
-     * Set item res layout resource
-     */
-    fun res(res: Int) {
-        this.resId = res
-    }
-
-    fun onBind(block: YashaScope<T>.() -> Unit) {
+    fun onBind(block: YashaBindingScope<T, VB>.() -> Unit) {
         this.onBind = block
     }
 
-    fun onBindPayload(block: YashaScope<T>.(payload: List<Any>) -> Unit) {
+    fun onBindPayload(block: YashaBindingScope<T, VB>.(payload: List<Any>) -> Unit) {
         this.onBindPayload = block
     }
 
-    fun onAttach(block: YashaScope<T>.() -> Unit) {
+    fun onAttach(block: YashaBindingScope<T, VB>.() -> Unit) {
         this.onAttach = block
     }
 
-    fun onDetach(block: YashaScope<T>.() -> Unit) {
+    fun onDetach(block: YashaBindingScope<T, VB>.() -> Unit) {
         this.onDetach = block
     }
 
-    fun onRecycled(block: YashaScope<T>.() -> Unit) {
+    fun onRecycled(block: YashaBindingScope<T, VB>.() -> Unit) {
         this.onRecycled = block
     }
 
@@ -77,11 +78,9 @@ class YashaItemDsl<T : YashaItem> {
 
     @Suppress("UNCHECKED_CAST")
     private fun builder(viewGroup: ViewGroup): YashaViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
-                .inflate(this.resId, viewGroup, false)
-
-        return object : YashaViewHolder(view) {
-            val viewHolderScope = YashaScope<T>(view)
+        val binding = getViewBinding(viewGroup)
+        return object : YashaViewHolder(binding.root) {
+            val viewHolderScope = YashaBindingScope<T, VB>(binding)
 
             init {
                 viewHolderScope.initScope()
@@ -131,6 +130,15 @@ class YashaItemDsl<T : YashaItem> {
                     onRecycled()
                 }
             }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getViewBinding(viewGroup: ViewGroup): VB {
+        return when {
+            inflateFunction != null -> inflateFunction!!.invoke(from(viewGroup.context), viewGroup, false) as VB
+            inflateMethod != null -> inflateMethod.invoke(null, from(viewGroup.context), viewGroup, false) as VB
+            else -> throw IllegalStateException("Can not create ViewBinding!")
         }
     }
 }

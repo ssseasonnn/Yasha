@@ -1,105 +1,83 @@
 package zlc.season.yaksaproject
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.activity_demo.*
-import kotlinx.android.synthetic.main.view_holder_footer.view.*
-import kotlinx.android.synthetic.main.view_holder_header.view.*
-import kotlinx.android.synthetic.main.view_holder_normal.view.*
+import androidx.lifecycle.ViewModelProvider
+import zlc.season.yaksaproject.databinding.ActivityDemoBinding
+import zlc.season.yaksaproject.databinding.ViewHolderFooterBinding
+import zlc.season.yaksaproject.databinding.ViewHolderHeaderBinding
+import zlc.season.yaksaproject.databinding.ViewHolderNormalBinding
 import zlc.season.yasha.linear
 
 class DemoActivity : AppCompatActivity() {
     private val demoViewModel by lazy {
-        ViewModelProviders.of(this)[DemoViewModel::class.java]
+        ViewModelProvider(this)[DemoViewModel::class.java]
     }
+    private val binding by lazy { ActivityDemoBinding.inflate(layoutInflater) }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_demo)
+        setContentView(binding.root)
 
-        recycler_view.linear(demoViewModel.dataSource) {
-
-            renderItem<NormalItem> {
-                initScope {
-                    set("test", Any())
-                }
-
-                res(R.layout.view_holder_normal)
+        binding.recyclerView.linear(demoViewModel.dataSource) {
+            // 使用反射构造ViewBinding
+            renderBindingItem<NormalItem, ViewHolderNormalBinding> {
                 onBind {
-                    val a = get<Any>("test")
-                    println(a.toString())
-                    containerView.tv_normal_content.text = data.toString()
+                    itemBinding.tvNormalContent.text = "position: $position, data: $data"
                 }
             }
 
-            renderItem<HeaderItem> {
+            renderBindingItem<HeaderItem, ViewHolderHeaderBinding> {
+                onBind {
+                    itemBinding.tvHeaderContent.text = "position: $position, data: $data"
+                }
+            }
+
+            renderBindingItem<FooterItem, ViewHolderFooterBinding> {
+                onBind {
+                    itemBinding.tvFooterContent.text = "position: $position, data: $data"
+                }
+            }
+
+            // 不使用反射构造ViewBinding
+            renderBindingItem<HeaderItem, ViewHolderHeaderBinding>("AAA") {
+                viewBinding(ViewHolderHeaderBinding::inflate)
+                onBind {
+                    itemBinding.tvHeaderContent.text = "position: $position, data: $data"
+                }
+                onBindPayload {
+                    itemBinding.tvHeaderContent.text = "position: $position, data: $data"
+                }
+            }
+
+            // 不使用ViewBinding
+            renderItem<HeaderItem>("BBB") {
                 res(R.layout.view_holder_header)
                 onBind {
-                    containerView.tv_header_content.text = data.toString()
-                }
-            }
-
-            renderItem<HeaderItem>("AAA") {
-                res(R.layout.view_holder_normal)
-                onBind {
-                    containerView.tv_normal_content.text = data.toString()
+                    val itemBinding = ViewHolderHeaderBinding.bind(containerView)
+                    itemBinding.tvHeaderContent.text = "position: $position, data: $data"
                 }
                 onBindPayload {
-                    containerView.tv_normal_content.text = data.toString()
-                }
-            }
-
-            renderItem<HeaderItem>("BBB") {
-                res(R.layout.view_holder_normal)
-                onBind {
-                    containerView.tv_normal_content.text = data.toString()
-                }
-                onBindPayload {
-                    containerView.tv_normal_content.text = data.toString()
-                }
-            }
-
-            renderItem<HeaderItem>("AAA") {
-                res(R.layout.view_holder_normal)
-                onBind {
-                    containerView.tv_normal_content.text = data.toString()
-                }
-                onBindPayload {
-                    containerView.tv_normal_content.text = data.toString()
-                }
-            }
-
-            renderItem<HeaderItem>("BBB") {
-                res(R.layout.view_holder_normal)
-                onBind {
-                    containerView.tv_normal_content.text = data.toString()
-                }
-                onBindPayload {
-                    containerView.tv_normal_content.text = data.toString()
-                }
-            }
-
-            renderItem<FooterItem> {
-                res(R.layout.view_holder_footer)
-                onBind {
-                    containerView.tv_footer_content.text = data.toString()
+                    val itemBinding = ViewHolderHeaderBinding.bind(containerView)
+                    itemBinding.tvHeaderContent.text = "position: $position, data: $data"
                 }
             }
         }
 
 
-        swipe_refresh_layout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             demoViewModel.refresh()
         }
 
         demoViewModel.refresh.observe(this, Observer {
             if (it == null) return@Observer
-            swipe_refresh_layout.isRefreshing = it
+            binding.swipeRefreshLayout.isRefreshing = it
         })
 
-        button.setOnClickListener {
+        binding.button.setOnClickListener {
             demoViewModel.changeHeader()
         }
     }

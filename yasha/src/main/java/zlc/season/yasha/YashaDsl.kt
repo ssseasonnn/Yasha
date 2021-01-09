@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.viewbinding.ViewBinding
+import zlc.season.yasha.databinding.YashaStateViewHolderBinding
 
 class YashaDsl(val adapter: YashaAdapter) {
     private var orientation = VERTICAL
@@ -44,12 +46,18 @@ class YashaDsl(val adapter: YashaAdapter) {
         dsl.prepare(type<T>(typeConflict), adapter)
     }
 
-    fun init(target: RecyclerView, type: Int, enableDefaultState: Boolean) {
+    inline fun <reified T : YashaItem, reified VB : ViewBinding> renderBindingItem(typeConflict: String? = null, block: YashaBindingItemDsl<T, VB>.() -> Unit) {
+        val dsl = YashaBindingItemDsl<T, VB>(VB::class.java.getInflateMethod())
+        dsl.block()
+        dsl.prepare(type<T>(typeConflict), adapter)
+    }
 
+    fun init(target: RecyclerView, type: Int, enableDefaultState: Boolean, customLayoutManager: RecyclerView.LayoutManager?) {
         target.layoutManager = when (type) {
             LINEAR_LAYOUT -> LinearLayoutManager(target.context, orientation, reverse)
             GRID_LAYOUT -> GridLayoutManager(target.context, spanCount, orientation, reverse)
             STAGGERED_LAYOUT -> StaggeredGridLayoutManager(spanCount, orientation)
+            CUSTOM_LAYOUT -> customLayoutManager
             else -> throw IllegalStateException("This should never happen!")
         }
 
@@ -59,16 +67,13 @@ class YashaDsl(val adapter: YashaAdapter) {
     }
 
     private fun setDefaultStateItem() {
-        renderItem<YashaStateItem> {
-            res(R.layout.yasha_state_view_holder)
-
-            onBind {
-                containerView.findViewById<YashaStateView>(R.id.state_view).setState(data)
-            }
-
+        renderBindingItem<YashaStateItem, YashaStateViewHolderBinding> {
+            viewBinding(YashaStateViewHolderBinding::inflate)
             gridSpanSize(spanCount)
-
             staggerFullSpan(true)
+            onBind {
+                itemBinding.stateView.setState(data)
+            }
         }
     }
 }
