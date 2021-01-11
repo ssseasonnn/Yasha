@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2021-1-11
+### Added
+- Support ViewBinding
+- Remove kotlin-android-extension
+
+
 ## [1.1.0] - 2020-7-13
 ### Added
 - Support coroutine
