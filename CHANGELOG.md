@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] - 2021-4-25
+### Added
+- Support ViewPager2
+
 ## [1.1.1] - 2021-1-11
 ### Added
 - Support ViewBinding
