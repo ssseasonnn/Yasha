@@ -35,8 +35,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation "io.reactivex.rxjava2:rxjava:2.2.19"
-
 //    implementation "com.github.ssseasonnn:Yasha:1.0.7"
     implementation project(":yasha")
 

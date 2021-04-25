@@ -4,21 +4,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 
 class YashaItemDsl<T : YashaItem> {
-    private var initScope: YashaScope<T>.() -> Unit = {}
-
     private var resId: Int = 0
-    private var onBind: YashaScope<T>.() -> Unit = {}
-    private var onBindPayload: YashaScope<T>.(payload: List<Any>) -> Unit = { _: List<Any> -> }
-
-    private var onAttach: YashaScope<T>.() -> Unit = {}
-    private var onDetach: YashaScope<T>.() -> Unit = {}
-    private var onRecycled: YashaScope<T>.() -> Unit = {}
-
     private var gridSpanSize = 1
     private var staggerFullSpan = false
 
-    fun initScope(block: YashaScope<T>.() -> Unit) {
-        this.initScope = block
+    internal var initItemScope: YashaItemScope<T>.() -> Unit = {}
+
+    internal var onBind: YashaItemScope<T>.() -> Unit = {}
+    internal var onBindPayload: YashaItemScope<T>.(payload: List<Any>) -> Unit = { _: List<Any> -> }
+
+    internal var onAttach: YashaItemScope<T>.() -> Unit = {}
+    internal var onDetach: YashaItemScope<T>.() -> Unit = {}
+    internal var onRecycled: YashaItemScope<T>.() -> Unit = {}
+
+    fun initScope(block: YashaItemScope<T>.() -> Unit) {
+        this.initItemScope = block
     }
 
     /**
@@ -28,23 +28,23 @@ class YashaItemDsl<T : YashaItem> {
         this.resId = res
     }
 
-    fun onBind(block: YashaScope<T>.() -> Unit) {
+    fun onBind(block: YashaItemScope<T>.() -> Unit) {
         this.onBind = block
     }
 
-    fun onBindPayload(block: YashaScope<T>.(payload: List<Any>) -> Unit) {
+    fun onBindPayload(block: YashaItemScope<T>.(payload: List<Any>) -> Unit) {
         this.onBindPayload = block
     }
 
-    fun onAttach(block: YashaScope<T>.() -> Unit) {
+    fun onAttach(block: YashaItemScope<T>.() -> Unit) {
         this.onAttach = block
     }
 
-    fun onDetach(block: YashaScope<T>.() -> Unit) {
+    fun onDetach(block: YashaItemScope<T>.() -> Unit) {
         this.onDetach = block
     }
 
-    fun onRecycled(block: YashaScope<T>.() -> Unit) {
+    fun onRecycled(block: YashaItemScope<T>.() -> Unit) {
         this.onRecycled = block
     }
 
@@ -79,58 +79,6 @@ class YashaItemDsl<T : YashaItem> {
     private fun builder(viewGroup: ViewGroup): YashaViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
                 .inflate(this.resId, viewGroup, false)
-
-        return object : YashaViewHolder(view) {
-            val viewHolderScope = YashaScope<T>(view)
-
-            init {
-                viewHolderScope.initScope()
-            }
-
-            override fun onBind(position: Int, t: YashaItem) {
-                t as T
-                viewHolderScope.run {
-                    this.data = t
-                    this.position = position
-                    onBind()
-                }
-            }
-
-            override fun onBindPayload(position: Int, t: YashaItem, payload: MutableList<Any>) {
-                t as T
-                viewHolderScope.run {
-                    this.data = t
-                    this.position = position
-                    onBindPayload(payload)
-                }
-            }
-
-            override fun onAttach(position: Int, t: YashaItem) {
-                t as T
-                viewHolderScope.run {
-                    this.data = t
-                    this.position = position
-                    onAttach()
-                }
-            }
-
-            override fun onDetach(position: Int, t: YashaItem) {
-                t as T
-                viewHolderScope.run {
-                    this.data = t
-                    this.position = position
-                    onDetach()
-                }
-            }
-
-            override fun onRecycled(position: Int, t: YashaItem) {
-                t as T
-                viewHolderScope.run {
-                    this.data = t
-                    this.position = position
-                    onRecycled()
-                }
-            }
-        }
+        return YashaViewHolderImpl(this, view)
     }
 }

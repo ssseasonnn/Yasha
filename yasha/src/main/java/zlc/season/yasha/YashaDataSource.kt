@@ -2,13 +2,15 @@ package zlc.season.yasha
 
 import zlc.season.sange.SangeDataSource
 
-open class YashaDataSource : SangeDataSource<YashaItem>() {
+open class YashaDataSource(private val enableDefaultState: Boolean = false) : SangeDataSource<YashaItem>() {
 
     override fun shouldLoadNext(position: Int): Boolean {
-        return position == itemSize() - 1
+        return position == headerSize() + itemSize() - 1
     }
 
     override fun onStateChanged(newState: Int) {
-        setState(YashaStateItem(newState, ::retry))
+        if (enableDefaultState) {
+            setState(YashaStateItem(newState, ::retry))
+        }
     }
 }

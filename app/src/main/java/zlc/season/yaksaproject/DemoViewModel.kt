@@ -2,8 +2,8 @@ package zlc.season.yaksaproject
 
 import androidx.lifecycle.ViewModel
 
-class DemoViewModel : ViewModel() {
-    val dataSource = DemoDataSource()
+class DemoViewModel(enableDefaultState: Boolean) : ViewModel() {
+    val dataSource = DemoDataSource(enableDefaultState)
 
     val refresh = dataSource.refresh
 

@@ -2,60 +2,60 @@ package zlc.season.yaksaproject
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import zlc.season.yaksaproject.databinding.ActivityDemoBinding
-import zlc.season.yaksaproject.databinding.ViewHolderFooterBinding
-import zlc.season.yaksaproject.databinding.ViewHolderHeaderBinding
-import zlc.season.yaksaproject.databinding.ViewHolderNormalBinding
-import zlc.season.yasha.linear
+import androidx.viewpager2.widget.ViewPager2
+import zlc.season.yaksaproject.databinding.*
+import zlc.season.yasha.YashaStateItem
+import zlc.season.yasha.horizontal
+import zlc.season.yasha.vertical
 
-class DemoActivity : AppCompatActivity() {
+class ViewPager2Activity : AppCompatActivity() {
     private val demoViewModel by lazy {
         ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return DemoViewModel(true) as T
+                return DemoViewModel(false) as T
             }
         }).get(DemoViewModel::class.java)
     }
-    private val binding by lazy { ActivityDemoBinding.inflate(layoutInflater) }
+    private val binding by lazy { ActivityViewpager2Binding.inflate(layoutInflater) }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
-        println("on create ${savedInstanceState == null}")
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        initRecyclerView(savedInstanceState != null)
+        initUi(savedInstanceState != null)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun initRecyclerView(isRecreate: Boolean) {
-        binding.recyclerView.linear(demoViewModel.dataSource, true, shouldInvalidate = !isRecreate) {
+    private fun initUi(isRecreate: Boolean) {
+        binding.viewPager.vertical(demoViewModel.dataSource, shouldInvalidate = !isRecreate) {
             // 使用反射构造ViewBinding
-            renderBindingItem<NormalItem, ViewHolderNormalBinding> {
+            renderBindingItem<NormalItem, ViewPagerNormalBinding> {
                 onBind {
                     itemBinding.tvNormalContent.text = "position: $position, data: $data"
                 }
             }
 
-            renderBindingItem<HeaderItem, ViewHolderHeaderBinding> {
+            renderBindingItem<HeaderItem, ViewPagerHeaderBinding> {
                 onBind {
                     itemBinding.tvHeaderContent.text = "position: $position, data: $data"
                 }
             }
 
-            renderBindingItem<FooterItem, ViewHolderFooterBinding> {
+            renderBindingItem<FooterItem, ViewPagerFooterBinding> {
                 onBind {
                     itemBinding.tvFooterContent.text = "position: $position, data: $data"
                 }
             }
 
             // 不使用反射构造ViewBinding
-            renderBindingItem<HeaderItem, ViewHolderHeaderBinding>("AAA") {
-                viewBinding(ViewHolderHeaderBinding::inflate)
+            renderBindingItem<HeaderItem, ViewPagerHeaderBinding>("AAA") {
+                viewBinding(ViewPagerHeaderBinding::inflate)
                 onBind {
                     itemBinding.tvHeaderContent.text = "position: $position, data: $data"
                 }
@@ -66,17 +66,25 @@ class DemoActivity : AppCompatActivity() {
 
             // 不使用ViewBinding
             renderItem<HeaderItem>("BBB") {
-                res(R.layout.view_holder_header)
+                res(R.layout.view_pager_header)
                 onBind {
-                    val itemBinding = ViewHolderHeaderBinding.bind(containerView)
+                    val itemBinding = ViewPagerHeaderBinding.bind(containerView)
                     itemBinding.tvHeaderContent.text = "position: $position, data: $data"
                 }
                 onBindPayload {
-                    val itemBinding = ViewHolderHeaderBinding.bind(containerView)
+                    val itemBinding = ViewPagerHeaderBinding.bind(containerView)
                     itemBinding.tvHeaderContent.text = "position: $position, data: $data"
                 }
             }
+
+            renderBindingItem<YashaStateItem, ViewPagerStateBinding> {
+                viewBinding(ViewPagerStateBinding::inflate)
+                onBind {
+                    itemBinding.stateLoading.visibility = View.VISIBLE
+                }
+            }
         }
+
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             demoViewModel.refresh()

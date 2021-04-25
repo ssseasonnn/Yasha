@@ -66,6 +66,12 @@ class YashaDsl(val adapter: YashaAdapter) {
         }
     }
 
+    fun initViewPager2(enableDefaultState: Boolean) {
+        if (enableDefaultState) {
+            setDefaultStateItem()
+        }
+    }
+
     private fun setDefaultStateItem() {
         renderBindingItem<YashaStateItem, YashaStateViewHolderBinding> {
             viewBinding(YashaStateViewHolderBinding::inflate)

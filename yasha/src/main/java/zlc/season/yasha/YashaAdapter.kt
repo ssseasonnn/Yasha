@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import zlc.season.sange.DataSource
 import zlc.season.sange.SangeMultiAdapter
 
-
-class YashaAdapter(dataSource: DataSource<YashaItem>) :
-    SangeMultiAdapter<YashaItem, YashaViewHolder>(dataSource) {
+class YashaAdapter(dataSource: DataSource<YashaItem>, shouldInvalidate: Boolean) :
+        SangeMultiAdapter<YashaItem, YashaViewHolder>(dataSource, shouldInvalidate) {
 
     private val itemBuilderMap = mutableMapOf<Int, YashaItemBuilder>()
 

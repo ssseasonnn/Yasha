@@ -4,12 +4,14 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.delay
 import zlc.season.yasha.YashaDataSource
 import zlc.season.yasha.YashaItem
+import zlc.season.yasha.YashaStateItem
 
-class DemoDataSource : YashaDataSource() {
+class DemoDataSource(enableDefaultState: Boolean) : YashaDataSource(enableDefaultState) {
     val refresh = MutableLiveData<Boolean>()
     var page = 0
 
     override suspend fun loadInitial(): List<YashaItem>? {
+        println("load init")
         page = 0
 
         refresh.postValue(true)
@@ -24,7 +26,7 @@ class DemoDataSource : YashaDataSource() {
         }
 
         val items = mutableListOf<YashaItem>()
-        for (i in 0 until 10) {
+        for (i in 0 until 2) {
             items.add(NormalItem(i))
         }
 
@@ -42,17 +44,18 @@ class DemoDataSource : YashaDataSource() {
     }
 
     override suspend fun loadAfter(): List<YashaItem>? {
+        println("load after")
         page++
 
         //Mock load failed.
         //模拟加载失败.
-        if (page % 3 == 0) {
+        if (page % 5 == 0) {
             return null
         }
 
         delay(1500)
         val items = mutableListOf<YashaItem>()
-        for (i in page * 10 until (page + 1) * 10) {
+        for (i in page * 2 until (page + 1) * 2) {
             items.add(NormalItem(i))
         }
 
