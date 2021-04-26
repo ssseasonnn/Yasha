@@ -1,12 +1,13 @@
 package zlc.season.yaksaproject
 
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import zlc.season.yasha.YashaDataSource
 import zlc.season.yasha.YashaItem
 import zlc.season.yasha.YashaStateItem
 
-class DemoDataSource(enableDefaultState: Boolean) : YashaDataSource(enableDefaultState) {
+class DemoDataSource(coroutineScope: CoroutineScope, enableDefaultState: Boolean) : YashaDataSource(coroutineScope, enableDefaultState = enableDefaultState) {
     val refresh = MutableLiveData<Boolean>()
     var page = 0
 
