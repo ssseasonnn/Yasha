@@ -6,22 +6,9 @@
 
 # Yasha (夜叉)
 
+
 ![](yasha_usage.png)
 
-> 物品介绍：
->
-> 基于Kotlin的现代化RecyclerView渲染武器
-> 
-> 物品特点:
-> - 无需Adapter
-> - 无需ViewHolder
-> - 支持协程
-> - 支持数据分页加载
-> - 支持MultiViewType
-> - 支持Header和Footer
-> - 支持DiffUtil
-> - 支持Loading State
-> - 支持CleanUp, 释放资源避免内存泄漏
 
 ## Prepare
 
@@ -46,118 +33,137 @@ dependencies {
 
 ## First Blood
 
-如何快速渲染一个RecyclerView？还在不厌其烦的写Adapter,ViewHolder? 快让夜叉来拯救你吧：
-
-   ```kotlin
-
-     //以 **dataSource** 作为数据源渲染一个列表
-     recycler_view.linear(dataSource) {
-
-         //渲染一个NormalItem类型的Item
-         renderItem<NormalItem> {
-             //布局文件
-             res(R.layout.view_holder_normal)
-
-             //绑定数据 
-             onBind {
-                 tv_normal_content.text = data.toString()
-             }
-         }
-
-         //渲染一个HeaderItem类型的头布局
-         renderItem<HeaderItem> {
-             //布局文件
-             res(R.layout.view_holder_header)
-
-             //绑定数据
-             onBind {
-                 tv_header_content.text = data.toString()
-             }
-         }
-
-         //渲染一个FooterItem类型的尾部
-         renderItem<FooterItem> {
-
-             //布局文件
-             res(R.layout.view_holder_footer)
-
-             //绑定数据
-             onBind {
-                 tv_footer_content.text = data.toString()
-             }
-         }
-     }
-   ```
-
-如你所见，非常简单并且直观，并且没有看到任何的Adapter以及ViewHolder，装备夜叉，去Gank吧！
-
-## Double Kill
-
-渲染搞定了，数据源从何而来呢？夜叉贴心的为你准备了它的好伙伴：[散华](https://github.com/ssseasonnn/Sange)
-
-散华是另一件强大的武器，它能提供夜叉所需要的任何数据，有了它夜叉才能如鱼得水，就像在Dota中它俩也是形影不离，熟悉Dota的朋友都知道，夜叉+散华=暗夜对剑，所以这里也是一样，有了它们俩，何惧任何逆风局？
+渲染一个RecyclerView分几步？
 
 ```kotlin
-//创建一个DataSource
-class DemoDataSource : YashaDataSource() {
-   
-    //loadInitial负责加载列表初始化数据
-    override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
-        
-        //模拟延时，不用担心，该方法会在异步线程中执行，因此你可以放心在这里进行网络请求或者数据库加载等等
-        Thread.sleep(1500)
 
-        val allDataList = mutableListOf<YashaItem>()
+//定义数据类型
+class NormalItem(val i: Int, val text: String = "") : YashaItem
 
-        //添加Header数据
-        for (i in 0 until 2) {
-            allDataList.add(HeaderItem(i))
-        }
-        //添加Item数据
-        for (i in 0 until 10) {
-            allDataList.add(NormalItem(i))
-        }
-        //添加Footer数据
-        for (i in 0 until 2) {
-            allDataList.add(FooterItem(i))
-        }
+//创建DataSource并添加数据
+val dataSource = YashaDataSource()
+val items = mutableListOf<YashaItem>()
+for (i in 0 until 10) {
+    items.add(NormalItem(i))
+}
+dataSource.addItems(items)
 
-        //通知数据加载完毕
-        loadCallback.setResult(allDataList)
+//渲染Item
+recyclerView.linear(dataSource){
+    // 使用反射构造ViewBinding
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
+        onBind {
+            itemBinding.tvNormalContent.text = "position: $position, data: $data"
+        }
     }
-
-    //loadAfter负责加载下一页数据，夜叉会自己决定是否触发了分页加载，你只需要做好加载下一页的逻辑，其他的交给夜叉吧
-    override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
-       
-        //当加载失败：
-        if (page % 3 == 0) {
-
-            //当数据加载失败时，只需要简单告诉夜叉一个NULL值，夜叉就会自动停止加载，并显示一个加载失败的状态
-            loadCallback.setResult(null)
-            return
+    // 或者
+    // 不使用反射构造ViewBinding
+    renderBindingItem<NormalItem, ViewHolderNormalBinding>() {
+        viewBinding(ViewHolderNormalBinding::inflate)
+        onBind {
+            itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
-
-        //当加载完毕：
-        if(page == 5) {
-            //当数据加载完之后，只需要告诉夜叉一个空列表，夜叉就会自动停止加载，并且显示一个加载完毕的状态
-            loadCallback.setResult(emptyList())
-            return
-        }
-
-        //加载下一页数据：
-        val items = mutableListOf<YashaItem>()
-        for (i in page * 10 until (page + 1) * 10) {
-            items.add(NormalItem(i))
-        }
-
-        loadCallback.setResult(items)
     }
 }
 ```
 
-是不是很轻松？没错，夜叉和散华提供的API简单易懂，无需任何门槛即可快速上手，简直是居家旅行，杀人越货必备的武器！
+> 使用反射创建ViewBinding时，请添加以下proguard rule：
 
-除此之外，散华还提供了很多直接操作数据源的API，例如
+```pro
+-keepclassmembers class * implements androidx.viewbinding.ViewBinding {
+    public static ** inflate(...);
+}
+```
+
+## Double Kill
+
+分页？Easy!
+
+```kotlin
+// 继承YashaDataSource并重写**loadInitial**和**loadAfter**方法即可
+class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(coroutineScope) {
+    var page = 0
+
+    // 初始化加载时调用，位于IO线程
+    override suspend fun loadInitial(): List<YashaItem>? {
+        page = 0
+    
+        val items = mutableListOf<YashaItem>()
+        for (i in 0 until 10) {
+            items.add(NormalItem(i))
+        }
+
+        // 返回null触发加载失败
+        // 返回空列表触发没有更多
+        return items
+    }
+
+    // 分页加载时调用，位于IO线程
+    override suspend fun loadAfter(): List<YashaItem>? {
+        page++
+
+        //模拟加载失败
+        if (page % 5 == 0) {
+            // 返回null触发加载失败
+            return null  
+        }
+
+        val items = mutableListOf<YashaItem>()
+        for (i in 0 until 10) {
+            items.add(NormalItem(i))
+        }
+
+        // 返回空列表触发没有更多
+        return items
+    }
+}
+```
+
+> 你只需要定义好初始化加载和分页加载的逻辑，夜叉会在合适的时候自动调用，安心的做个甩手掌柜吧
+
+## Triple Kill
+
+多种viewType？小case啦
+
+```kotlin
+
+//定义数据类型A
+class AItem(val i: Int) : YashaItem
+
+//定义数据类型B
+class BItem(val i:Int) : YashaItem
+
+//添加不同类型数据
+val dataSource = YashaDataSource()
+val items = mutableListOf<YashaItem>()
+for (i in 0 until 5) {
+    items.add(AItem(i))
+}
+for (i in 5 until 10){
+    items.add(BItem(i))
+}
+dataSource.addItems(items)
+
+//渲染Item
+recyclerView.linear(dataSource){
+    //渲染AItem
+    renderBindingItem<AItem, AItemBinding> {
+        onBind {
+            //render
+            ...
+        }
+    }
+    //渲染BItem
+    renderBindingItem<BItem, BItemBinding> {
+        onBind {
+            //render
+            ...
+        }
+    }
+}
+```
+
+Header 和 Footer？没问题，DataSource都支持
 
 ```kotlin
 //Headers
@@ -175,59 +181,102 @@ fun removeFooter(t: T, delay: Boolean = false)
 fun setFooter(old: T, new: T, delay: Boolean = false)
 fun getFooter(position: Int): T
 fun clearFooter(delay: Boolean = false)
-
-//Items
-fun addItem(t: T, position: Int = -1, delay: Boolean = false)
-fun addItems(list: List<T>, position: Int = -1, delay: Boolean = false) 
-fun removeItem(t: T, delay: Boolean = false) 
-fun setItem(old: T, new: T, delay: Boolean = false)
-fun getItem(position: Int): T
-fun clearItem(delay: Boolean = false)
-
-//等等API接口
 ```
 
-## Triple Kill
+## Ultra kill
 
-除此之外，夜叉还贴心的为各位小哥们准备了状态的显示，如常用的**加载中**，**加载失败**，**加载完成** 等
-
-那如果对自带的状态有任何不满，那很简单，第一种办法就是干掉它，第二种办法就是替换它
+局部刷新? 往下面看
 
 ```kotlin
-//干掉它：
-class DemoDataSource : YashaDataSource() {
+//定义数据类型时，重写Diff方法
+class NormalItem(val i: Int, val text: String = "") : YashaItem {
 
-    override fun onStateChanged(newState: Int) {
-        //super.onStateChanged(newState)
-        //只需要重新这个方法并且注释掉super的调用即可，这样就没有任何状态显示啦！
+    override fun areItemsTheSame(other: Differ): Boolean {
+        if (other !is NormalItem) return false
+        return other.i == i
+    }
+
+    override fun areContentsTheSame(other: Differ): Boolean {
+        if (other !is NormalItem) return false
+        return other.text == text
+    }
+
+    //设置payload
+    override fun getChangePayload(other: Differ): Any? {
+        if (other !is NormalItem) return null
+        return other.text 
     }
 }
 
-//替换它：
-recycler_view.linear(dataSource) {
+//dataSource更新新的Item数据
+val oldItem = NormalItem(1, "1")
+val newItem = NormalItem(2, "2")
+dataSource.setItem(oldItem, newItem)
 
-    //替换成你自己的状态渲染方式
-    renderItem<YashaStateItem> {
-        //新的状态布局
-        res(R.layout.your_state_view)
-
-        //新的状态绑定
+// 渲染时注册onBindPayload
+recyclerView.linear(dataSource){
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
         onBind {
-            
+            itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
-        gridSpanSize(spanCount)
-        staggerFullSpan(true)
+        onBindPayload {
+            //取出payload进行局部刷新
+            val payload = it[0]
+            if (payload != null) {
+                itemBinding.tvNormalContent.text = payload.toString()
+            }
+        }
     }
 }
 ```
 
-## 天辉获胜，GG
+## Rampage
 
+加载状态？
+
+```kotlin
+//使用默认的加载状态
+val dataSource = YashaDataSource(enableDefaultState = true)
+
+//自定义加载状态
+class CustomStateItem(val state: Int) : YashaItem
+class CustomDataSource : YashaDataSource(enableDefaultState = false) {
+
+    override fun onStateChanged(newState: Int) {
+        setState(CustomStateItem(newState))
+    }
+}
+
+//渲染自定义状态
+recyclerView.linear(dataSource){
+    ...
+    renderBindingItem<CustomStateItem, CustomStateItemBinding> {
+        onBind {
+            when (data.state) {
+                FetchingState.FETCHING -> {
+                    //加载中
+                }
+                FetchingState.FETCHING_ERROR -> {
+                    //加载失败
+                }
+                FetchingState.DONE_FETCHING -> {
+                   //加载完成
+                }
+                else -> {
+                    //其他
+                }
+            }
+        }
+    }
+}
+```
+
+## 
     
 ## License
 
 > ```
-> Copyright 2019 Season.Zlc
+> Copyright 2021 Season.Zlc
 >
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this file except in compliance with the License.

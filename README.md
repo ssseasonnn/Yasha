@@ -6,22 +6,9 @@
 
 # Yasha
 
+
 ![](yasha_usage.png)
 
-> Item introduction：
->
-> Kotlin-based modern RecyclerView rendering weapon
-> 
-> Item Features:
-> - No Adapter required
-> - No ViewHolder required
-> - Support Coroutine
-> - Support page loading
-> - Support for MultiViewType
-> - Support for Header and Footer
-> - Support DiffUtil
-> - Support Loading State
-> - Support CleanUp, free resources to avoid memory leaks
 
 ## Prepare
 
@@ -35,7 +22,7 @@ allprojects {
 }
 ```
 
-2.  Add dependency
+2. Add dependency
 
 ```gradle
 dependencies {
@@ -46,117 +33,137 @@ dependencies {
 
 ## First Blood
 
-How to quickly render a RecyclerView? Still tirelessly writing Adapter, ViewHolder? Let Yasha come to save you:
-
-   ```kotlin
-
-     //Render a list with ** dataSource ** as the data source
-     recycler_view.linear(dataSource) {
-
-         //Render an Item of type NormalItem
-         renderItem<NormalItem> {
-             //layout res
-             res(R.layout.view_holder_normal)
-
-             //bind data 
-             onBind {
-                 tv_normal_content.text = data.toString()
-             }
-         }
-
-         //Render an Header of type HeaderItem
-         renderItem<HeaderItem> {
-             //layout res
-             res(R.layout.view_holder_header)
-
-             //bind data 
-             onBind {
-                 tv_header_content.text = data.toString()
-             }
-         }
-
-         //Render an Footer of type FooterItem
-         renderItem<FooterItem> {
-
-             //layout res
-             res(R.layout.view_holder_footer)
-
-             //bind data 
-             onBind {
-                 tv_footer_content.text = data.toString()
-             }
-         }
-     }
-   ```
-
-As you can see, it's very simple and intuitive, and you don't see any Adapter or ViewHolder. Equipped with Yasha, go to Gank!
-
-## Double Kill
-
-Rendering is done. Where does the data source come from? Yasha thoughtfully prepared a good partner for you：[Sange](https://github.com/ssseasonnn/Sange)
-
-Sange is another powerful weapon. It can provide any data that Yasha needs. With it, Yasha can be like a fish. As in Dota, they are also inseparable. Friends who are familiar with Dota know that Yasha + Sange = Dark Night The sword is the same here. With both of them, why fear any headwinds?
+How many steps are there to render a RecyclerView?
 
 ```kotlin
-//Create a DataSource
-class DemoDataSource : YashaDataSource() {
-   
-    //loadInitial is responsible for loading list initialization data
-    override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
-        
-        //Simulate the delay, don't worry, this method will be executed in an asynchronous thread, so you can rest assured to make network requests or database loading, etc.
-        Thread.sleep(1500)
 
-        val allDataList = mutableListOf<YashaItem>()
+//Define data type
+class NormalItem(val i: Int, val text: String = "") : YashaItem
 
-        //Add Headers data
-        for (i in 0 until 2) {
-            allDataList.add(HeaderItem(i))
-        }
-        //Add Items data
-        for (i in 0 until 10) {
-            allDataList.add(NormalItem(i))
-        }
-        //Add Footers data
-        for (i in 0 until 2) {
-            allDataList.add(FooterItem(i))
-        }
+//Create DataSource and add data
+val dataSource = YashaDataSource()
+val items = mutableListOf<YashaItem>()
+for (i in 0 until 10) {
+    items.add(NormalItem(i))
+}
+dataSource.addItems(items)
 
-        //Notify data loading is complete
-        loadCallback.setResult(allDataList)
+//Render Item
+recyclerView.linear(dataSource){
+    // Use reflection to construct ViewBinding
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
+        onBind {
+            itemBinding.tvNormalContent.text = "position: $position, data: $data"
+        }
     }
-
-    //loadAfter is responsible for loading the next page of data. Yasha will decide whether to trigger pagination loading by itself. You only need to do the logic to load the next page. Leave the rest to Yasha
-    override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
-       
-        //when loading failed:
-        if (page % 3 == 0) {
-
-            //When data loading fails, you only need to simply tell Yasha a NULL value, and Yasha will automatically stop loading and display a status of loading failure.
-            loadCallback.setResult(null)
-            return
+    // or
+    // Do not use reflection to construct ViewBinding
+    renderBindingItem<NormalItem, ViewHolderNormalBinding>() {
+        viewBinding(ViewHolderNormalBinding::inflate)
+        onBind {
+            itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
-
-        //when loading finished:
-        if(page == 5) {
-            //After the data is loaded, you only need to tell Yasha an empty list, and Yasha will automatically stop loading and display a loading status.            loadCallback.setResult(emptyList())
-            return
-        }
-
-        //Load the next page of data:
-        val items = mutableListOf<YashaItem>()
-        for (i in page * 10 until (page + 1) * 10) {
-            items.add(NormalItem(i))
-        }
-
-        loadCallback.setResult(items)
     }
 }
 ```
 
-Is it easy? That's right, the API provided by Yasha and Sange is simple and easy to understand. It can be quickly used without any threshold. It is an essential weapon for traveling at home and killing more goods!
+> When using reflection to create a ViewBinding, add the following proguard rule:
 
-In addition, Sange also provides many APIs for directly operating data sources, such as
+```pro
+-keepclassmembers class * implements androidx.viewbinding.ViewBinding {
+    public static ** inflate(...);
+}
+```
+
+## Double Kill
+
+Pagination？Easy!
+
+```kotlin
+// Inherit YashaDataSource and rewrite the **loadInitial** and **loadAfter** methods
+class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(coroutineScope) {
+    var page = 0
+
+    // Called when initial loading, located in the IO thread
+    override suspend fun loadInitial(): List<YashaItem>? {
+        page = 0
+    
+        val items = mutableListOf<YashaItem>()
+        for (i in 0 until 10) {
+            items.add(NormalItem(i))
+        }
+
+        // Return null to trigger loading failure
+        // Return to empty list to trigger no more
+        return items
+    }
+
+    // Called when the page is loaded, located in the IO thread
+    override suspend fun loadAfter(): List<YashaItem>? {
+        page++
+
+        //Simulated loading failed
+        if (page % 5 == 0) {
+            // Return null to trigger loading failure
+            return null  
+        }
+
+        val items = mutableListOf<YashaItem>()
+        for (i in 0 until 10) {
+            items.add(NormalItem(i))
+        }
+
+        // Return to empty list to trigger no more
+        return items
+    }
+}
+```
+
+> You only need to define the logic of initial loading and paging loading, Yasha will automatically call it at the right time, and you can be a handy shopkeeper with peace of mind.
+
+## Triple Kill
+
+Multiple viewTypes? Little case
+
+```kotlin
+
+//Define data type A
+class AItem(val i: Int) : YashaItem
+
+//Define data type B
+class BItem(val i:Int) : YashaItem
+
+//Add different types of data
+val dataSource = YashaDataSource()
+val items = mutableListOf<YashaItem>()
+for (i in 0 until 5) {
+    items.add(AItem(i))
+}
+for (i in 5 until 10){
+    items.add(BItem(i))
+}
+dataSource.addItems(items)
+
+//Render Item
+recyclerView.linear(dataSource){
+    //Render AItem
+    renderBindingItem<AItem, AItemBinding> {
+        onBind {
+            //render
+            ...
+        }
+    }
+    //Render BItem
+    renderBindingItem<BItem, BItemBinding> {
+        onBind {
+            //render
+            ...
+        }
+    }
+}
+```
+
+Header and Footer? No problem, DataSource supports
 
 ```kotlin
 //Headers
@@ -174,59 +181,102 @@ fun removeFooter(t: T, delay: Boolean = false)
 fun setFooter(old: T, new: T, delay: Boolean = false)
 fun getFooter(position: Int): T
 fun clearFooter(delay: Boolean = false)
-
-//Items
-fun addItem(t: T, position: Int = -1, delay: Boolean = false)
-fun addItems(list: List<T>, position: Int = -1, delay: Boolean = false) 
-fun removeItem(t: T, delay: Boolean = false) 
-fun setItem(old: T, new: T, delay: Boolean = false)
-fun getItem(position: Int): T
-fun clearItem(delay: Boolean = false)
-
-//...
 ```
 
-## Triple Kill
+## Ultra kill
 
-In addition, Yasha also prepared the status display for the younger friends, such as commonly used ** Loading **, ** Loading failed **, ** Loading completed **
-
-If there is any dissatisfaction with the state that comes with it, it is very simple. The first method is to kill it. The second method is to replace it.
+Partial refresh? Look down
 
 ```kotlin
-//kill it：
-class DemoDataSource : YashaDataSource() {
+//When defining the data type, override the Diff method
+class NormalItem(val i: Int, val text: String = "") : YashaItem {
 
-    override fun onStateChanged(newState: Int) {
-        //super.onStateChanged(newState)
-        //You just need to redo this method and comment out the call to super, so there is no status display!
+    override fun areItemsTheSame(other: Differ): Boolean {
+        if (other !is NormalItem) return false
+        return other.i == i
+    }
+
+    override fun areContentsTheSame(other: Differ): Boolean {
+        if (other !is NormalItem) return false
+        return other.text == text
+    }
+
+    //Set the payload
+    override fun getChangePayload(other: Differ): Any? {
+        if (other !is NormalItem) return null
+        return other.text 
     }
 }
 
-//replace it：
-recycler_view.linear(dataSource) {
+//dataSource updates the new Item data
+val oldItem = NormalItem(1, "1")
+val newItem = NormalItem(2, "2")
+dataSource.setItem(oldItem, newItem)
 
-    //Replace with your own state rendering
-    renderItem<YashaStateItem> {
-        //new state layout res
-        res(R.layout.your_state_view)
-
-        //new state bind
+// Register onBindPayload when rendering
+recyclerView.linear(dataSource){
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
         onBind {
-            
+            itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
-        gridSpanSize(spanCount)
-        staggerFullSpan(true)
+        onBindPayload {
+            //Take out the payload for partial refresh
+            val payload = it[0]
+            if (payload != null) {
+                itemBinding.tvNormalContent.text = payload.toString()
+            }
+        }
     }
 }
 ```
 
-## Radiant wins, GG
+## Rampage
 
-    
+Loading status?
+
+```kotlin
+//Use the default loading state
+val dataSource = YashaDataSource(enableDefaultState = true)
+
+//or
+//Custom loading status
+class CustomStateItem(val state: Int) : YashaItem
+class CustomDataSource : YashaDataSource(enableDefaultState = false) {
+
+    override fun onStateChanged(newState: Int) {
+        setState(CustomStateItem(newState))
+    }
+}
+
+//Render custom state
+recyclerView.linear(dataSource){
+    ...
+    renderBindingItem<CustomStateItem, CustomStateItemBinding> {
+        onBind {
+            when (data.state) {
+                FetchingState.FETCHING -> {
+                    //loading
+                }
+                FetchingState.FETCHING_ERROR -> {
+                    //loading failed
+                }
+                FetchingState.DONE_FETCHING -> {
+                   //loading complete
+                }
+                else -> {
+                    //other
+                }
+            }
+        }
+    }
+}
+```
+
+
 ## License
 
 > ```
-> Copyright 2019 Season.Zlc
+> Copyright 2021 Season.Zlc
 >
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this file except in compliance with the License.
