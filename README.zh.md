@@ -26,7 +26,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Yasha:1.1.3'
+	implementation 'com.github.ssseasonnn:Yasha:1.1.5'
 }
 ```
 
