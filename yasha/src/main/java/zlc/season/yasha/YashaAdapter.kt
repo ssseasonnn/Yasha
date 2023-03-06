@@ -8,7 +8,7 @@ import zlc.season.sange.DataSource
 import zlc.season.sange.SangeMultiAdapter
 
 class YashaAdapter(dataSource: DataSource<YashaItem>, shouldInvalidate: Boolean) :
-        SangeMultiAdapter<YashaItem, YashaViewHolder>(dataSource, shouldInvalidate) {
+    SangeMultiAdapter<YashaItem, YashaViewHolder>(dataSource, shouldInvalidate) {
 
     private val itemBuilderMap = mutableMapOf<Int, YashaItemBuilder>()
 
@@ -55,7 +55,7 @@ class YashaAdapter(dataSource: DataSource<YashaItem>, shouldInvalidate: Boolean)
     private fun specialStaggeredGridLayout(holder: YashaViewHolder) {
         val layoutParams = holder.itemView.layoutParams
         if (layoutParams != null && layoutParams is StaggeredGridLayoutManager.LayoutParams) {
-            val position = holder.adapterPosition
+            val position = holder.bindingAdapterPosition
             layoutParams.isFullSpan = getItemBuilder(position)?.staggerFullSpan ?: false
         }
     }

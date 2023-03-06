@@ -3,15 +3,20 @@ package zlc.season.yaksaproject
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import zlc.season.yaksaproject.databinding.*
+import zlc.season.yaksaproject.databinding.ActivityPageBinding
+import zlc.season.yaksaproject.databinding.ViewPagerFooterBinding
+import zlc.season.yaksaproject.databinding.ViewPagerHeaderBinding
+import zlc.season.yaksaproject.databinding.ViewPagerNormalBinding
+import zlc.season.yaksaproject.databinding.ViewPagerStateBinding
 import zlc.season.yasha.YashaStateItem
-import zlc.season.yasha.vertical
+import zlc.season.yasha.pager
 
-class ViewPager2Activity : AppCompatActivity() {
+class PagerActivity : AppCompatActivity() {
     private val demoViewModel by lazy {
         ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -19,7 +24,7 @@ class ViewPager2Activity : AppCompatActivity() {
             }
         })[DemoViewModel::class.java]
     }
-    private val binding by lazy { ActivityViewpager2Binding.inflate(layoutInflater) }
+    private val binding by lazy { ActivityPageBinding.inflate(layoutInflater) }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,11 +32,17 @@ class ViewPager2Activity : AppCompatActivity() {
         setContentView(binding.root)
 
         initUi(savedInstanceState != null)
+
     }
 
     @SuppressLint("SetTextI18n")
     private fun initUi(isRecreate: Boolean) {
-        binding.viewPager.vertical(demoViewModel.dataSource, shouldInvalidate = !isRecreate) {
+        binding.recyclerView.itemAnimator = null
+        binding.recyclerView.pager(demoViewModel.dataSource, shouldInvalidate = !isRecreate,
+            onPageChanged = { position, item, itemView ->
+                Toast.makeText(this, "This is page $position", Toast.LENGTH_SHORT).show()
+            }
+        ) {
             // 使用反射构造ViewBinding
             renderBindingItem<NormalItem, ViewPagerNormalBinding> {
                 onBind {

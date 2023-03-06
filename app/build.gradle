@@ -2,11 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
+    namespace 'zlc.season.yaksaproject'
+    compileSdkVersion 31
     defaultConfig {
         applicationId "zlc.season.yaksaproject"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.builderMap.runner.AndroidJUnitRunner"
@@ -37,7 +38,4 @@ dependencies {
 
 //    implementation "com.github.ssseasonnn:Yasha:1.0.7"
     implementation project(":yasha")
-
-    testImplementation 'androidx.arch.core:core-testing:2.1.0'
-    testImplementation 'junit:junit:4.12'
 }

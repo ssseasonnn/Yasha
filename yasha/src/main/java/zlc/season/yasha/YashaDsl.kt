@@ -46,18 +46,27 @@ class YashaDsl(val adapter: YashaAdapter) {
         dsl.prepare(type<T>(typeConflict), adapter)
     }
 
-    inline fun <reified T : YashaItem, reified VB : ViewBinding> renderBindingItem(typeConflict: String? = null, block: YashaBindingItemDsl<T, VB>.() -> Unit) {
+    inline fun <reified T : YashaItem, reified VB : ViewBinding> renderBindingItem(
+        typeConflict: String? = null,
+        block: YashaBindingItemDsl<T, VB>.() -> Unit
+    ) {
         val dsl = YashaBindingItemDsl<T, VB>(VB::class.java.getInflateMethod())
         dsl.block()
         dsl.prepare(type<T>(typeConflict), adapter)
     }
 
-    fun init(target: RecyclerView, type: Int, enableDefaultState: Boolean, customLayoutManager: RecyclerView.LayoutManager?) {
+    fun init(
+        target: RecyclerView,
+        type: Int,
+        enableDefaultState: Boolean,
+        customLayoutManager: RecyclerView.LayoutManager?
+    ) {
         target.layoutManager = when (type) {
             LINEAR_LAYOUT -> LinearLayoutManager(target.context, orientation, reverse)
             GRID_LAYOUT -> GridLayoutManager(target.context, spanCount, orientation, reverse)
             STAGGERED_LAYOUT -> StaggeredGridLayoutManager(spanCount, orientation)
             CUSTOM_LAYOUT -> customLayoutManager
+            PAGER_LAYOUT -> LinearLayoutManager(target.context, orientation, reverse)
             else -> throw IllegalStateException("This should never happen!")
         }
 

@@ -15,10 +15,10 @@ import zlc.season.yasha.linear
 class DemoActivity : AppCompatActivity() {
     private val demoViewModel by lazy {
         ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return DemoViewModel(true) as T
             }
-        }).get(DemoViewModel::class.java)
+        })[DemoViewModel::class.java]
     }
     private val binding by lazy { ActivityDemoBinding.inflate(layoutInflater) }
 
