@@ -1,5 +1,6 @@
 package zlc.season.yasha
 
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,8 @@ class YashaDsl(val adapter: YashaAdapter) {
     private var orientation = VERTICAL
     private var reverse = false
     private var spanCount = 1
+
+    private var onPageChanged: ((Int, YashaItem, View) -> Unit)? = null
 
     /**
      * Set the orientation
@@ -38,6 +41,13 @@ class YashaDsl(val adapter: YashaAdapter) {
      */
     fun spanCount(spanCount: Int) {
         this.spanCount = spanCount
+    }
+
+    /**
+     * Set page changed callback for Pager
+     */
+    fun onPageChanged(block: (Int, YashaItem, View) -> Unit) {
+        this.onPageChanged = block
     }
 
     inline fun <reified T : YashaItem> renderItem(typeConflict: String? = null, block: YashaItemDsl<T>.() -> Unit) {
@@ -72,6 +82,12 @@ class YashaDsl(val adapter: YashaAdapter) {
 
         if (enableDefaultState) {
             setDefaultStateItem()
+        }
+
+        target.adapter = adapter
+
+        onPageChanged?.let {
+            target.addOnScrollListener(YashaPagerListener(target, it))
         }
     }
 

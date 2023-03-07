@@ -1,11 +1,28 @@
 ![](yasha.png)
 
-[![](https://jitpack.io/v/ssseasonnn/Yasha.svg)](https://jitpack.io/#ssseasonnn/Yasha)
+<p align="left">
+	<img src="https://img.shields.io/badge/kotlin-1.8.0-green"/>
+	<a href="https://jitpack.io/#ssseasonnn/Yasha">
+		<img src="https://jitpack.io/v/ssseasonnn/Yasha.svg"/>
+	</a>
+</p>
 
-*Read this in other languages: [中文](README.zh.md), [English](README.md), [Changelog](CHANGELOG.md)*
+# Yasha
 
-# Yasha (夜叉)
+一个渲染RecyclerView和ViewPager的DSL库.
 
+> *Read this in other languages: [中文](README.zh.md), [English](README.md), [Changelog](CHANGELOG.md)*
+
+## 功能介绍：
+
+✅ 支持RecyclerView  
+✅ 支持ViewPager  
+✅ 支持MultiType  
+✅ 支持Header和Footer  
+✅ 支持自动分页加载  
+✅ 支持DiffUtils刷新  
+✅ 支持加载状态显示  
+✅ 支持CleanUp自动清理资源
 
 ![](yasha_usage.png)
 
@@ -16,7 +33,6 @@
 ```gradle
 allprojects {
     repositories {
-        ...
         maven { url 'https://jitpack.io' }
     }
 }
@@ -31,35 +47,20 @@ dependencies {
 ```
 
 
-## First Blood
+## 基本用法
 
-渲染一个RecyclerView分几步？
+### 1. 渲染RecyclerView
 
 ```kotlin
+//创建数据类
+class RecyclerViewItem(val i: Int, val text: String = "") : YashaItem
 
-//定义数据类型
-class NormalItem(val i: Int, val text: String = "") : YashaItem
-
-//创建DataSource并添加数据
+//创建DataSource
 val dataSource = YashaDataSource()
-val items = mutableListOf<YashaItem>()
-for (i in 0 until 10) {
-    items.add(NormalItem(i))
-}
-dataSource.addItems(items)
 
-//渲染Item
+//渲染RecyclerView
 recyclerView.linear(dataSource){
-    // 使用反射构造ViewBinding
-    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
-        onBind {
-            itemBinding.tvNormalContent.text = "position: $position, data: $data"
-        }
-    }
-    // 或者
-    // 不使用反射构造ViewBinding
-    renderBindingItem<NormalItem, ViewHolderNormalBinding>() {
-        viewBinding(ViewHolderNormalBinding::inflate)
+    renderBindingItem<RecyclerViewItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
@@ -67,17 +68,73 @@ recyclerView.linear(dataSource){
 }
 ```
 
-> 使用反射创建ViewBinding时，请添加以下proguard rule：
+### 2. 渲染ViewPager
 
-```pro
--keepclassmembers class * implements androidx.viewbinding.ViewBinding {
-    public static ** inflate(...);
+```kotlin
+//创建数据类
+class ViewPagerItem(val i: Int, val text: String = "") : YashaItem
+
+//创建DataSource
+val dataSource = YashaDataSource()
+
+//渲染ViewPager
+viewPager.vertical(dataSource){
+    renderBindingItem<ViewPagerItem, ViewHolderNormalBinding> {
+        onBind {
+            itemBinding.tvNormalContent.text = "position: $position, data: $data"
+        }
+    }
 }
 ```
 
-## Double Kill
+## 其余配置
 
-分页？Easy!
+### 1. 渲染类型
+
+Yasha支持多种类型的RecyclerView，如列表、Grid、Stagger以及Pager和自定义列表类型
+
+```kotlin
+//渲染列表
+recyclerView.linear(dataSource){
+	//设置方向为垂直列表或横向列表
+	orientation(RecyclerView.VERTICAL)
+	renderBindingItem<NormalItem, ViewHolderNormalBinding> {}
+}
+
+//渲染表格
+recyclerView.grid(dataSource){
+	//设置列数量
+	spanCount(2)  
+	renderBindingItem<NormalItem, ViewHolderNormalBinding> {  
+		//设置该item项对应的列数
+	    gridSpanSize(2)  
+	    onBind {}  
+	}
+}
+
+//渲染瀑布流
+recyclerView.stagger(dataSource){
+	//设置列数量
+	spanCount(2)  
+	renderBindingItem<NormalItem, ViewHolderNormalBinding> {  
+	    staggerFullSpan(true)  
+	    onBind {}  
+	}
+}
+
+//渲染Page
+recyclerView.pager(dataSource){
+	//注册翻页回调
+	onPageChanged { position, yashaItem, view ->  
+	    Toast.makeText(this, "This is page $position", Toast.LENGTH_SHORT).show()  
+	}
+}
+
+//渲染自定义layout
+recyclerView.custom(customLayoutManager, dataSource){}
+```
+
+### 2. DataSource分页加载
 
 ```kotlin
 // 继承YashaDataSource并重写**loadInitial**和**loadAfter**方法即可
@@ -119,11 +176,7 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
 }
 ```
 
-> 你只需要定义好初始化加载和分页加载的逻辑，夜叉会在合适的时候自动调用，安心的做个甩手掌柜吧
-
-## Triple Kill
-
-多种viewType？小case啦
+### 3. 渲染MultiType
 
 ```kotlin
 
@@ -133,27 +186,16 @@ class AItem(val i: Int) : YashaItem
 //定义数据类型B
 class BItem(val i:Int) : YashaItem
 
-//添加不同类型数据
-val dataSource = YashaDataSource()
-val items = mutableListOf<YashaItem>()
-for (i in 0 until 5) {
-    items.add(AItem(i))
-}
-for (i in 5 until 10){
-    items.add(BItem(i))
-}
-dataSource.addItems(items)
-
 //渲染Item
 recyclerView.linear(dataSource){
-    //渲染AItem
+    //渲染类型 A
     renderBindingItem<AItem, AItemBinding> {
         onBind {
             //render
             ...
         }
     }
-    //渲染BItem
+    //渲染类型 B
     renderBindingItem<BItem, BItemBinding> {
         onBind {
             //render
@@ -163,7 +205,9 @@ recyclerView.linear(dataSource){
 }
 ```
 
-Header 和 Footer？没问题，DataSource都支持
+### 4. Header 和 Footer
+
+DataSource支持以下多种添加Header和Footer的方法：
 
 ```kotlin
 //Headers
@@ -183,9 +227,9 @@ fun getFooter(position: Int): T
 fun clearFooter(delay: Boolean = false)
 ```
 
-## Ultra kill
+### 5. 局部刷新
 
-局部刷新? 往下面看
+通过重写数据类的Diff方法，即可完成高效的局部刷新
 
 ```kotlin
 //定义数据类型时，重写Diff方法
@@ -219,6 +263,8 @@ recyclerView.linear(dataSource){
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
+        
+        //局部刷新使用
         onBindPayload {
             //取出payload进行局部刷新
             val payload = it[0]
@@ -230,9 +276,7 @@ recyclerView.linear(dataSource){
 }
 ```
 
-## Rampage
-
-加载状态？
+### 6. 自定义加载状态
 
 ```kotlin
 //使用默认的加载状态
@@ -271,8 +315,16 @@ recyclerView.linear(dataSource){
 }
 ```
 
-## 
-    
+### 7. 混淆
+
+仅当使用反射创建ViewBinding时，需要添加以下proguard rule：
+
+```pro
+-keepclassmembers class * implements androidx.viewbinding.ViewBinding {
+    public static ** inflate(...);
+}
+```
+
 ## License
 
 > ```

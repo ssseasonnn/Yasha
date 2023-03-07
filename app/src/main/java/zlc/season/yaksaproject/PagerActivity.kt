@@ -38,11 +38,14 @@ class PagerActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun initUi(isRecreate: Boolean) {
         binding.recyclerView.itemAnimator = null
-        binding.recyclerView.pager(demoViewModel.dataSource, shouldInvalidate = !isRecreate,
-            onPageChanged = { position, item, itemView ->
-                Toast.makeText(this, "This is page $position", Toast.LENGTH_SHORT).show()
+        binding.recyclerView.pager(demoViewModel.dataSource, shouldInvalidate = !isRecreate) {
+            /**
+             * 注册翻页回调
+             */
+            onPageChanged { position, yashaItem, view ->
+                Toast.makeText(this@PagerActivity, "This is page $position", Toast.LENGTH_SHORT).show()
             }
-        ) {
+
             // 使用反射构造ViewBinding
             renderBindingItem<NormalItem, ViewPagerNormalBinding> {
                 onBind {

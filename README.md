@@ -1,14 +1,30 @@
 ![](yasha.png)
 
-[![](https://jitpack.io/v/ssseasonnn/Yasha.svg)](https://jitpack.io/#ssseasonnn/Yasha)
-
-*Read this in other languages: [中文](README.zh.md), [English](README.md), [Changelog](CHANGELOG.md)*
+<p align="left">
+	<img src="https://img.shields.io/badge/kotlin-1.8.0-green"/>
+	<a href="https://jitpack.io/#ssseasonnn/Yasha">
+		<img src="https://jitpack.io/v/ssseasonnn/Yasha.svg"/>
+	</a>
+</p>
 
 # Yasha
 
+A DSL library for rendering RecyclerView and ViewPage.
+
+> *Read this in other languages: [中文](README.zh.md), [English](README.md), [Changelog](CHANGELOG.md)*
+
+## Feature introduction：
+
+✅ Support RecyclerView  
+✅ Support ViewPager  
+✅ Support MultiType  
+✅ Support Header and Footer  
+✅ Support automatic paging loading  
+✅ Support DiffUtil  
+✅ Support loading status display  
+✅ Support automatic clean up resources
 
 ![](yasha_usage.png)
-
 
 ## Prepare
 
@@ -16,50 +32,32 @@
 ```gradle
 allprojects {
     repositories {
-        ...
         maven { url 'https://jitpack.io' }
     }
 }
 ```
 
-2. Add dependency
-
+2. Add Dependencies
 ```gradle
 dependencies {
 	implementation 'com.github.ssseasonnn:Yasha:1.1.5'
 }
 ```
 
+## Basic usage
 
-## First Blood
-
-How many steps are there to render a RecyclerView?
+### 1. Render RecyclerView
 
 ```kotlin
+//Create data class
+class RecyclerViewItem(val i: Int, val text: String = "") : YashaItem
 
-//Define data type
-class NormalItem(val i: Int, val text: String = "") : YashaItem
-
-//Create DataSource and add data
+//Create DataSource
 val dataSource = YashaDataSource()
-val items = mutableListOf<YashaItem>()
-for (i in 0 until 10) {
-    items.add(NormalItem(i))
-}
-dataSource.addItems(items)
 
-//Render Item
+//Render RecyclerView
 recyclerView.linear(dataSource){
-    // Use reflection to construct ViewBinding
-    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
-        onBind {
-            itemBinding.tvNormalContent.text = "position: $position, data: $data"
-        }
-    }
-    // or
-    // Do not use reflection to construct ViewBinding
-    renderBindingItem<NormalItem, ViewHolderNormalBinding>() {
-        viewBinding(ViewHolderNormalBinding::inflate)
+    renderBindingItem<RecyclerViewItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
@@ -67,24 +65,79 @@ recyclerView.linear(dataSource){
 }
 ```
 
-> When using reflection to create a ViewBinding, add the following proguard rule:
-
-```pro
--keepclassmembers class * implements androidx.viewbinding.ViewBinding {
-    public static ** inflate(...);
-}
-```
-
-## Double Kill
-
-Pagination？Easy!
+### 2. Render ViewPager
 
 ```kotlin
-// Inherit YashaDataSource and rewrite the **loadInitial** and **loadAfter** methods
+//Create data class
+class ViewPagerItem(val i: Int, val text: String = "") : YashaItem
+
+//Create DataSource
+val dataSource = YashaDataSource()
+
+//Render ViewPager
+viewPager.vertical(dataSource){
+    renderBindingItem<ViewPagerItem, ViewHolderNormalBinding> {
+        onBind {
+            itemBinding.tvNormalContent.text = "position: $position, data: $data"
+        }
+    }
+}
+```
+
+## Other configurations
+
+### 1. Render Type
+
+Yasha supports multiple types of RecyclerView, such as list, Grid, Stagger, Pager and custom list types
+
+```kotlin
+//Render List
+recyclerView.linear(dataSource){
+	//Set the direction to vertical list or horizontal list
+	orientation(RecyclerView.VERTICAL)
+	renderBindingItem<NormalItem, ViewHolderNormalBinding> {}
+}
+
+//Render Grid
+recyclerView.grid(dataSource){
+	//Set the number of columns
+	spanCount(2)  
+	renderBindingItem<NormalItem, ViewHolderNormalBinding> {  
+		//Set the number of columns corresponding to this item
+	    gridSpanSize(2)  
+	    onBind {}  
+	}
+}
+
+//Render waterfall flow
+recyclerView.stagger(dataSource){
+	//Set the number of columns
+	spanCount(2)  
+	renderBindingItem<NormalItem, ViewHolderNormalBinding> {  
+	    staggerFullSpan(true)  
+	    onBind {}  
+	}
+}
+
+//Render Page
+recyclerView.pager(dataSource){
+	//Register page change callback
+	onPageChanged { position, yashaItem, view ->  
+	    Toast.makeText(this, "This is page $position", Toast.LENGTH_SHORT).show()  
+	}
+}
+
+//Render custom layout
+recyclerView.custom(customLayoutManager, dataSource){}
+```
+
+### 2. DataSource paging load
+
+```kotlin
 class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(coroutineScope) {
     var page = 0
 
-    // Called when initial loading, located in the IO thread
+    // Called when initializing the load
     override suspend fun loadInitial(): List<YashaItem>? {
         page = 0
     
@@ -94,15 +147,15 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
         }
 
         // Return null to trigger loading failure
-        // Return to empty list to trigger no more
+        // Return to the empty list to trigger no more
+        // Return init data
         return items
     }
 
-    // Called when the page is loaded, located in the IO thread
+    // Called on paging load
     override suspend fun loadAfter(): List<YashaItem>? {
         page++
 
-        //Simulated loading failed
         if (page % 5 == 0) {
             // Return null to trigger loading failure
             return null  
@@ -113,17 +166,13 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
             items.add(NormalItem(i))
         }
 
-        // Return to empty list to trigger no more
+        // Return to the empty list to trigger no more
         return items
     }
 }
 ```
 
-> You only need to define the logic of initial loading and paging loading, Yasha will automatically call it at the right time, and you can be a handy shopkeeper with peace of mind.
-
-## Triple Kill
-
-Multiple viewTypes? Little case
+### 3. Render MultiType
 
 ```kotlin
 
@@ -133,27 +182,16 @@ class AItem(val i: Int) : YashaItem
 //Define data type B
 class BItem(val i:Int) : YashaItem
 
-//Add different types of data
-val dataSource = YashaDataSource()
-val items = mutableListOf<YashaItem>()
-for (i in 0 until 5) {
-    items.add(AItem(i))
-}
-for (i in 5 until 10){
-    items.add(BItem(i))
-}
-dataSource.addItems(items)
-
-//Render Item
+//Render Items
 recyclerView.linear(dataSource){
-    //Render AItem
+    //Render Type A
     renderBindingItem<AItem, AItemBinding> {
         onBind {
             //render
             ...
         }
     }
-    //Render BItem
+    //Render Type B
     renderBindingItem<BItem, BItemBinding> {
         onBind {
             //render
@@ -163,7 +201,9 @@ recyclerView.linear(dataSource){
 }
 ```
 
-Header and Footer? No problem, DataSource supports
+### 4. Header and Footer
+
+DataSource supports the following methods for adding headers and footers:
 
 ```kotlin
 //Headers
@@ -183,12 +223,12 @@ fun getFooter(position: Int): T
 fun clearFooter(delay: Boolean = false)
 ```
 
-## Ultra kill
+### 5. Partial refresh
 
-Partial refresh? Look down
+By rewriting the Diff method of the data class, you can complete efficient local refresh:
 
 ```kotlin
-//When defining the data type, override the Diff method
+//Override Diff method when defining data type
 class NormalItem(val i: Int, val text: String = "") : YashaItem {
 
     override fun areItemsTheSame(other: Differ): Boolean {
@@ -201,26 +241,28 @@ class NormalItem(val i: Int, val text: String = "") : YashaItem {
         return other.text == text
     }
 
-    //Set the payload
+    //Set up payload
     override fun getChangePayload(other: Differ): Any? {
         if (other !is NormalItem) return null
         return other.text 
     }
 }
 
-//dataSource updates the new Item data
+//Use dataSource to update the new Item data
 val oldItem = NormalItem(1, "1")
 val newItem = NormalItem(2, "2")
 dataSource.setItem(oldItem, newItem)
 
-// Register onBindPayload when rendering
+// Register onBindPayload at render time
 recyclerView.linear(dataSource){
     renderBindingItem<NormalItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
+        
+        //Partial refresh use
         onBindPayload {
-            //Take out the payload for partial refresh
+            //Take out payload for partial refresh
             val payload = it[0]
             if (payload != null) {
                 itemBinding.tvNormalContent.text = payload.toString()
@@ -230,16 +272,13 @@ recyclerView.linear(dataSource){
 }
 ```
 
-## Rampage
-
-Loading status?
+### 6. Custom Load Status
 
 ```kotlin
-//Use the default loading state
+//Use default load state
 val dataSource = YashaDataSource(enableDefaultState = true)
 
-//or
-//Custom loading status
+//Custom LoadStateItem
 class CustomStateItem(val state: Int) : YashaItem
 class CustomDataSource : YashaDataSource(enableDefaultState = false) {
 
@@ -248,14 +287,14 @@ class CustomDataSource : YashaDataSource(enableDefaultState = false) {
     }
 }
 
-//Render custom state
+//Render Custom State
 recyclerView.linear(dataSource){
     ...
     renderBindingItem<CustomStateItem, CustomStateItemBinding> {
         onBind {
             when (data.state) {
                 FetchingState.FETCHING -> {
-                    //loading
+                    //loading...
                 }
                 FetchingState.FETCHING_ERROR -> {
                     //loading failed
@@ -272,6 +311,15 @@ recyclerView.linear(dataSource){
 }
 ```
 
+### 7. Proguard
+
+Only when using reflection to create ViewBinding, you need to add the following guard rules:
+
+```pro
+-keepclassmembers class * implements androidx.viewbinding.ViewBinding {
+    public static ** inflate(...);
+}
+```
 
 ## License
 

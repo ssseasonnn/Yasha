@@ -1,6 +1,5 @@
 package zlc.season.yasha
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import zlc.season.sange.DataSource
@@ -72,14 +71,16 @@ fun RecyclerView.custom(
     initDsl(CUSTOM_LAYOUT, dataSource, enableDefaultState, shouldInvalidate, block, customLayoutManager)
 }
 
+/**
+ * Create a pager List.
+ */
 fun RecyclerView.pager(
     dataSource: DataSource<YashaItem>,
     enableDefaultState: Boolean = false,
     shouldInvalidate: Boolean = true,
-    onPageChanged: ((position: Int, item: YashaItem, itemView: View) -> Unit)? = null,
     block: YashaDsl.() -> Unit
 ) {
-    initDsl(PAGER_LAYOUT, dataSource, enableDefaultState, shouldInvalidate, block, onPageChanged = onPageChanged)
+    initDsl(PAGER_LAYOUT, dataSource, enableDefaultState, shouldInvalidate, block)
 }
 
 /**
@@ -113,20 +114,13 @@ private fun RecyclerView.initDsl(
     enableDefaultState: Boolean,
     shouldInvalidate: Boolean,
     block: YashaDsl.() -> Unit,
-    customLayoutManager: RecyclerView.LayoutManager? = null,
-    onPageChanged: ((Int, YashaItem, View) -> Unit)? = null
+    customLayoutManager: RecyclerView.LayoutManager? = null
 ) {
     val adapter = YashaAdapter(dataSource, shouldInvalidate)
 
     val dsl = YashaDsl(adapter)
     dsl.block()
     dsl.init(this, type, enableDefaultState, customLayoutManager)
-
-    this.adapter = adapter
-
-    if (onPageChanged != null) {
-        this.addOnScrollListener(YashaPagerListener(this, onPageChanged))
-    }
 }
 
 private fun ViewPager2.initDsl(
