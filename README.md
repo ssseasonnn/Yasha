@@ -9,7 +9,7 @@
 
 # Yasha
 
-A DSL library for rendering RecyclerView and ViewPage.
+A DSL library for rendering RecyclerView and ViewPager.
 
 > *Read this in other languages: [中文](README.zh.md), [English](README.md), [Changelog](CHANGELOG.md)*
 
