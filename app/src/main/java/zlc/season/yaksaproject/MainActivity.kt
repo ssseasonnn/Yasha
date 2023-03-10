@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnBanner.setOnClickListener {
-            startActivity(Intent(this@MainActivity, AutoScrollActivity::class.java))
+            startActivity(Intent(this@MainActivity, BannerActivity::class.java))
         }
     }
 }
