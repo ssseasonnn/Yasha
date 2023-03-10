@@ -22,5 +22,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnPage.setOnClickListener {
             startActivity(Intent(this@MainActivity, PagerActivity::class.java))
         }
+
+        binding.btnBanner.setOnClickListener {
+            startActivity(Intent(this@MainActivity, AutoScrollActivity::class.java))
+        }
     }
 }
