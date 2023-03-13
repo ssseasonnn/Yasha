@@ -1,1 +1,2 @@
 include ':app', ':yasha'
+include ':yasha-banner'

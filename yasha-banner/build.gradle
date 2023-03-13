@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'zlc.season.yasha'
+    namespace 'zlc.season.yasha.banner'
     compileSdkVersion 31
 
     defaultConfig {
@@ -25,9 +25,7 @@ android {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    api "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
-    api "androidx.viewpager2:viewpager2:1.0.0"
-    api "com.github.ssseasonnn:Sange:1.1.7"
+    api project(":yasha")
+    api("com.github.ssseasonnn:Tango:1.0.1")
+    api("io.coil-kt:coil:2.2.2")
 }

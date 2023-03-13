@@ -36,9 +36,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'com.github.ssseasonnn:Tango:-SNAPSHOT'
 
 //    implementation "com.github.ssseasonnn:Yasha:1.0.7"
     implementation project(":yasha")
+    implementation project(":yasha-banner")
 
 }
