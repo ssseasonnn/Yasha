@@ -1,1 +1,3 @@
 include ':app', ':yasha'
+include ':yasha-compose'
+include ':app-compose'
