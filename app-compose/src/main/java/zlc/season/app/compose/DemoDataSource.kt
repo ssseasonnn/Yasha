@@ -7,8 +7,8 @@ import zlc.season.sange.datasource.FetchState
 import zlc.season.yasha.compose.ComposeItem
 import zlc.season.yasha.compose.LazyListDataSource
 
-class DemoDataSource(coroutineScope: CoroutineScope) : LazyListDataSource<ComposeItem>(coroutineScope) {
-    val refresh = MutableStateFlow<Boolean>(false)
+class DemoDataSource(coroutineScope: CoroutineScope) : LazyListDataSource(coroutineScope) {
+    val isRefreshing = MutableStateFlow(false)
     var page = 0
 
     init {
@@ -19,7 +19,7 @@ class DemoDataSource(coroutineScope: CoroutineScope) : LazyListDataSource<Compos
         println("load init")
         page = 0
 
-        refresh.value = true
+        isRefreshing.value = true
 
         delay(1500)
 
@@ -43,7 +43,7 @@ class DemoDataSource(coroutineScope: CoroutineScope) : LazyListDataSource<Compos
         addHeaders(headers, delay = true)
         addFooters(footers, delay = true)
 
-        refresh.value = false
+        isRefreshing.value = false
 
         return items
     }
