@@ -9,7 +9,7 @@
 
 # Yasha
 
-一个渲染RecyclerView和ViewPager的DSL库.
+一个渲染RecyclerView和ViewPager以及ComposeList的DSL库.
 
 > *Read this in other languages: [中文](README.zh.md), [English](README.md), [Changelog](CHANGELOG.md)*
 
@@ -23,13 +23,14 @@
 ✅ 支持DiffUtils刷新  
 ✅ 支持加载状态显示  
 ✅ 支持CleanUp自动清理资源
+✅ 支持Compose
 
 ![](yasha_usage.png)
-
 
 ## Prepare
 
 1. 添加jitpack到build.gradle
+
 ```gradle
 allprojects {
     repositories {
@@ -42,10 +43,13 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Yasha:1.1.5'
+	implementation 'com.github.ssseasonnn:Yasha:1.2.0'
+	
+	// or
+	implementation 'com.github.ssseasonnn.Yasha:yasha:1.2.0'  //only for recyclerview
+	implementation 'com.github.ssseasonnn.Yasha:yasha-compose:1.2.0' //only for compose
 }
 ```
-
 
 ## 基本用法
 
@@ -59,7 +63,7 @@ class RecyclerViewItem(val i: Int, val text: String = "") : YashaItem
 val dataSource = YashaDataSource()
 
 //渲染RecyclerView
-recyclerView.linear(dataSource){
+recyclerView.linear(dataSource) {
     renderBindingItem<RecyclerViewItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
@@ -78,7 +82,7 @@ class ViewPagerItem(val i: Int, val text: String = "") : YashaItem
 val dataSource = YashaDataSource()
 
 //渲染ViewPager
-viewPager.vertical(dataSource){
+viewPager.vertical(dataSource) {
     renderBindingItem<ViewPagerItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
@@ -95,43 +99,43 @@ Yasha支持多种类型的RecyclerView，如列表、Grid、Stagger以及Pager�
 
 ```kotlin
 //渲染列表
-recyclerView.linear(dataSource){
-	//设置方向为垂直列表或横向列表
-	orientation(RecyclerView.VERTICAL)
-	renderBindingItem<NormalItem, ViewHolderNormalBinding> {}
+recyclerView.linear(dataSource) {
+    //设置方向为垂直列表或横向列表
+    orientation(RecyclerView.VERTICAL)
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {}
 }
 
 //渲染表格
-recyclerView.grid(dataSource){
-	//设置列数量
-	spanCount(2)  
-	renderBindingItem<NormalItem, ViewHolderNormalBinding> {  
-		//设置该item项对应的列数
-	    gridSpanSize(2)  
-	    onBind {}  
-	}
+recyclerView.grid(dataSource) {
+    //设置列数量
+    spanCount(2)
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
+        //设置该item项对应的列数
+        gridSpanSize(2)
+        onBind {}
+    }
 }
 
 //渲染瀑布流
-recyclerView.stagger(dataSource){
-	//设置列数量
-	spanCount(2)  
-	renderBindingItem<NormalItem, ViewHolderNormalBinding> {  
-	    staggerFullSpan(true)  
-	    onBind {}  
-	}
+recyclerView.stagger(dataSource) {
+    //设置列数量
+    spanCount(2)
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
+        staggerFullSpan(true)
+        onBind {}
+    }
 }
 
 //渲染Page
-recyclerView.pager(dataSource){
-	//注册翻页回调
-	onPageChanged { position, yashaItem, view ->  
-	    Toast.makeText(this, "This is page $position", Toast.LENGTH_SHORT).show()  
-	}
+recyclerView.pager(dataSource) {
+    //注册翻页回调
+    onPageChanged { position, yashaItem, view ->
+        Toast.makeText(this, "This is page $position", Toast.LENGTH_SHORT).show()
+    }
 }
 
 //渲染自定义layout
-recyclerView.custom(customLayoutManager, dataSource){}
+recyclerView.custom(customLayoutManager, dataSource) {}
 ```
 
 ### 2. DataSource分页加载
@@ -144,7 +148,7 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
     // 初始化加载时调用，位于IO线程
     override suspend fun loadInitial(): List<YashaItem>? {
         page = 0
-    
+
         val items = mutableListOf<YashaItem>()
         for (i in 0 until 10) {
             items.add(NormalItem(i))
@@ -162,7 +166,7 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
         //模拟加载失败
         if (page % 5 == 0) {
             // 返回null触发加载失败
-            return null  
+            return null
         }
 
         val items = mutableListOf<YashaItem>()
@@ -184,10 +188,10 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
 class AItem(val i: Int) : YashaItem
 
 //定义数据类型B
-class BItem(val i:Int) : YashaItem
+class BItem(val i: Int) : YashaItem
 
 //渲染Item
-recyclerView.linear(dataSource){
+recyclerView.linear(dataSource) {
     //渲染类型 A
     renderBindingItem<AItem, AItemBinding> {
         onBind {
@@ -212,16 +216,16 @@ DataSource支持以下多种添加Header和Footer的方法：
 ```kotlin
 //Headers
 fun addHeader(t: T, position: Int = -1, delay: Boolean = false)
-fun addHeaders(list: List<T>, position: Int = -1, delay: Boolean = false) 
-fun removeHeader(t: T, delay: Boolean = false) 
+fun addHeaders(list: List<T>, position: Int = -1, delay: Boolean = false)
+fun removeHeader(t: T, delay: Boolean = false)
 fun setHeader(old: T, new: T, delay: Boolean = false)
 fun getHeader(position: Int): T
 fun clearHeader(delay: Boolean = false)
 
 //Footers
 fun addFooter(t: T, position: Int = -1, delay: Boolean = false)
-fun addFooters(list: List<T>, position: Int = -1, delay: Boolean = false) 
-fun removeFooter(t: T, delay: Boolean = false) 
+fun addFooters(list: List<T>, position: Int = -1, delay: Boolean = false)
+fun removeFooter(t: T, delay: Boolean = false)
 fun setFooter(old: T, new: T, delay: Boolean = false)
 fun getFooter(position: Int): T
 fun clearFooter(delay: Boolean = false)
@@ -248,7 +252,7 @@ class NormalItem(val i: Int, val text: String = "") : YashaItem {
     //设置payload
     override fun getChangePayload(other: Differ): Any? {
         if (other !is NormalItem) return null
-        return other.text 
+        return other.text
     }
 }
 
@@ -258,12 +262,12 @@ val newItem = NormalItem(2, "2")
 dataSource.setItem(oldItem, newItem)
 
 // 渲染时注册onBindPayload
-recyclerView.linear(dataSource){
+recyclerView.linear(dataSource) {
     renderBindingItem<NormalItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
-        
+
         //局部刷新使用
         onBindPayload {
             //取出payload进行局部刷新
@@ -292,7 +296,7 @@ class CustomDataSource : YashaDataSource(enableDefaultState = false) {
 }
 
 //渲染自定义状态
-recyclerView.linear(dataSource){
+recyclerView.linear(dataSource) {
     ...
     renderBindingItem<CustomStateItem, CustomStateItemBinding> {
         onBind {
@@ -304,7 +308,7 @@ recyclerView.linear(dataSource){
                     //加载失败
                 }
                 FetchingState.DONE_FETCHING -> {
-                   //加载完成
+                    //加载完成
                 }
                 else -> {
                     //其他

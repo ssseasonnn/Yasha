@@ -39,7 +39,7 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     api "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
     api "androidx.viewpager2:viewpager2:1.0.0"
-    api "com.github.ssseasonnn.Sange:sange:feature~support_compose-SNAPSHOT"
+    api "com.github.ssseasonnn.Sange:sange:1.2.0"
 
     testImplementation 'junit:junit:4.13.2'
 }

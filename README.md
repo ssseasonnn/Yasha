@@ -9,7 +9,7 @@
 
 # Yasha
 
-A DSL library for rendering RecyclerView and ViewPager.
+A DSL library for rendering RecyclerView and ViewPager and Compose List.
 
 > *Read this in other languages: [中文](README.zh.md), [English](README.md), [Changelog](CHANGELOG.md)*
 
@@ -23,12 +23,14 @@ A DSL library for rendering RecyclerView and ViewPager.
 ✅ Support DiffUtil  
 ✅ Support loading status display  
 ✅ Support automatic clean up resources
+✅ Support Compose
 
 ![](yasha_usage.png)
 
 ## Prepare
 
 1. Add jitpack to build.gradle
+
 ```gradle
 allprojects {
     repositories {
@@ -38,9 +40,14 @@ allprojects {
 ```
 
 2. Add Dependencies
+
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Yasha:1.1.5'
+	implementation 'com.github.ssseasonnn:Yasha:1.2.0'
+	
+	// or
+	implementation 'com.github.ssseasonnn.Yasha:yasha:1.2.0'  //only for recyclerview
+	implementation 'com.github.ssseasonnn.Yasha:yasha-compose:1.2.0' //only for compose
 }
 ```
 
@@ -56,7 +63,7 @@ class RecyclerViewItem(val i: Int, val text: String = "") : YashaItem
 val dataSource = YashaDataSource()
 
 //Render RecyclerView
-recyclerView.linear(dataSource){
+recyclerView.linear(dataSource) {
     renderBindingItem<RecyclerViewItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
@@ -75,7 +82,7 @@ class ViewPagerItem(val i: Int, val text: String = "") : YashaItem
 val dataSource = YashaDataSource()
 
 //Render ViewPager
-viewPager.vertical(dataSource){
+viewPager.vertical(dataSource) {
     renderBindingItem<ViewPagerItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
@@ -92,43 +99,43 @@ Yasha supports multiple types of RecyclerView, such as list, Grid, Stagger, Page
 
 ```kotlin
 //Render List
-recyclerView.linear(dataSource){
-	//Set the direction to vertical list or horizontal list
-	orientation(RecyclerView.VERTICAL)
-	renderBindingItem<NormalItem, ViewHolderNormalBinding> {}
+recyclerView.linear(dataSource) {
+    //Set the direction to vertical list or horizontal list
+    orientation(RecyclerView.VERTICAL)
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {}
 }
 
 //Render Grid
-recyclerView.grid(dataSource){
-	//Set the number of columns
-	spanCount(2)  
-	renderBindingItem<NormalItem, ViewHolderNormalBinding> {  
-		//Set the number of columns corresponding to this item
-	    gridSpanSize(2)  
-	    onBind {}  
-	}
+recyclerView.grid(dataSource) {
+    //Set the number of columns
+    spanCount(2)
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
+        //Set the number of columns corresponding to this item
+        gridSpanSize(2)
+        onBind {}
+    }
 }
 
 //Render waterfall flow
-recyclerView.stagger(dataSource){
-	//Set the number of columns
-	spanCount(2)  
-	renderBindingItem<NormalItem, ViewHolderNormalBinding> {  
-	    staggerFullSpan(true)  
-	    onBind {}  
-	}
+recyclerView.stagger(dataSource) {
+    //Set the number of columns
+    spanCount(2)
+    renderBindingItem<NormalItem, ViewHolderNormalBinding> {
+        staggerFullSpan(true)
+        onBind {}
+    }
 }
 
 //Render Page
-recyclerView.pager(dataSource){
-	//Register page change callback
-	onPageChanged { position, yashaItem, view ->  
-	    Toast.makeText(this, "This is page $position", Toast.LENGTH_SHORT).show()  
-	}
+recyclerView.pager(dataSource) {
+    //Register page change callback
+    onPageChanged { position, yashaItem, view ->
+        Toast.makeText(this, "This is page $position", Toast.LENGTH_SHORT).show()
+    }
 }
 
 //Render custom layout
-recyclerView.custom(customLayoutManager, dataSource){}
+recyclerView.custom(customLayoutManager, dataSource) {}
 ```
 
 ### 2. DataSource paging load
@@ -140,7 +147,7 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
     // Called when initializing the load
     override suspend fun loadInitial(): List<YashaItem>? {
         page = 0
-    
+
         val items = mutableListOf<YashaItem>()
         for (i in 0 until 10) {
             items.add(NormalItem(i))
@@ -158,7 +165,7 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
 
         if (page % 5 == 0) {
             // Return null to trigger loading failure
-            return null  
+            return null
         }
 
         val items = mutableListOf<YashaItem>()
@@ -180,10 +187,10 @@ class CustomDataSource(coroutineScope: CoroutineScope) : YashaDataSource(corouti
 class AItem(val i: Int) : YashaItem
 
 //Define data type B
-class BItem(val i:Int) : YashaItem
+class BItem(val i: Int) : YashaItem
 
 //Render Items
-recyclerView.linear(dataSource){
+recyclerView.linear(dataSource) {
     //Render Type A
     renderBindingItem<AItem, AItemBinding> {
         onBind {
@@ -208,16 +215,16 @@ DataSource supports the following methods for adding headers and footers:
 ```kotlin
 //Headers
 fun addHeader(t: T, position: Int = -1, delay: Boolean = false)
-fun addHeaders(list: List<T>, position: Int = -1, delay: Boolean = false) 
-fun removeHeader(t: T, delay: Boolean = false) 
+fun addHeaders(list: List<T>, position: Int = -1, delay: Boolean = false)
+fun removeHeader(t: T, delay: Boolean = false)
 fun setHeader(old: T, new: T, delay: Boolean = false)
 fun getHeader(position: Int): T
 fun clearHeader(delay: Boolean = false)
 
 //Footers
 fun addFooter(t: T, position: Int = -1, delay: Boolean = false)
-fun addFooters(list: List<T>, position: Int = -1, delay: Boolean = false) 
-fun removeFooter(t: T, delay: Boolean = false) 
+fun addFooters(list: List<T>, position: Int = -1, delay: Boolean = false)
+fun removeFooter(t: T, delay: Boolean = false)
 fun setFooter(old: T, new: T, delay: Boolean = false)
 fun getFooter(position: Int): T
 fun clearFooter(delay: Boolean = false)
@@ -244,7 +251,7 @@ class NormalItem(val i: Int, val text: String = "") : YashaItem {
     //Set up payload
     override fun getChangePayload(other: Differ): Any? {
         if (other !is NormalItem) return null
-        return other.text 
+        return other.text
     }
 }
 
@@ -254,12 +261,12 @@ val newItem = NormalItem(2, "2")
 dataSource.setItem(oldItem, newItem)
 
 // Register onBindPayload at render time
-recyclerView.linear(dataSource){
+recyclerView.linear(dataSource) {
     renderBindingItem<NormalItem, ViewHolderNormalBinding> {
         onBind {
             itemBinding.tvNormalContent.text = "position: $position, data: $data"
         }
-        
+
         //Partial refresh use
         onBindPayload {
             //Take out payload for partial refresh
@@ -288,7 +295,7 @@ class CustomDataSource : YashaDataSource(enableDefaultState = false) {
 }
 
 //Render Custom State
-recyclerView.linear(dataSource){
+recyclerView.linear(dataSource) {
     ...
     renderBindingItem<CustomStateItem, CustomStateItemBinding> {
         onBind {
@@ -300,7 +307,7 @@ recyclerView.linear(dataSource){
                     //loading failed
                 }
                 FetchingState.DONE_FETCHING -> {
-                   //loading complete
+                    //loading complete
                 }
                 else -> {
                     //other
