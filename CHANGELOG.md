@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2023-11
+
+### Added
+
+- Support render Compose list
+
 ## [1.1.6] - 2023-3
 
 ### Added
