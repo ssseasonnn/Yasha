@@ -7,21 +7,21 @@ import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ProgressBar
-import zlc.season.sange.FetchingState
+import zlc.season.sange.datasource.FetchState
 
 class YashaStateView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
     private var failedBtn: Button
     private var loading: ProgressBar
 
     init {
         LayoutInflater.from(context).inflate(
-                R.layout.layout_yasha_state,
-                this,
-                true
+            R.layout.layout_yasha_state,
+            this,
+            true
         )
 
         failedBtn = findViewById(R.id.yasha_state_failed_btn)
@@ -34,18 +34,21 @@ class YashaStateView @JvmOverloads constructor(
         }
 
         when (newState.state) {
-            FetchingState.FETCHING -> {
+            FetchState.Fetching -> {
                 loading.visibility = View.VISIBLE
                 failedBtn.visibility = View.GONE
             }
-            FetchingState.FETCHING_ERROR -> {
+
+            FetchState.FetchingError -> {
                 loading.visibility = View.GONE
                 failedBtn.visibility = View.VISIBLE
             }
-            FetchingState.DONE_FETCHING -> {
+
+            FetchState.DoneFetching -> {
                 loading.visibility = View.GONE
                 failedBtn.visibility = View.GONE
             }
+
             else -> {
                 loading.visibility = View.GONE
                 failedBtn.visibility = View.GONE

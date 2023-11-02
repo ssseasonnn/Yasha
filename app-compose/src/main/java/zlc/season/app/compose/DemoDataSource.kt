@@ -3,11 +3,10 @@ package zlc.season.app.compose
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import zlc.season.sange.datasource.FetchState
+import zlc.season.yasha.compose.ComposeDataSource
 import zlc.season.yasha.compose.ComposeItem
-import zlc.season.yasha.compose.LazyListDataSource
 
-class DemoDataSource(coroutineScope: CoroutineScope) : LazyListDataSource(coroutineScope) {
+class DemoDataSource(coroutineScope: CoroutineScope) : ComposeDataSource(coroutineScope, enableDefaultState = true) {
     val isRefreshing = MutableStateFlow(false)
     var page = 0
 
@@ -65,9 +64,5 @@ class DemoDataSource(coroutineScope: CoroutineScope) : LazyListDataSource(corout
         }
 
         return items
-    }
-
-    override fun onFetchStateChanged(newState: FetchState) {
-        super.onFetchStateChanged(newState)
     }
 }

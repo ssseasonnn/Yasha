@@ -2,7 +2,6 @@ package zlc.season.yasha
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import zlc.season.sange.DataSource
 
 const val LINEAR_LAYOUT = 0
 const val GRID_LAYOUT = 1
@@ -17,7 +16,7 @@ const val PAGER_LAYOUT = 4
  *
  */
 fun RecyclerView.linear(
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean = false,
     shouldInvalidate: Boolean = true,
     block: YashaDsl.() -> Unit
@@ -32,7 +31,7 @@ fun RecyclerView.linear(
  *
  */
 fun RecyclerView.grid(
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean = false,
     shouldInvalidate: Boolean = true,
     block: YashaDsl.() -> Unit
@@ -47,7 +46,7 @@ fun RecyclerView.grid(
  *
  */
 fun RecyclerView.stagger(
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean = false,
     shouldInvalidate: Boolean = true,
     block: YashaDsl.() -> Unit
@@ -63,7 +62,7 @@ fun RecyclerView.stagger(
  */
 fun RecyclerView.custom(
     customLayoutManager: RecyclerView.LayoutManager,
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean = false,
     shouldInvalidate: Boolean = true,
     block: YashaDsl.() -> Unit
@@ -75,7 +74,7 @@ fun RecyclerView.custom(
  * Create a pager List.
  */
 fun RecyclerView.pager(
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean = false,
     shouldInvalidate: Boolean = true,
     block: YashaDsl.() -> Unit
@@ -87,7 +86,7 @@ fun RecyclerView.pager(
  * Create a vertical viewpager2
  */
 fun ViewPager2.vertical(
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean = false,
     shouldInvalidate: Boolean = true,
     block: YashaDsl.() -> Unit
@@ -99,7 +98,7 @@ fun ViewPager2.vertical(
  * Create a horizontal viewpager2
  */
 fun ViewPager2.horizontal(
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean = false,
     shouldInvalidate: Boolean = true,
     block: YashaDsl.() -> Unit
@@ -110,7 +109,7 @@ fun ViewPager2.horizontal(
 
 private fun RecyclerView.initDsl(
     type: Int,
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean,
     shouldInvalidate: Boolean,
     block: YashaDsl.() -> Unit,
@@ -125,7 +124,7 @@ private fun RecyclerView.initDsl(
 
 private fun ViewPager2.initDsl(
     isHorizontal: Boolean,
-    dataSource: DataSource<YashaItem>,
+    dataSource: YashaDataSource,
     enableDefaultState: Boolean,
     shouldInvalidate: Boolean,
     block: YashaDsl.() -> Unit
